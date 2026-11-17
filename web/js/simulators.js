@@ -10,108 +10,114 @@
 
 const PALETTE = {
   bg: '#ffffff',
-  panelBg: '#f8fafc',
-  grid: '#e2e8f0',
+  panelBg: '#f9fafb',
+  grid: '#edf0f4',
   axis: '#94a3b8',
   text: '#0f172a',
   muted: '#475569',
-  blue: '#1d4ed8',
-  blueSoft: 'rgba(29, 78, 216, 0.14)',
-  teal: '#0f766e',
-  tealSoft: 'rgba(15, 118, 110, 0.16)',
-  crimson: '#be123c',
-  crimsonSoft: 'rgba(190, 18, 60, 0.15)',
-  amber: '#b45309',
-  amberSoft: 'rgba(180, 83, 9, 0.22)',
+  blue: '#2563eb',
+  blueSoft: 'rgba(37, 99, 235, 0.13)',
+  teal: '#0d9488',
+  tealSoft: 'rgba(13, 148, 136, 0.15)',
+  crimson: '#e11d48',
+  crimsonSoft: 'rgba(225, 29, 72, 0.14)',
+  amber: '#d97706',
+  amberSoft: 'rgba(217, 119, 6, 0.2)',
   slate: '#334155',
 };
 
 const BASE_SIMULATOR_CSS = `
 .sim-card {
-  margin: 1.75rem 0;
-  padding: 1.25rem 1.35rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
+  margin: 2.25rem 0;
+  padding: 1.45rem 1.55rem;
+  border: 1px solid rgba(15, 23, 42, 0.085);
+  border-radius: 14px;
   background: #ffffff;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.035);
 }
 .sim-header {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #e2e8f0;
+  gap: 0.85rem;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.065);
 }
 .sim-title {
   margin: 0;
-  font-size: 1.04rem;
-  font-weight: 700;
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
   color: #0f172a;
 }
 .sim-subtitle {
-  margin: 0.25rem 0 0;
-  font-size: 0.86rem;
-  color: #475569;
-  line-height: 1.45;
+  margin: 0.28rem 0 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
 }
 .sim-btn {
-  padding: 0.42rem 0.8rem;
-  font-size: 0.82rem;
+  padding: 0.42rem 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #1d4ed8;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 6px;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   cursor: pointer;
   white-space: nowrap;
+  transition: all 0.15s ease;
 }
 .sim-btn:hover {
-  background: #dbeafe;
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.22);
 }
 .sim-controls {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
-  gap: 0.85rem 1.1rem;
-  margin-bottom: 1rem;
-  padding: 0.85rem 1rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  gap: 0.9rem 1.25rem;
+  margin-bottom: 1.15rem;
+  padding: 0.95rem 1.1rem;
+  background: #f9fafb;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 10px;
 }
 .sim-control {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.36rem;
 }
 .sim-control-top {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 0.4rem;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
 }
 .sim-control-label {
-  color: #334155;
+  color: #475569;
   font-weight: 500;
 }
 .sim-control-val {
   color: #0f172a;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.79rem;
   font-variant-numeric: tabular-nums;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 .sim-slider {
   width: 100%;
-  accent-color: #1d4ed8;
+  height: 5px;
+  accent-color: #2563eb;
   cursor: pointer;
 }
 .sim-canvas-wrap {
   width: 100%;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  border-radius: 10px;
   overflow: hidden;
   background: #ffffff;
 }
@@ -121,33 +127,34 @@ const BASE_SIMULATOR_CSS = `
 }
 .sim-metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.65rem;
-  margin-top: 0.9rem;
+  margin-top: 1rem;
 }
 .sim-metric {
-  padding: 0.6rem 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 7px;
-  background: #f8fafc;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(15, 23, 42, 0.065);
+  border-radius: 9px;
+  background: #fafbfc;
 }
 .sim-metric-label {
-  font-size: 0.76rem;
-  color: #475569;
-  margin-bottom: 0.2rem;
+  font-size: 0.73rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 0.22rem;
 }
 .sim-metric-value {
-  font-size: 0.94rem;
-  font-weight: 700;
+  font-size: 0.92rem;
+  font-weight: 650;
   color: #0f172a;
   font-variant-numeric: tabular-nums;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 .sim-footnote {
-  margin: 0.7rem 0 0;
-  font-size: 0.8rem;
+  margin: 0.8rem 0 0;
+  font-size: 0.78rem;
   color: #64748b;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 `;
 

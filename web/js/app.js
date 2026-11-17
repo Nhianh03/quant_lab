@@ -435,6 +435,7 @@ function bootBrowserApp() {
     projectsContainer: document.getElementById('projects-container'),
 
     // Reader & Split View elements
+    readerScrollProgress: document.getElementById('reader-scroll-progress'),
     readerBreadcrumb: document.getElementById('reader-breadcrumb'),
     readerCompletedPill: document.getElementById('reader-completed-pill'),
     btnReaderQuickComplete: document.getElementById('btn-reader-quick-complete'),
@@ -826,7 +827,8 @@ function bootBrowserApp() {
         : `<a href="#problems" class="btn">Mở ngân hàng luyện đề (${state.problems.length} câu)</a>`;
 
     const semestersHtml = (state.syllabus.semesters || [])
-      .map((sem) => {
+      .map((sem, semIdx) => {
+        const semNum = String(semIdx + 1).padStart(2, '0');
         const modCardsHtml = (sem.module_ids || [])
           .map((modId) => {
             const mod = state.moduleMap.get(modId);
@@ -837,19 +839,18 @@ function bootBrowserApp() {
               .map((les) => {
                 const done = Boolean(state.progress.completed_lessons[les.id]);
                 const simBadge = les.simulator_id
-                  ? `<span class="sem-sim-tag">Mô phỏng tương tác</span>`
+                  ? `<span class="sem-sim-tag">Mô phỏng</span>`
                   : '';
                 return `
                   <a href="#lesson/${encodeURIComponent(les.id)}" class="sem-lesson-card${done ? ' is-completed' : ''}">
-                    <div class="sem-lesson-main">
-                      <div class="sem-lesson-code-row">
-                        <span class="sem-lesson-code">${escapeHtml(les.code)}</span>
-                        <span class="sem-lesson-hours">${escapeHtml(String(les.estimated_hours))} giờ</span>
-                        ${simBadge}
-                      </div>
-                      <div class="sem-lesson-title">${escapeHtml(les.title)}</div>
+                    <span class="sem-lesson-code">${escapeHtml(les.code)}</span>
+                    <span class="sem-lesson-title">${escapeHtml(les.title)}</span>
+                    <div class="sem-lesson-right">
+                      ${simBadge}
+                      <span class="sem-lesson-hours">${escapeHtml(String(les.estimated_hours))}h</span>
+                      <span class="sem-lesson-check" title="${done ? 'Đã hoàn thành' : 'Chưa hoàn thành'}">${checkSvg}</span>
+                      <span class="sem-lesson-arrow" aria-hidden="true">&rarr;</span>
                     </div>
-                    <span class="sem-lesson-check" title="${done ? 'Đã hoàn thành' : 'Chưa hoàn thành'}">${checkSvg}</span>
                   </a>`;
               })
               .join('');
@@ -857,8 +858,8 @@ function bootBrowserApp() {
             return `
               <div class="sem-module-card">
                 <div class="sem-module-head">
-                  <span class="sem-module-name">${escapeHtml(mod.code)} — ${escapeHtml(mod.title)}</span>
-                  <span class="sem-module-done">${doneMod} / ${lessons.length} bài</span>
+                  <span class="sem-module-name">${escapeHtml(mod.code)} · ${escapeHtml(mod.title)}</span>
+                  <span class="sem-module-done">${doneMod}/${lessons.length} bài</span>
                 </div>
                 <div class="sem-lesson-list">
                   ${lessonCards}
@@ -880,10 +881,10 @@ function bootBrowserApp() {
 
             return `
               <a href="#projects/${encodeURIComponent(proj.id)}" class="sem-project-card">
-                <div>
-                  <div class="sem-project-code">ĐỒ ÁN TRỌNG TÂM • ${escapeHtml(proj.code)}</div>
+                <div class="sem-project-body">
+                  <div class="sem-project-code">Đồ án trọng tâm · ${escapeHtml(proj.code)}</div>
                   <div class="sem-project-title">${escapeHtml(proj.title)}</div>
-                  <div class="sem-project-firms">Quỹ mục tiêu: ${escapeHtml(firms)} • Triển khai ${checkedTasks}/${totalTasks} • Kiểm duyệt ${checkedAudits}/${totalAudits}</div>
+                  <div class="sem-project-firms">${escapeHtml(firms)} · Triển khai ${checkedTasks}/${totalTasks} · Kiểm duyệt ${checkedAudits}/${totalAudits}</div>
                 </div>
                 <span class="sem-project-cta">Mở xưởng đồ án &rarr;</span>
               </a>`;
@@ -913,26 +914,29 @@ function bootBrowserApp() {
 
         return `
           <section class="semester-block" id="${escapeHtml(sem.id)}">
-            <header class="semester-header">
-              <div class="semester-top-meta">
-                <span class="semester-months">${escapeHtml(sem.months)}</span>
-                <span class="semester-progress-meta">Cột mốc tuyển dụng: ${doneMsCount} / ${milestones.length}</span>
+            <div class="semester-timeline-node" aria-hidden="true">${semNum}</div>
+            <div class="semester-content">
+              <header class="semester-header">
+                <div class="semester-top-meta">
+                  <span class="semester-months">${escapeHtml(sem.months)}</span>
+                  <span class="semester-progress-meta">Cột mốc tuyển dụng: ${doneMsCount} / ${milestones.length}</span>
+                </div>
+                <h2 class="semester-title">${escapeHtml(sem.title)}</h2>
+                <p class="semester-goal">${escapeHtml(sem.goal)}</p>
+              </header>
+
+              <div class="semester-modules-grid">
+                ${modCardsHtml}
               </div>
-              <h2 class="semester-title">${escapeHtml(sem.title)}</h2>
-              <p class="semester-goal">${escapeHtml(sem.goal)}</p>
-            </header>
 
-            <div class="semester-subhead">Học phần &amp; Chuyên đề Toán Định lượng</div>
-            <div class="semester-modules-grid">
-              ${modCardsHtml}
-            </div>
+              ${projCardsHtml ? `<div class="semester-project-wrap">${projCardsHtml}</div>` : ''}
 
-            <div class="semester-subhead">Đồ án Thực nghiệm</div>
-            ${projCardsHtml}
-
-            <div class="semester-subhead">Cột mốc Tuyển dụng Thực tế</div>
-            <div class="milestone-list">
-              ${milestonesHtml}
+              <div class="semester-milestones-wrap">
+                <div class="semester-subhead">Cột mốc Tuyển dụng Thực tế</div>
+                <div class="milestone-list">
+                  ${milestonesHtml}
+                </div>
+              </div>
             </div>
           </section>`;
       })
@@ -947,7 +951,7 @@ function bootBrowserApp() {
 
       <div class="roadmap-action-bar">
         <div class="roadmap-resume-info">
-          <div class="roadmap-resume-caption">Bài giảng gần nhất</div>
+          <div class="roadmap-resume-caption">Đang nghiên cứu dở dang</div>
           <div class="roadmap-resume-title">
             ${resumeLesson ? `${escapeHtml(resumeLesson.code)} — ${escapeHtml(resumeLesson.title)}` : ''}
           </div>
@@ -955,14 +959,16 @@ function bootBrowserApp() {
         <div class="roadmap-action-buttons">
           ${
             resumeLesson
-              ? `<a href="#lesson/${encodeURIComponent(resumeLesson.id)}" class="btn btn-primary">Tiếp tục bài đang học &rarr;</a>`
+              ? `<a href="#lesson/${encodeURIComponent(resumeLesson.id)}" class="btn btn-primary">Tiếp tục bài học &rarr;</a>`
               : ''
           }
           ${dueBtnHtml}
         </div>
       </div>
 
-      ${semestersHtml}
+      <div class="roadmap-timeline">
+        ${semestersHtml}
+      </div>
     `;
   }
 
@@ -1827,7 +1833,7 @@ function bootBrowserApp() {
       <section class="project-section-card">
         <div class="section-heading-row">
           <h2 class="section-heading-title">5. Hồ sơ Thực nghiệm Ngoài mẫu &amp; Nhật ký Bảo vệ</h2>
-          <span class="section-heading-count">Tự động lưu vào ổ cứng</span>
+          <span class="section-heading-count">${state.isStaticHost ? 'Tự động lưu trên trình duyệt' : 'Tự động lưu vào ổ cứng'}</span>
         </div>
 
         <div class="project-form-grid">
@@ -2438,6 +2444,16 @@ function bootBrowserApp() {
         scheduleProgressSave(600);
       }
     });
+
+    // Update reading hairline progress bar on scroll inside #view-lesson
+    const updateReaderScrollProgress = () => {
+      if (!els.readerScrollProgress || state.route.view !== 'lesson') return;
+      const docEl = document.documentElement;
+      const maxScroll = Math.max(0, docEl.scrollHeight - window.innerHeight);
+      const pct = maxScroll > 10 ? Math.min(100, Math.max(0, (window.scrollY / maxScroll) * 100)) : 0;
+      els.readerScrollProgress.style.width = `${pct.toFixed(1)}%`;
+    };
+    window.addEventListener('scroll', updateReaderScrollProgress, { passive: true });
 
     // Re-render math cleanly once deferred KaTeX script finishes loading
     const handleKatexLoaded = () => {
