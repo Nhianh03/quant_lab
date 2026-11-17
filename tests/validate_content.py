@@ -11,40 +11,64 @@ import re
 import sys
 from typing import Iterable
 
-EXPECTED_MODULE_IDS = ["m1", "m2", "m3", "m4", "m5"]
+EXPECTED_MODULE_IDS = ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7"]
 
 EXPECTED_LESSONS_BY_MODULE: dict[str, list[str]] = {
+    "m0": [
+        "m0-01-to-hop-phep-dem-bu-tru-va-doi-xung",
+        "m0-02-bien-ngau-nhien-mgf-luat-so-lon-va-clt",
+        "m0-03-khong-gian-vector-chieu-truc-giao-va-cholesky",
+        "m0-04-giai-tich-da-bien-jacobian-hessian-va-lagrange",
+        "m0-05-chuoi-so-phuong-trinh-sai-phan-va-tiem-can",
+    ],
     "m1": [
         "m1-01-he-sinh-thai-buy-side-va-alpha",
         "m1-02-so-lenh-lob-reg-nms-va-crypto-perps",
         "m1-03-du-lieu-point-in-time-va-bay-backtest",
         "m1-04-mo-hinh-roll-glosten-milgrom-kyle-ofi",
+        "m1-05-hop-dong-tuong-lai-quyen-chon-va-dong-tien-gamma",
     ],
     "m2": [
         "m2-01-khong-gian-xac-suat-bayes-va-phan-phoi",
         "m2-02-ky-vong-co-dieu-kien-va-tower-property",
         "m2-03-chuoi-markov-va-first-step-analysis",
         "m2-04-random-walk-martingale-optional-stopping",
+        "m2-05-chien-thuat-brainteasers-tro-choi-va-winners-curse",
     ],
     "m3": [
         "m3-01-mle-cramer-rao-va-phan-phoi-duoi-day",
         "m3-02-hinh-hoc-ols-ridge-lasso-va-newey-west",
         "m3-03-multiple-testing-fdr-va-deflated-sharpe",
         "m3-04-kiem-dinh-cheo-chuoi-thoi-gian-purged-cv",
+        "m3-05-thong-ke-ben-vung-huber-quantile-va-du-lieu-khuyet",
     ],
     "m4": [
         "m4-01-svd-pca-va-eigenportfolios",
         "m4-02-marchenko-pastur-va-ledoit-wolf-shrinkage",
         "m4-03-tinh-dung-arma-garch-va-du-bao-bien-dong",
         "m4-04-dong-lien-ket-ornstein-uhlenbeck-va-kalman",
+        "m4-05-mo-hinh-var-khong-gian-trang-thai-va-hidden-markov",
     ],
     "m5": [
         "m5-01-dinh-luat-grinold-kahn-ic-ir-breadth",
         "m5-02-toi-uu-hoa-loi-danh-muc-va-phat-turnover",
         "m5-03-thuc-thi-lenh-almgren-chriss-va-kelly",
         "m5-04-hoc-may-tai-chinh-truc-giao-hoa-va-pnl-attribution",
+        "m5-05-mo-hinh-rui-ro-barra-cvar-va-tham-hoa-crowding",
+    ],
+    "m6": [
+        "m6-01-chuyen-dong-brown-martingale-va-bien-thien-bac-hai",
+        "m6-02-tich-phan-ito-bo-de-ito-gbm-va-volatility-drag",
+        "m6-03-feynman-kac-black-scholes-girsanov-va-greeks",
+    ],
+    "m7": [
+        "m7-01-giai-phau-sau-ho-tin-hieu-alpha-thuc-chien",
+        "m7-02-toan-tu-worldquant-trung-hoa-da-tang-va-alpha-decay",
+        "m7-03-quy-trinh-whitepaper-va-chien-thuat-superday-quy-my",
     ],
 }
+
+ALLOWED_PROBLEM_DIFFICULTIES = {"Easy", "Medium", "Hard"}
 
 EXPECTED_ALL_LESSONS: list[str] = [
     lesson_id
@@ -301,12 +325,12 @@ def validate_syllabus_and_library(base_dir: Path) -> list[str]:
                         if not _is_non_empty_str(ms.get(m_key)):
                             errors.append(f"{m_ctx}: '{m_key}' must be a non-empty string.")
 
-    # 2. Validate modules (5) and lessons (20)
+    # 2. Validate modules (8) and lessons (36)
     modules = syllabus.get("modules")
     seen_lesson_ids: list[str] = []
-    if not isinstance(modules, list) or len(modules) != 5:
+    if not isinstance(modules, list) or len(modules) != 8:
         errors.append(
-            f"syllabus.json: 'modules' must be a list of 5 objects (got {len(modules) if isinstance(modules, list) else type(modules).__name__})."
+            f"syllabus.json: 'modules' must be a list of 8 objects (got {len(modules) if isinstance(modules, list) else type(modules).__name__})."
         )
     else:
         actual_mod_ids = [m.get("id") for m in modules if isinstance(m, dict)]
@@ -325,12 +349,13 @@ def validate_syllabus_and_library(base_dir: Path) -> list[str]:
                 if not _is_non_empty_str(mod.get(m_str)):
                     errors.append(f"{m_ctx}: '{m_str}' must be a non-empty string.")
 
+            expected_for_mod = EXPECTED_LESSONS_BY_MODULE.get(str(mod_id), [])
+            expected_len = len(expected_for_mod) if expected_for_mod else 5
             lessons = mod.get("lessons")
-            if not isinstance(lessons, list) or len(lessons) != 4:
-                errors.append(f"{m_ctx}: 'lessons' must be a list of 4 lesson objects.")
+            if not isinstance(lessons, list) or len(lessons) != expected_len:
+                errors.append(f"{m_ctx}: 'lessons' must be a list of {expected_len} lesson objects.")
                 continue
 
-            expected_for_mod = EXPECTED_LESSONS_BY_MODULE.get(str(mod_id), [])
             actual_for_mod = [les.get("id") for les in lessons if isinstance(les, dict)]
             if expected_for_mod and actual_for_mod != expected_for_mod:
                 errors.append(
@@ -378,7 +403,7 @@ def validate_syllabus_and_library(base_dir: Path) -> list[str]:
 
     if seen_lesson_ids != EXPECTED_ALL_LESSONS:
         errors.append(
-            f"syllabus.json: exact 20 lesson IDs mismatch.\n  Expected: {EXPECTED_ALL_LESSONS}\n  Actual:   {seen_lesson_ids}"
+            f"syllabus.json: exact 36 lesson IDs mismatch.\n  Expected: {EXPECTED_ALL_LESSONS}\n  Actual:   {seen_lesson_ids}"
         )
 
     # 3. Validate projects (4)
@@ -583,7 +608,7 @@ def validate_lessons(base_dir: Path, prefixes: Iterable[str]) -> tuple[int, list
 
 
 def validate_problems(base_dir: Path) -> list[str]:
-    """Validate content/problems.json (>=40 problems, >=8 per module m1..m5, schema & balanced LaTeX)."""
+    """Validate content/problems.json (>=120 problems, >=15 per module m0..m7, schema & balanced LaTeX)."""
     errors: list[str] = []
     problems_path = base_dir / "content" / "problems.json"
     if not problems_path.is_file():
@@ -601,8 +626,8 @@ def validate_problems(base_dir: Path) -> list[str]:
     else:
         return ["problems.json must be a JSON object with a 'problems' array (or a top-level array)."]
 
-    if len(problems) < 40:
-        errors.append(f"problems.json: expected >= 40 problems, found {len(problems)}.")
+    if len(problems) < 120:
+        errors.append(f"problems.json: expected >= 120 problems, found {len(problems)}.")
 
     seen_ids: set[str] = set()
     per_module_counts: Counter[str] = Counter()
@@ -635,6 +660,16 @@ def validate_problems(base_dir: Path) -> list[str]:
             if not _is_non_empty_str(prob.get(str_field)):
                 errors.append(f"{p_ctx}: '{str_field}' must be a non-empty string.")
 
+        diff_val = prob.get("difficulty")
+        if _is_non_empty_str(diff_val) and diff_val not in ALLOWED_PROBLEM_DIFFICULTIES:
+            errors.append(
+                f"{p_ctx}: 'difficulty' must be one of {sorted(ALLOWED_PROBLEM_DIFFICULTIES)}, got {diff_val!r}."
+            )
+
+        title_val = prob.get("title")
+        if isinstance(title_val, str) and "$" in title_val:
+            errors.append(f"{p_ctx}: 'title' must not contain '$'.")
+
         firms = prob.get("firms")
         valid_firms = _is_non_empty_str(firms) or (
             isinstance(firms, list) and len(firms) > 0 and all(_is_non_empty_str(f) for f in firms)
@@ -663,9 +698,9 @@ def validate_problems(base_dir: Path) -> list[str]:
 
     for mod_id in EXPECTED_MODULE_IDS:
         count = per_module_counts[mod_id]
-        if count < 8:
+        if count < 15:
             errors.append(
-                f"problems.json: module '{mod_id}' must have >= 8 problems, found {count}."
+                f"problems.json: module '{mod_id}' must have >= 15 problems, found {count}."
             )
 
     return errors

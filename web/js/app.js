@@ -12,18 +12,21 @@ import { computeNextReview, getTodayIso, isProblemDue } from './spaced_repetitio
 import { escapeHtml, renderMarkdownWithMath } from './markdown_math.js';
 import { mountSimulator } from './simulators.js';
 
-const DEFAULT_LESSON_ID = 'm1-01-he-sinh-thai-buy-side-va-alpha';
+const DEFAULT_LESSON_ID = 'm0-01-to-hop-phep-dem-bu-tru-va-doi-xung';
 const DEFAULT_PROJECT_ID = 'proj-1';
 const LOCAL_DRAFT_KEY = 'qra_progress_draft_v1';
 const LOCAL_DIRTY_KEY = 'qra_progress_dirty_v1';
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 const MODULE_SHORT_LABELS = {
-  m1: 'Vi cấu trúc Thị trường',
+  m0: 'Toán Đại học Nền tảng',
+  m1: 'Vi cấu trúc & Phái sinh',
   m2: 'Xác suất & Martingale',
-  m3: 'Thống kê Nhiễu cao',
+  m3: 'Thống kê & Kinh tế lượng',
   m4: 'Ma trận & Chuỗi thời gian',
-  m5: 'Tối ưu Danh mục & Thực thi',
+  m5: 'Danh mục, Barra & Thực thi',
+  m6: 'Giải tích Ngẫu nhiên & PDE',
+  m7: 'Thiết kế Alpha & Superday',
 };
 
 function isPlainObject(val) {
@@ -334,9 +337,16 @@ function formatByteSize(bytes) {
 }
 
 function formatProblemBadgeCode(probId, moduleId) {
+  const rawMod = String(moduleId || '').trim();
+  const idModMatch = /^prob-(m\d+)-/i.exec(String(probId || '').trim());
+  const resolvedMod = /^m\d+$/i.test(rawMod)
+    ? rawMod.toUpperCase()
+    : idModMatch
+      ? idModMatch[1].toUpperCase()
+      : (rawMod || 'M').toUpperCase();
   const m = /(\d+)$/.exec(String(probId || ''));
-  const num = m ? m[1] : '01';
-  return `${String(moduleId || 'M').toUpperCase()} • #${num}`;
+  const num = m ? m[1].padStart(2, '0') : '01';
+  return `${resolvedMod} • #${num}`;
 }
 
 const DIFFICULTY_LABELS = {
@@ -673,7 +683,7 @@ function bootBrowserApp() {
    * ---------------------------------------------------------------------- */
 
   function renderSidebarMetricsAndBadges() {
-    const totalLessons = state.orderedLessons.length || 20;
+    const totalLessons = state.orderedLessons.length || 36;
     let doneCount = 0;
     for (const les of state.orderedLessons) {
       if (state.progress.completed_lessons[les.id]) {
@@ -1573,13 +1583,20 @@ function bootBrowserApp() {
     const firms = collectUniqueProblemFirms();
     const f = state.problemFilters;
 
+    const dynamicMods =
+      Array.isArray(state.syllabus?.modules) && state.syllabus.modules.length > 0
+        ? state.syllabus.modules.map((mod) => ({
+            value: mod.id,
+            label: `${mod.code || String(mod.id || '').toUpperCase()} — ${MODULE_SHORT_LABELS[mod.id] || mod.title}`,
+          }))
+        : ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7'].map((id) => ({
+            value: id,
+            label: `${id.toUpperCase()} — ${MODULE_SHORT_LABELS[id] || id.toUpperCase()}`,
+          }));
+
     const modOptions = [
       { value: 'all', label: 'Tất cả học phần' },
-      { value: 'm1', label: 'M1 — Vi cấu trúc Thị trường' },
-      { value: 'm2', label: 'M2 — Xác suất & Martingale' },
-      { value: 'm3', label: 'M3 — Thống kê Nhiễu cao' },
-      { value: 'm4', label: 'M4 — Ma trận & Chuỗi thời gian' },
-      { value: 'm5', label: 'M5 — Tối ưu Danh mục' },
+      ...dynamicMods,
     ];
 
     const diffOptions = [

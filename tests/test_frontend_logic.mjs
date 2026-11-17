@@ -147,10 +147,10 @@ test('Markdown renderer handles escaped literal dollars, double-backtick code, c
   assert.ok(html.includes('&lt;script&gt;'));
 });
 
-test('All 20 lessons, READING_GUIDE, and 40 problems render cleanly with zero leftover tokens', () => {
+test('All 36 lessons, READING_GUIDE, and 120 problems render cleanly with zero leftover tokens', () => {
   const lessonsDir = path.join(APP_ROOT, 'content', 'lessons');
   const lessonFiles = fs.readdirSync(lessonsDir).filter((f) => f.endsWith('.md')).sort();
-  assert.equal(lessonFiles.length, 20);
+  assert.equal(lessonFiles.length, 36);
 
   const mockKatex = {
     renderToString(tex, opts) {
@@ -179,7 +179,7 @@ test('All 20 lessons, READING_GUIDE, and 40 problems render cleanly with zero le
   assert.ok(!guideHtml.includes('\u0002'));
 
   const problemsData = JSON.parse(fs.readFileSync(path.join(APP_ROOT, 'content', 'problems.json'), 'utf8'));
-  assert.equal(problemsData.problems.length, 40);
+  assert.ok(problemsData.problems.length >= 120, `expected >= 120 problems, found ${problemsData.problems.length}`);
   for (const prob of problemsData.problems) {
     assert.ok(!prob.title.includes('$'), `${prob.id}: raw '$' found in plain-text prob.title`);
     for (const text of [prob.prompt, ...prob.hints, prob.solution]) {
@@ -547,13 +547,13 @@ test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial 
   }
 });
 
-test('Vercel static bundle builder packages web, 20 lessons, 40 problems, library, and Dual-Mode config', async () => {
+test('Vercel static bundle builder packages web, 36 lessons, 120 problems, library, and Dual-Mode config', async () => {
   const { buildStaticBundle } = await import('../scripts/build_static.mjs');
   const os = await import('node:os');
   const tmpOut = fs.mkdtempSync(path.join(os.tmpdir(), 'qra-dist-'));
   try {
     const summary = buildStaticBundle(APP_ROOT, tmpOut);
-    assert.equal(summary.lessonCount, 20);
+    assert.equal(summary.lessonCount, 36);
     assert.ok(fs.existsSync(path.join(tmpOut, 'index.html')));
     assert.ok(fs.existsSync(path.join(tmpOut, 'styles.css')));
     assert.ok(fs.existsSync(path.join(tmpOut, 'js', 'app.js')));

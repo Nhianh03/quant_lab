@@ -6,12 +6,12 @@ Nền tảng tự học và nghiên cứu định lượng chuyên sâu trên m�
 
 ## 1. Triết Lý Học Thuật & Kiến Trúc 3 Tầng
 
-Chương trình tập trung hoàn toàn vào mảng định lượng phía mua (Buy-Side P-Measure), bao gồm vi cấu trúc sổ lệnh giới hạn (Limit Order Book), xác suất và quá trình Martingale, thống kê trong môi trường tỷ số tín hiệu trên nhiễu thấp, đại số tuyến tính và lý thuyết ma trận ngẫu nhiên (Random Matrix Theory), chuỗi thời gian cùng bộ lọc Kalman, và tối ưu hóa danh mục lồi có chi phí giao dịch.
+Chương trình tập trung vào nền tảng toán định lượng và mảng nghiên cứu phía mua (Buy-Side P-Measure) kết nối sang định giá phái sinh cốt lõi, trải dài trên **8 học phần** (`M0`–`M7`): toán đại học nền tảng, vi cấu trúc sổ lệnh giới hạn (Limit Order Book) và phái sinh, xác suất nâng cao cùng quá trình Martingale, thống kê bền vững trong môi trường nhiễu cao, lý thuyết ma trận ngẫu nhiên (Random Matrix Theory) và chuỗi thời gian chế độ ẩn, giải tích ngẫu nhiên Itô, kỹ nghệ thiết kế tín hiệu thực chiến, đến quản trị danh mục lồi, mô hình rủi ro Barra và thực thi lệnh tối ưu.
 
 Hệ thống tách biệt hoàn toàn mã nguồn giao diện khỏi kho học liệu theo ba tầng:
 
-1. **Tầng 1 — Bài giảng cầu nối (`content/lessons/*.md`)**: 20 chuyên đề biên soạn chuẩn giáo trình đại học, đi từ trực giác hình học, định nghĩa chặt chẽ, chứng minh từng bước các định lý phỏng vấn cốt lõi đến các bẫy dữ liệu thực tế.
-2. **Tầng 2 — Chỉ mục giáo trình kinh điển (`content/syllabus.json` & `content/library/READING_GUIDE.md`)**: Gắn từng bài học với chương mục cụ thể trong các sách chuẩn ngành và bài báo gốc kèm danh mục kiểm tra tiến độ đọc.
+1. **Tầng 1 — Bài giảng cầu nối (`content/lessons/*.md`)**: **36 chuyên đề** biên soạn chuẩn giáo trình đại học, đi từ trực giác hình học, định nghĩa chặt chẽ, chứng minh từng bước các định lý phỏng vấn cốt lõi đến các bẫy dữ liệu thực tế.
+2. **Tầng 2 — Chỉ mục giáo trình kinh điển & Ngân hàng luyện đề (`content/syllabus.json`, `content/library/READING_GUIDE.md` & `content/problems.json`)**: Gắn từng bài học với 108 mục đọc chương sách chuẩn ngành và bài báo gốc, đi kèm **120 bài toán phỏng vấn** định lượng có gợi ý từng bậc và lời giải chi tiết.
 3. **Tầng 3 — Kho thư viện cá nhân (`content/library/`)**: Tự động nhận diện mọi tệp `.pdf` hoặc `.md` đặt trong thư mục để mở đối chiếu trực tiếp ở chế độ chia đôi màn hình (Split View) ngay cạnh bài giảng và sổ ghi chú công thức.
 
 ---
@@ -51,8 +51,8 @@ quant_lab/
 ├── start.sh                      # Kịch bản khởi chạy nhanh và mở trình duyệt
 ├── README.md                     # Tài liệu hướng dẫn vận hành và mở rộng học liệu
 ├── content/
-│   ├── syllabus.json             # Lộ trình 4 học kỳ, 5 học phần, 20 bài giảng & 4 đồ án
-│   ├── problems.json             # Ngân hàng câu hỏi phỏng vấn kèm gợi ý và lời giải chi tiết
+│   ├── syllabus.json             # Lộ trình 4 học kỳ, 8 học phần, 36 chuyên đề & 4 đồ án
+│   ├── problems.json             # Ngân hàng 120 bài toán phỏng vấn kèm gợi ý và lời giải chi tiết
 │   ├── lessons/                  # Các tệp bài giảng Markdown tích hợp công thức KaTeX
 │   └── library/                  # Nơi lưu trữ sách PDF và bài báo nghiên cứu cá nhân
 ├── user_data/

@@ -52,7 +52,7 @@ def default_progress() -> dict:
     """Return a fresh version-1 user progress structure."""
     return {
         "version": 1,
-        "last_active_lesson": "m1-01-he-sinh-thai-buy-side-va-alpha",
+        "last_active_lesson": "m0-01-to-hop-phep-dem-bu-tru-va-doi-xung",
         "study_days": [],
         "completed_lessons": {},
         "completed_readings": {},
