@@ -394,6 +394,7 @@ function bootBrowserApp() {
     problemReveals: {},
 
     // Persistence state
+    isStaticHost: false,
     saveTimer: null,
     saveInFlight: false,
     saveQueuedAgain: false,
@@ -488,7 +489,7 @@ function bootBrowserApp() {
       els.saveText.textContent = 'Chế độ tạm ngoại tuyến';
     } else {
       els.saveDot.classList.add('is-saved');
-      els.saveText.textContent = 'Đã lưu vào ổ cứng';
+      els.saveText.textContent = state.isStaticHost ? 'Đã lưu trên trình duyệt' : 'Đã lưu vào ổ cứng';
     }
   }
 
@@ -533,6 +534,12 @@ function bootBrowserApp() {
       payload = normalizeProgressPayload(state.progress);
       state.progress = payload;
     } catch {
+      return;
+    }
+
+    if (state.isStaticHost) {
+      saveLocalDraft(false);
+      setSaveStatus('saved');
       return;
     }
 
@@ -1182,15 +1189,21 @@ function bootBrowserApp() {
         els.lessonBody.innerHTML = '<div class="loading-state">Đang tải nội dung bài giảng...</div>';
       }
       try {
-        const resp = await fetch(`/api/lesson?id=${encodeURIComponent(requestedId)}`);
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const data = await resp.json();
-        mdText = typeof data.markdown === 'string' ? data.markdown : '';
+        if (state.isStaticHost) {
+          const resp = await fetch(`/static-content/lessons/${encodeURIComponent(requestedId)}.md`);
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          mdText = await resp.text();
+        } else {
+          const resp = await fetch(`/api/lesson?id=${encodeURIComponent(requestedId)}`);
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const data = await resp.json();
+          mdText = typeof data.markdown === 'string' ? data.markdown : '';
+        }
         state.lessonCache.set(requestedId, mdText);
       } catch {
         if (state.activeLessonId === requestedId && els.lessonBody) {
           els.lessonBody.innerHTML =
-            '<div class="empty-state">Không thể tải tệp bài giảng từ máy chủ cục bộ. Hãy kiểm tra kết nối tới <code>server.py</code>.</div>';
+            '<div class="empty-state">Không thể tải tệp bài giảng. Hãy kiểm tra kết nối mạng hoặc máy chủ cục bộ.</div>';
         }
         return;
       }
@@ -1260,7 +1273,8 @@ function bootBrowserApp() {
 
   async function refreshLibraryList(forceReloadMd = false) {
     try {
-      const resp = await fetch('/api/library');
+      const libEndpoint = state.isStaticHost ? '/static-content/library-index.json' : '/api/library';
+      const resp = await fetch(libEndpoint);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
       state.libraryFiles = Array.isArray(data.files) ? data.files : [];
@@ -2442,36 +2456,65 @@ function bootBrowserApp() {
    * Initial Data Bootstrap
    * ---------------------------------------------------------------------- */
 
+  async function fetchJsonStrict(url) {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const ct = resp.headers.get('content-type') || '';
+    if (!ct.includes('json')) {
+      const txt = await resp.text();
+      return JSON.parse(txt);
+    }
+    return resp.json();
+  }
+
   async function init() {
     bindEvents();
 
-    const [sylRes, probRes, progRes, libRes] = await Promise.allSettled([
-      fetch('/api/syllabus').then((r) => {
-        if (!r.ok) throw new Error('Failed syllabus');
-        return r.json();
-      }),
-      fetch('/api/problems').then((r) => {
-        if (!r.ok) throw new Error('Failed problems');
-        return r.json();
-      }),
-      fetch('/api/progress').then((r) => {
-        if (!r.ok) throw new Error('Failed progress');
-        return r.json();
-      }),
-      fetch('/api/library').then((r) => {
-        if (!r.ok) throw new Error('Failed library');
-        return r.json();
-      }),
-    ]);
+    let sylData = null;
+    let probData = null;
+    let progRes = { status: 'rejected' };
+    let libData = null;
 
-    // 1. Progress state (prefer unsynced local offline draft if present)
+    // Probe local Python backend (/api/syllabus); if unavailable (e.g. Vercel), switch to Static Mode
+    try {
+      sylData = await fetchJsonStrict('/api/syllabus');
+      state.isStaticHost = false;
+    } catch {
+      state.isStaticHost = true;
+    }
+
+    if (!state.isStaticHost) {
+      const [probSettled, progSettled, libSettled] = await Promise.allSettled([
+        fetchJsonStrict('/api/problems'),
+        fetchJsonStrict('/api/progress'),
+        fetchJsonStrict('/api/library'),
+      ]);
+      if (probSettled.status === 'fulfilled') probData = probSettled.value;
+      progRes = progSettled;
+      if (libSettled.status === 'fulfilled') libData = libSettled.value;
+    } else {
+      const [sylSettled, probSettled, libSettled] = await Promise.allSettled([
+        fetchJsonStrict('/static-content/syllabus.json'),
+        fetchJsonStrict('/static-content/problems.json'),
+        fetchJsonStrict('/static-content/library-index.json'),
+      ]);
+      if (sylSettled.status === 'fulfilled') sylData = sylSettled.value;
+      if (probSettled.status === 'fulfilled') probData = probSettled.value;
+      if (libSettled.status === 'fulfilled') libData = libSettled.value;
+    }
+
+    // 1. Progress state (browser localStorage in Static Mode; disk + offline draft in Local Mode)
     let loadedProgress = createDefaultProgress();
     let needsOfflineSync = false;
 
     try {
       const dirtyFlag = window.localStorage.getItem(LOCAL_DIRTY_KEY);
       const rawDraft = window.localStorage.getItem(LOCAL_DRAFT_KEY);
-      if (dirtyFlag === '1' && rawDraft) {
+      if (state.isStaticHost) {
+        if (rawDraft) {
+          loadedProgress = normalizeProgressPayload(JSON.parse(rawDraft));
+        }
+      } else if (dirtyFlag === '1' && rawDraft) {
         loadedProgress = normalizeProgressPayload(JSON.parse(rawDraft));
         needsOfflineSync = true;
       } else if (progRes.status === 'fulfilled') {
@@ -2480,7 +2523,7 @@ function bootBrowserApp() {
         loadedProgress = normalizeProgressPayload(JSON.parse(rawDraft));
       }
     } catch {
-      if (progRes.status === 'fulfilled') {
+      if (!state.isStaticHost && progRes.status === 'fulfilled') {
         try {
           loadedProgress = normalizeProgressPayload(progRes.value);
         } catch {
@@ -2490,7 +2533,10 @@ function bootBrowserApp() {
     }
     state.progress = loadedProgress;
 
-    if (progRes.status === 'rejected') {
+    if (state.isStaticHost) {
+      saveLocalDraft(false);
+      setSaveStatus('saved');
+    } else if (progRes.status === 'rejected') {
       setSaveStatus('offline');
     } else if (needsOfflineSync) {
       persistProgressNow();
@@ -2499,13 +2545,13 @@ function bootBrowserApp() {
     }
 
     // 2. Problems bank
-    if (probRes.status === 'fulfilled' && Array.isArray(probRes.value?.problems)) {
-      state.problems = probRes.value.problems;
+    if (Array.isArray(probData?.problems)) {
+      state.problems = probData.problems;
     }
 
     // 3. Library files
-    if (libRes.status === 'fulfilled' && Array.isArray(libRes.value?.files)) {
-      state.libraryFiles = libRes.value.files;
+    if (Array.isArray(libData?.files)) {
+      state.libraryFiles = libData.files;
       const firstPdf = state.libraryFiles.find((f) => f.ext === '.pdf');
       if (state.libraryFiles.length > 0) {
         state.selectedLibraryFile = firstPdf ? firstPdf.name : state.libraryFiles[0].name;
@@ -2514,13 +2560,13 @@ function bootBrowserApp() {
     populateLibrarySelectDom();
 
     // 4. Syllabus & Route activation
-    if (sylRes.status === 'fulfilled' && sylRes.value) {
-      indexSyllabus(sylRes.value);
+    if (sylData) {
+      indexSyllabus(sylData);
       state.katexLoadedOnce = Boolean(getKatex());
       handleRouteChange();
     } else if (els.roadmapContainer) {
       els.roadmapContainer.innerHTML =
-        '<div class="empty-state">Không thể tải dữ liệu khung chương trình từ <code>/api/syllabus</code>. Hãy đảm bảo <code>python3 server.py</code> đang chạy.</div>';
+        '<div class="empty-state">Không thể tải dữ liệu khung chương trình. Hãy kiểm tra kết nối mạng hoặc chạy <code>python3 server.py</code>.</div>';
     }
   }
 

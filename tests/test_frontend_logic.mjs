@@ -546,3 +546,35 @@ test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial 
     assert.deepEqual(dups, [], `Repeated English parentheticals in ${label}: ${JSON.stringify(dups)}`);
   }
 });
+
+test('Vercel static bundle builder packages web, 20 lessons, 40 problems, library, and Dual-Mode config', async () => {
+  const { buildStaticBundle } = await import('../scripts/build_static.mjs');
+  const os = await import('node:os');
+  const tmpOut = fs.mkdtempSync(path.join(os.tmpdir(), 'qra-dist-'));
+  try {
+    const summary = buildStaticBundle(APP_ROOT, tmpOut);
+    assert.equal(summary.lessonCount, 20);
+    assert.ok(fs.existsSync(path.join(tmpOut, 'index.html')));
+    assert.ok(fs.existsSync(path.join(tmpOut, 'styles.css')));
+    assert.ok(fs.existsSync(path.join(tmpOut, 'js', 'app.js')));
+    assert.ok(fs.existsSync(path.join(tmpOut, 'static-content', 'syllabus.json')));
+    assert.ok(fs.existsSync(path.join(tmpOut, 'static-content', 'problems.json')));
+    assert.ok(fs.existsSync(path.join(tmpOut, 'library', 'READING_GUIDE.md')));
+
+    const libIndex = JSON.parse(
+      fs.readFileSync(path.join(tmpOut, 'static-content', 'library-index.json'), 'utf8'),
+    );
+    assert.ok(Array.isArray(libIndex.files));
+    assert.ok(libIndex.files.some((f) => f.name === 'READING_GUIDE.md' && f.url === '/library/READING_GUIDE.md'));
+
+    const vercelCfg = JSON.parse(fs.readFileSync(path.join(APP_ROOT, 'vercel.json'), 'utf8'));
+    assert.equal(vercelCfg.buildCommand, 'node scripts/build_static.mjs');
+    assert.equal(vercelCfg.outputDirectory, 'dist');
+
+    const appJs = fs.readFileSync(path.join(APP_ROOT, 'web', 'js', 'app.js'), 'utf8');
+    assert.ok(appJs.includes('/static-content/syllabus.json'));
+    assert.ok(appJs.includes('/static-content/lessons/'));
+  } finally {
+    fs.rmSync(tmpOut, { recursive: true, force: true });
+  }
+});
