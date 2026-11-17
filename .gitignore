@@ -1,0 +1,14 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS
+.DS_Store
+
+# Atomic write temp & backup files
+user_data/*.tmp
+user_data/*.backup.json
+
+# Large local PDF textbooks dropped into Split-View library (keep READING_GUIDE.md tracked)
+content/library/*.pdf

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quant Research Academy — Lộ trình 24 Tháng</title>
+  <meta name="description" content="Nền tảng tự học Toán định lượng, Vi cấu trúc Thị trường và Tối ưu hóa Danh mục hướng tới vị trí Quantitative Researcher tại các quỹ đầu cơ Mỹ.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f172a'/%3E%3Ctext x='16' y='21.5' font-family='Georgia,serif' font-size='16' font-weight='bold' fill='%23ffffff' text-anchor='middle'%3E%CE%A3%3C/text%3E%3C/svg%3E">
+  <link id="katex-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="/styles.css">
+  <script id="katex-script" defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script type="module" src="/js/app.js"></script>
+</head>
+<body>
+  <div id="app-shell" class="app-shell">
+    <!-- Mobile Top Bar -->
+    <header class="mobile-topbar" aria-label="Thanh điều hướng di động">
+      <button type="button" id="mobile-menu-btn" class="icon-btn" aria-label="Mở danh mục điều hướng" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="mobile-brand">
+        <span class="mobile-brand-title">Quant Research</span>
+        <span class="mobile-brand-sep">•</span>
+        <span class="mobile-brand-sub">Lộ trình 24 Tháng</span>
+      </div>
+    </header>
+
+    <div id="sidebar-backdrop" class="sidebar-backdrop" hidden></div>
+
+    <!-- Sticky Scholarly Left Sidebar (290px) -->
+    <aside id="app-sidebar" class="sidebar" aria-label="Điều hướng học liệu">
+      <div class="sidebar-header">
+        <a href="#roadmap" class="brand-lockup">
+          <span class="brand-mark" aria-hidden="true">&Sigma;</span>
+          <div class="brand-text">
+            <span class="brand-title">Quant Research</span>
+            <span class="brand-subtitle">Lộ trình 24 Tháng • Hedge Fund Mỹ</span>
+          </div>
+        </a>
+
+        <nav class="workspace-tabs" aria-label="Không gian học tập">
+          <button type="button" class="workspace-tab is-active" data-nav-view="roadmap">
+            <span>Lộ trình 24T</span>
+          </button>
+          <button type="button" class="workspace-tab" data-nav-view="lesson">
+            <span>Giáo trình</span>
+          </button>
+          <button type="button" class="workspace-tab" data-nav-view="problems">
+            <span>Luyện đề</span>
+            <span id="nav-due-badge" class="due-badge" hidden>0</span>
+          </button>
+          <button type="button" class="workspace-tab" data-nav-view="projects">
+            <span>Đồ án</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-search">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="4.8" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10.7 10.7L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input
+            type="search"
+            id="sidebar-search-input"
+            class="sidebar-search-input"
+            placeholder="Tìm bài học..."
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Tìm kiếm bài học"
+          >
+          <kbd id="sidebar-search-kbd" class="search-kbd" title="Nhấn phím / để tìm nhanh">/</kbd>
+          <button type="button" id="sidebar-search-clear" class="search-clear-btn" aria-label="Xóa từ khóa tìm kiếm" hidden>&times;</button>
+        </div>
+      </div>
+
+      <div id="sidebar-module-tree" class="sidebar-tree" role="navigation" aria-label="Cây chuyên đề 5 học phần">
+        <div class="sidebar-loading">Đang tải khung chương trình...</div>
+      </div>
+
+      <footer class="sidebar-footer">
+        <div class="progress-summary">
+          <div class="progress-summary-row">
+            <span class="progress-label">Hoàn thành giáo trình</span>
+            <span id="sidebar-progress-text" class="progress-fraction">0 / 20 bài</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="sidebar-progress-bar-wrap">
+            <div id="sidebar-progress-fill" class="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="streak-row">
+          <span id="sidebar-streak-text">Chuỗi học: 0 ngày • Tích lũy: 0 ngày</span>
+        </div>
+
+        <div class="save-status-row" aria-live="polite">
+          <span id="save-status-dot" class="save-dot is-saved"></span>
+          <span id="save-status-text" class="save-status-text">Đã lưu vào ổ cứng</span>
+        </div>
+
+        <div class="backup-actions">
+          <button type="button" id="btn-export-backup" class="backup-btn" title="Tải tệp sao lưu tiến độ JSON về máy">
+            Sao lưu JSON
+          </button>
+          <button type="button" id="btn-import-backup" class="backup-btn" title="Khôi phục tiến độ từ tệp JSON đã lưu">
+            Khôi phục JSON
+          </button>
+          <input type="file" id="input-import-backup" accept=".json,application/json" hidden>
+        </div>
+        <div id="sidebar-toast" class="sidebar-toast" role="status" aria-live="polite" hidden></div>
+      </footer>
+    </aside>
+
+    <!-- Main Workspace Area -->
+    <main id="workspace-main" class="workspace-main">
+      <!-- Workspace 1: Lộ trình 24 Tháng -->
+      <section id="view-roadmap" class="workspace-view" aria-label="Lộ trình 24 Tháng">
+        <div id="roadmap-container" class="page-container">
+          <div class="loading-state">Đang khởi tạo lộ trình nghiên cứu 24 tháng...</div>
+        </div>
+      </section>
+
+      <!-- Workspace 2: Phòng Đọc Giáo Trình & Thư Viện Đôi -->
+      <section id="view-lesson" class="workspace-view" hidden aria-label="Phòng đọc giáo trình và thư viện đôi">
+        <div class="reader-toolbar">
+          <div class="reader-toolbar-left">
+            <span id="reader-breadcrumb" class="reader-breadcrumb">Học phần</span>
+            <span id="reader-completed-pill" class="reader-status-pill" hidden>Đã hoàn thành</span>
+          </div>
+          <div class="reader-toolbar-right">
+            <button type="button" id="btn-reader-quick-complete" class="toolbar-btn">
+              Đánh dấu hoàn thành
+            </button>
+            <button type="button" id="btn-toggle-split" class="toolbar-btn toolbar-btn-accent" aria-pressed="false">
+              Chia đôi: Ghi chú / PDF
+            </button>
+          </div>
+        </div>
+
+        <div id="reader-grid" class="reader-grid">
+          <div id="reader-article-pane" class="reader-article-pane">
+            <div class="reader-article-inner">
+              <header id="lesson-header" class="lesson-header"></header>
+              <article id="lesson-markdown-body" class="prose">
+                <div class="loading-state">Đang tải nội dung bài giảng...</div>
+              </article>
+              <div id="lesson-simulator-slot" class="lesson-simulator-slot" hidden></div>
+              <section id="lesson-readings-section" class="lesson-readings-section"></section>
+              <footer id="lesson-footer-nav" class="lesson-footer-nav"></footer>
+            </div>
+          </div>
+
+          <aside id="reader-split-pane" class="reader-split-pane" hidden aria-label="Khung ghi chú công thức và thư viện tài liệu">
+            <div class="split-pane-header">
+              <div class="split-tabs" role="tablist">
+                <button type="button" id="split-tab-notes" class="split-tab is-active" data-split-tab="notes" role="tab" aria-selected="true">
+                  Sổ Ghi chú LaTeX
+                </button>
+                <button type="button" id="split-tab-library" class="split-tab" data-split-tab="library" role="tab" aria-selected="false">
+                  Thư viện Tài liệu
+                </button>
+              </div>
+              <button type="button" id="btn-close-split" class="split-close-btn" title="Đóng chế độ chia đôi" aria-label="Đóng chế độ chia đôi">&times;</button>
+            </div>
+
+            <!-- Split Tab 1: Personal LaTeX Scratchpad -->
+            <div id="split-panel-notes" class="split-panel" role="tabpanel">
+              <div class="notes-meta-bar">
+                <span id="notes-lesson-label" class="notes-lesson-label">Ghi chú bài giảng</span>
+                <div class="notes-mode-group" role="group" aria-label="Chế độ hiển thị sổ ghi chú">
+                  <button type="button" class="notes-mode-btn is-active" data-notes-mode="both">Song song</button>
+                  <button type="button" class="notes-mode-btn" data-notes-mode="edit">Soạn thảo</button>
+                  <button type="button" class="notes-mode-btn" data-notes-mode="preview">Xem trước</button>
+                </div>
+              </div>
+              <div id="notes-workbench" class="notes-workbench mode-both">
+                <textarea
+                  id="lesson-notes-input"
+                  class="notes-textarea"
+                  placeholder="Tự chứng minh lại định lý hoặc ghi chú ý tưởng kiểm thử tại đây... Hỗ trợ đầy đủ Markdown, công thức dòng $E[X \mid \mathcal{F}_t]$ và khối phương trình $$...$$."
+                  spellcheck="false"
+                ></textarea>
+                <div class="notes-preview-wrap">
+                  <div class="notes-preview-caption">Bản dịch công thức trực tiếp</div>
+                  <div id="lesson-notes-preview" class="prose prose-compact notes-preview-body"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Split Tab 2: Local PDF & Markdown Library -->
+            <div id="split-panel-library" class="split-panel" role="tabpanel" hidden>
+              <div class="library-toolbar">
+                <select id="library-file-select" class="library-select" aria-label="Chọn tài liệu trong thư mục content/library/">
+                  <option value="">Đang tải danh sách tài liệu...</option>
+                </select>
+                <button type="button" id="btn-refresh-library" class="toolbar-btn" title="Quét lại thư mục content/library/">
+                  Làm mới
+                </button>
+                <a id="link-open-library-raw" class="toolbar-btn" href="/library/READING_GUIDE.md" target="_blank" rel="noopener noreferrer" title="Mở tệp trong cửa sổ trình duyệt mới">
+                  Mở riêng &#8599;
+                </a>
+              </div>
+              <div class="library-hint-bar">
+                Chép sách <code>.pdf</code> hoặc ghi chú <code>.md</code> vào <code>content/library/</code> rồi nhấn <strong>Làm mới</strong> để đọc đối chiếu.
+              </div>
+              <div id="library-viewer-body" class="library-viewer-body"></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Workspace 3: Phòng Luyện Đề Phỏng Vấn Quant -->
+      <section id="view-problems" class="workspace-view" hidden aria-label="Phòng luyện đề phỏng vấn định lượng">
+        <div id="problems-container" class="page-container">
+          <div class="loading-state">Đang tải ngân hàng câu hỏi phỏng vấn...</div>
+        </div>
+      </section>
+
+      <!-- Workspace 4: Xưởng Đồ Án Thực Chiến -->
+      <section id="view-projects" class="workspace-view" hidden aria-label="Xưởng đồ án thực chiến">
+        <div id="projects-container" class="page-container">
+          <div class="loading-state">Đang tải xưởng đồ án định lượng...</div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

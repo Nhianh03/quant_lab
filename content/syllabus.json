@@ -1,0 +1,1170 @@
+{
+  "program_title": "Quant Research Academy",
+  "subtitle": "Lộ trình 24 tháng xây dựng nền tảng Toán định lượng, Vi cấu trúc Thị trường và Tối ưu hóa Danh mục hướng tới vị trí Quantitative Researcher tại các quỹ đầu cơ Mỹ",
+  "target_horizon_months": 24,
+  "semesters": [
+    {
+      "id": "sem-1",
+      "title": "Học kỳ 1: Vi cấu trúc Thị trường, Xác suất Rời rạc & Nền tảng Alpha Chéo",
+      "months": "Tháng 1–6",
+      "goal": "Nắm vững cơ chế khớp lệnh thực tế trên thị trường cổ phiếu Mỹ và hợp đồng tương lai vĩnh cửu tiền mã hóa, thiết lập kỷ luật dữ liệu không thiên lệch nhìn trước, đồng thời làm chủ toàn bộ xác suất có điều kiện, chuỗi Markov và quá trình Martingale phục vụ vòng lọc kỹ thuật đầu tiên.",
+      "module_ids": [
+        "m1",
+        "m2"
+      ],
+      "project_ids": [
+        "proj-1"
+      ],
+      "hiring_milestones": [
+        {
+          "id": "ms-s1-01",
+          "title": "Đạt danh hiệu WorldQuant BRAIN Research Consultant",
+          "detail": "Tích lũy đủ điểm chất lượng tín hiệu trên nền tảng WorldQuant BRAIN từ Việt Nam thông qua tối thiểu 15 biểu thức alpha cổ phiếu Mỹ vùng thanh khoản TOP3000 có tỷ số Sharpe ngoài mẫu vượt ngưỡng quy định và vòng quay vốn hợp lý."
+        },
+        {
+          "id": "ms-s1-02",
+          "title": "Hoàn tất 34 bài giảng và bộ bài tập Harvard Stat 110",
+          "detail": "Giải trọn vẹn các bài toán chứng minh bằng lập luận câu chuyện, biến ngẫu nhiên chỉ báo, luật kỳ vọng toàn phần và xích Markov trong giáo trình của Blitzstein & Hwang mà không cần tra cứu lời giải."
+        },
+        {
+          "id": "ms-s1-03",
+          "title": "Chinh phục 60 bài toán đầu tiên trong Green Book của Xinfeng Zhou",
+          "detail": "Tập trung dứt điểm Chương 1, Chương 3 và Chương 4 của sách luyện phỏng vấn định lượng kinh điển, bấm giờ giải miệng từng bài trong tối đa 8 phút như điều kiện phỏng vấn trực tuyến thực tế."
+        },
+        {
+          "id": "ms-s1-04",
+          "title": "Đóng gói Đồ án 1 kèm Báo cáo Nghiên cứu số 1 chuẩn LaTeX",
+          "detail": "Công bố kho mã nguồn khung kiểm thử tín hiệu chéo cổ phiếu Mỹ viết bằng Python vector hóa cùng bản báo cáo phân rã lợi nhuận ròng theo mười phân vị sau khi trừ chi phí trượt giá."
+        },
+        {
+          "id": "ms-s1-05",
+          "title": "Xây dựng sổ tay công thức phản xạ nhanh xác suất & vi cấu trúc",
+          "detail": "Tổng hợp hệ thống các đẳng thức cốt lõi từ phân phối Beta-Gamma, thống kê thứ tự đến mô hình bất cân xứng thông tin để ôn tập định kỳ bằng thuật toán lặp lại ngắt quãng."
+        }
+      ]
+    },
+    {
+      "id": "sem-2",
+      "title": "Học kỳ 2: Suy luận Thống kê Nhiễu cao, Ma trận Ngẫu nhiên & Chuỗi Thời gian",
+      "months": "Tháng 7–12",
+      "goal": "Xây dựng tư duy kiểm soát sai lầm loại I khi khai phá hàng ngàn đặc trưng trong môi trường tỷ số tín hiệu trên nhiễu cực thấp, làm chủ lọc nhiễu hiệp phương sai bằng lý thuyết phổ trị riêng và mô hình hóa chuỗi thời gian tài chính dừng, đồng liên kết và không gian trạng thái.",
+      "module_ids": [
+        "m3",
+        "m4"
+      ],
+      "project_ids": [
+        "proj-2"
+      ],
+      "hiring_milestones": [
+        {
+          "id": "ms-s2-01",
+          "title": "Tham gia giải đấu WorldQuant International Quant Championship hoặc Trexquant",
+          "detail": "Đăng ký thi đấu cá nhân hoặc đội tuyển tại vòng quốc gia và khu vực châu Á - Thái Bình Dương nhằm cọ xát bảng xếp hạng ngoài mẫu trực tiếp và tạo dấu ấn xác thực trên hồ sơ ứng tuyển."
+        },
+        {
+          "id": "ms-s2-02",
+          "title": "Thực chiến kiểm định chéo trên dữ liệu Kaggle tài chính hoặc Numerai",
+          "detail": "Áp dụng quy trình kiểm định chéo có cắt bỏ vùng chồng lấp và khoảng cách ly trên bộ dữ liệu dự báo biến động Optiver hoặc Jane Street Market Prediction để chứng minh năng lực chống quá khớp."
+        },
+        {
+          "id": "ms-s2-03",
+          "title": "Nâng tổng số bài giải phỏng vấn tích lũy lên 110 bài",
+          "detail": "Mở rộng sang các câu hỏi ước lượng hợp lý cực đại, hình học bình phương tối thiểu, ma trận xác định dương và kiểm định giả thuyết trong sách của Zhou và Timothy Crack."
+        },
+        {
+          "id": "ms-s2-04",
+          "title": "Hoàn thành Đồ án 2 kèm Báo cáo Nghiên cứu số 2 về Kinh doanh Chênh lệch Thống kê",
+          "detail": "Trình bày đầy đủ quy trình trích xuất phần dư bằng phân tích thành phần chính, ước lượng tốc độ hồi quy trung bình và cập nhật tỷ số phòng vệ động bằng bộ lọc Kalman."
+        }
+      ]
+    },
+    {
+      "id": "sem-3",
+      "title": "Học kỳ 3: Vi cấu trúc Sổ lệnh Cấp độ 2, Thực thi Tối ưu & Kiến tạo Danh mục Lồi",
+      "months": "Tháng 13–18",
+      "goal": "Kết nối từ dự báo lợi nhuận kỳ vọng sang bài toán phân bổ vốn thực tế của nhà quản lý danh mục: nắm vững định luật cơ bản của quản trị chủ động, giải bài toán quy hoạch bậc hai có hàm phạt chi phí giao dịch, lập lịch rải lệnh tối ưu và trực giao hóa đặc trưng học máy.",
+      "module_ids": [
+        "m5"
+      ],
+      "project_ids": [
+        "proj-3"
+      ],
+      "hiring_milestones": [
+        {
+          "id": "ms-s3-01",
+          "title": "Cán mốc 150+ bài toán phỏng vấn định lượng chuẩn Phố Wall",
+          "detail": "Hoàn tất toàn bộ nhóm bài nâng cao về trò chơi dừng tối ưu, định lý tách siêu phẳng, phân rã giá trị kỳ dị và bài toán phân bổ vốn Kelly trong điều kiện bất định tham số."
+        },
+        {
+          "id": "ms-s3-02",
+          "title": "Hoàn thiện Đồ án 3 về Dữ liệu Sổ lệnh Cấp độ 2 và Tác động Thị trường",
+          "detail": "Xây dựng bộ tái tạo trạng thái sổ lệnh từ luồng sự kiện từng mili-giây, kiểm chứng sức mạnh dự báo ngắn hạn của mất cân bằng luồng lệnh và mô phỏng đường cong rải lệnh tối ưu."
+        },
+        {
+          "id": "ms-s3-03",
+          "title": "Nộp hồ sơ thực tập nghiên cứu từ xa hoặc cộng tác viên định lượng khu vực APAC",
+          "detail": "Ứng tuyển các chương trình nghiên cứu viên bán thời gian và toàn thời gian tại Trexquant, WorldQuant văn phòng Việt Nam/Singapore và các nhóm nghiên cứu định lượng tuyển dụng kỹ sư từ xa."
+        },
+        {
+          "id": "ms-s3-04",
+          "title": "Thực hiện 6 buổi phỏng vấn thử kỹ thuật có bấm giờ",
+          "detail": "Luyện tập trình bày lời giải toán học mạch lạc bằng tiếng Anh trên bảng trắng ảo kết hợp viết mã kiểm chứng mô phỏng Monte Carlo trong vòng 30 phút mỗi đề."
+        }
+      ]
+    },
+    {
+      "id": "sem-4",
+      "title": "Học kỳ 4: Hệ thống Đa Tín hiệu Cấp độ Quỹ & Chiến dịch Phỏng vấn Superday",
+      "months": "Tháng 19–24",
+      "goal": "Tích hợp toàn bộ năm trụ cột kiến thức thành hệ thống tối ưu hóa danh mục đa nhân tố hoàn chỉnh kèm báo cáo phân rã lãi lỗ chuẩn tổ chức, đồng thời đạt độ chín phản xạ giải đề và bảo vệ luận điểm nghiên cứu trước hội đồng tuyển dụng của các quỹ đa chiến lược Mỹ.",
+      "module_ids": [
+        "m2",
+        "m3",
+        "m4",
+        "m5"
+      ],
+      "project_ids": [
+        "proj-4"
+      ],
+      "hiring_milestones": [
+        {
+          "id": "ms-s4-01",
+          "title": "Hoàn tất Đồ án 4 Flagship và trọn bộ 4 Báo cáo Nghiên cứu Định lượng",
+          "detail": "Đóng gói hệ thống kết hợp đa tín hiệu trực giao, làm co ma trận hiệp phương sai và tối ưu hóa danh mục lồi đa chu kỳ kèm bản phân tích dung lượng vốn tối đa của chiến lược."
+        },
+        {
+          "id": "ms-s4-02",
+          "title": "Chuẩn hóa Hồ sơ Ứng tuyển 1 Trang định hướng Nghiên cứu Định lượng",
+          "detail": "Trình bày súc tích các chỉ số thực nghiệm đã kiểm chứng ngoài mẫu sau phí giao dịch, thành tích giải đấu định lượng quốc tế và liên kết trực tiếp tới bốn kho mã nguồn tái lập được."
+        },
+        {
+          "id": "ms-s4-03",
+          "title": "Chiến dịch nộp đơn chu kỳ tuyển dụng Mùa Thu và Mùa Xuân",
+          "detail": "Ứng tuyển có chiến lược vào các văn phòng Singapore, Hong Kong, London và nhóm làm việc từ xa của Squarepoint Capital, Millennium, Point72 Cubist, Balyasny, Two Sigma và WorldQuant."
+        },
+        {
+          "id": "ms-s4-04",
+          "title": "Hoàn thành bài kiểm tra sàng lọc định lượng trực tuyến HackerRank & Codesignal",
+          "detail": "Đạt điểm tối đa ở cả phần trắc nghiệm xác suất tốc độ cao lẫn bài lập trình xử lý chuỗi thời gian, thao tác ma trận NumPy không vòng lặp và mô phỏng sổ lệnh."
+        },
+        {
+          "id": "ms-s4-05",
+          "title": "Diễn tập trọn vẹn vòng phỏng vấn Superday 4 phiên liên tiếp",
+          "detail": "Mô phỏng đúng cấu trúc tuyển dụng cuối cùng gồm: phiên 1 Xác suất & Martingale, phiên 2 Thống kê nhiễu cao & Hồi quy, phiên 3 Thiết kế tín hiệu thực nghiệm và phiên 4 Phản biện Đồ án Flagship."
+        }
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "id": "m1",
+      "code": "M1",
+      "title": "Hệ sinh thái Định lượng Phía Mua & Vi cấu trúc Thị trường",
+      "summary": "Làm rõ sự khác biệt bản chất giữa nghiên cứu dự báo dưới độ đo thực tế và định giá trung hòa rủi ro, giải phẫu cơ chế khớp lệnh sổ lệnh điện tử, thiết lập quy chuẩn dữ liệu đúng thời điểm và chứng minh các mô hình kinh tế lượng vi cấu trúc kinh điển.",
+      "lessons": [
+        {
+          "id": "m1-01-he-sinh-thai-buy-side-va-alpha",
+          "code": "M1.01",
+          "title": "Hệ sinh thái Phía Mua, Độ đo P so với Độ đo Q & Bản chất của Alpha",
+          "estimated_hours": 24,
+          "simulator_id": null,
+          "summary": "Phân biệt vai trò giữa quỹ đầu cơ phía mua (Buy-Side) dự báo phân phối lợi nhuận thực dưới độ đo xác suất vật lý $\\mathbb{P}$ với bàn tạo lập phái sinh phía bán (Sell-Side) nội suy dưới độ đo trung hòa rủi ro $\\mathbb{Q}$; thiết lập phân rã lợi nhuận theo mô hình nhân tố tuyến tính và khái niệm dung lượng chiến lược.",
+          "readings": [
+            {
+              "id": "read-m1-01-1",
+              "source": "Richard C. Grinold & Ronald N. Kahn — Active Portfolio Management, 2nd Ed., 1999",
+              "chapter": "Chương 1, Chương 2 & Chương 3: Lợi nhuận đồng thuận, Rủi ro phụ trội và Khung định giá CAPM chủ động",
+              "url": "https://www.mheducation.com/highered/product/active-portfolio-management-grinold-kahn/M9780070248823.html",
+              "note": "Tập trung tách biệt thành phần beta thị trường khỏi lợi nhuận kỳ vọng ngoại lệ $\\alpha_i$ và hiểu vì sao mọi dự báo định lượng đều phải đo lường tương đối so với kỳ vọng đồng thuận."
+            },
+            {
+              "id": "read-m1-01-2",
+              "source": "Zura Kakushadze — 101 Formulaic Alphas, Wilmott, 2016",
+              "chapter": "Mục 1 đến Mục 4 & Phụ lục A: Cấu trúc toán tử tín hiệu chéo và Ma trận tương quan thực nghiệm",
+              "url": "https://arxiv.org/abs/1601.00991",
+              "note": "Phân tích cấu trúc các toán tử xếp hạng chéo, trung hòa ngành và mối quan hệ nghịch biến giữa chu kỳ nắm giữ từ 0.6 đến 6.4 ngày với vòng quay danh mục."
+            },
+            {
+              "id": "read-m1-01-3",
+              "source": "Marcos López de Prado — Advances in Financial Machine Learning, 2018",
+              "chapter": "Chương 1: Học máy Tài chính như một Ngành Khoa học Độc lập",
+              "url": "https://www.wiley.com/en-us/Advances+in+Financial+Machine+Learning-p-9781119482086",
+              "note": "Đọc kỹ mô hình dây chuyền sản xuất nghiên cứu theo tổ hợp chuyên môn hóa tại các quỹ định lượng hiện đại nhằm tránh hội chứng nhà nghiên cứu đơn độc tự quá khớp dữ liệu."
+            }
+          ]
+        },
+        {
+          "id": "m1-02-so-lenh-lob-reg-nms-va-crypto-perps",
+          "code": "M1.02",
+          "title": "Cơ chế Sổ lệnh Giới hạn, Quy tắc Reg NMS & Hợp đồng Vĩnh cửu Tiền mã hóa",
+          "estimated_hours": 28,
+          "simulator_id": null,
+          "summary": "Giải phẫu cấu trúc hàng đợi ưu tiên giá - thời gian của sổ lệnh giới hạn (Limit Order Book), cơ chế hoàn phí cung cấp thanh khoản so với thu phí lấy thanh khoản, quy định bảo vệ giá chào tốt nhất toàn quốc tại Mỹ và cơ chế lãi suất tài trợ định kỳ trên thị trường hợp đồng tương lai vĩnh cửu.",
+          "readings": [
+            {
+              "id": "read-m1-02-1",
+              "source": "Joel Hasbrouck — Empirical Market Microstructure, 2007",
+              "chapter": "Chương 2 & Chương 8: Cơ chế Giao dịch Đấu giá Liên tục và Sự phân mảnh Đa sàn",
+              "url": "https://global.oup.com/academic/product/empirical-market-microstructure-9780195301649",
+              "note": "Nắm rõ cách lệnh giới hạn, lệnh thị trường, lệnh ẩn và lệnh hủy tương tác làm dịch chuyển đường cung cầu tức thời trên các sàn điện tử phân mảnh tại Mỹ."
+            },
+            {
+              "id": "read-m1-02-2",
+              "source": "Martin D. Gould, Mason A. Porter, Stacy Williams, Mark McDonald, Daniel J. Fenn & Sam D. Howison — Limit Order Books, Quantitative Finance, 2013",
+              "chapter": "Mục 2 & Mục 3: Biểu diễn Toán học Trạng thái Sổ lệnh và Các Quy luật Thống kê Thực nghiệm",
+              "url": "https://arxiv.org/abs/1012.0349",
+              "note": "Đối chiếu ký hiệu hình thức cho giá chào mua cao nhất, giá chào bán thấp nhất, giá trung tâm và giá vi mô có trọng số khối lượng ngược."
+            },
+            {
+              "id": "read-m1-02-3",
+              "source": "Damien Ackerer, Julien Hugonnier & Urban Jermann — Perpetual Futures Pricing, Mathematical Finance, 2024",
+              "chapter": "Mục 2 & Mục 3: Cơ chế Thanh toán Lãi suất Tài trợ và Điều kiện Không Kinh doanh Chênh lệch Giá",
+              "url": "https://arxiv.org/abs/2210.15367",
+              "note": "Chứng minh công thức neo giá hợp đồng vĩnh cửu vào chỉ số giao ngay thông qua dòng tiền thanh toán định kỳ giữa bên mua và bên bán."
+            }
+          ]
+        },
+        {
+          "id": "m1-03-du-lieu-point-in-time-va-bay-backtest",
+          "code": "M1.03",
+          "title": "Dữ liệu Đúng Thời điểm, Sự kiện Doanh nghiệp & Mười Bẫy Kiểm thử Lịch sử",
+          "estimated_hours": 26,
+          "simulator_id": null,
+          "summary": "Thiết lập kiến trúc bảng dữ liệu hai trục thời gian thực tế ghi nhận nhằm loại bỏ hoàn toàn thiên lệch nhìn trước (Look-Ahead Bias) và thiên lệch sống sót (Survivorship Bias); xây dựng công thức chuỗi điều chỉnh chia tách, cổ tức và quy tắc căn chỉnh mốc đóng nến.",
+          "readings": [
+            {
+              "id": "read-m1-03-1",
+              "source": "Marcos López de Prado — Advances in Financial Machine Learning, 2018",
+              "chapter": "Chương 2 & Chương 11: Cấu trúc Dữ liệu Tài chính Thanh Khối lượng/Giá trị và Bảy Đại tội của Kiểm thử Lịch sử",
+              "url": "https://www.wiley.com/en-us/Advances+in+Financial+Machine+Learning-p-9781119482086",
+              "note": "So sánh tính chuẩn tắc thống kê của thanh giá trị giao dịch so với thanh thời gian cố định và ghi nhớ danh mục các lỗi rò rỉ thông tin phổ biến nhất."
+            },
+            {
+              "id": "read-m1-03-2",
+              "source": "Ruey S. Tsay — Analysis of Financial Time Series, 3rd Ed., 2010",
+              "chapter": "Chương 1: Đặc tính Phân phối Lợi nhuận Tài chính, Lợi nhuận Gộp Liên tục và Lợi nhuận Đơn",
+              "url": "https://www.wiley.com/en-us/Analysis+of+Financial+Time+Series%2C+3rd+Edition-p-9780470414354",
+              "note": "Lưu ý tính cộng theo thời gian của lợi nhuận logarit đối lập với tính cộng theo danh mục chéo của lợi nhuận đơn trong cùng một kỳ."
+            },
+            {
+              "id": "read-m1-03-3",
+              "source": "Campbell R. Harvey, Yan Liu & Heqing Zhu — ... and the Cross-Section of Expected Returns, Review of Financial Studies, 2016",
+              "chapter": "Mục 1 & Mục 2: Lịch sử Khai phá Nhân tố và Độ lệch Tuyển chọn trong Tài chính Thực nghiệm",
+              "url": "https://doi.org/10.1093/rfs/hhv059",
+              "note": "Hiểu lý do ngưỡng thống kê $t > 2.0$ cổ điển hoàn toàn thất bại khi cộng đồng nghiên cứu thử nghiệm hàng trăm biến số trên cùng một kho dữ liệu cổ phiếu Mỹ."
+            }
+          ]
+        },
+        {
+          "id": "m1-04-mo-hinh-roll-glosten-milgrom-kyle-ofi",
+          "code": "M1.04",
+          "title": "Mô hình Roll, Bất cân xứng Glosten-Milgrom, Đấu giá Kyle & Mất cân bằng Luồng lệnh",
+          "estimated_hours": 34,
+          "simulator_id": "sim-lob",
+          "summary": "Chứng minh từng bước ba mô hình nền tảng của vi cấu trúc thị trường: tự hiệp phương sai âm bậc nhất của Roll do nảy giá mua - bán, cập nhật xác suất Bayes của nhà tạo lập trước giao dịch nội gián trong Glosten-Milgrom, hệ số tác động giá tuyến tính $\\lambda$ của Kyle, và kết nối sang biến mất cân bằng luồng lệnh (Order Flow Imbalance) hiện đại.",
+          "readings": [
+            {
+              "id": "read-m1-04-1",
+              "source": "Joel Hasbrouck — Empirical Market Microstructure, 2007",
+              "chapter": "Chương 3, Chương 5 & Chương 7: Mô hình Roll (1984), Mô hình Tuần tự Glosten-Milgrom (1985) và Mô hình Chiến lược Kyle (1985)",
+              "url": "https://global.oup.com/academic/product/empirical-market-microstructure-9780195301649",
+              "note": "Tự tay biến đổi công thức $\\text{Cov}(\\Delta p_t, \\Delta p_{t-1}) = -c^2$ và nghiệm cân bằng Nash tuyến tính $\\lambda = \\frac{1}{2}\\sqrt{\\Sigma_0 / \\sigma_u^2}$ trong đấu giá một kỳ của Kyle."
+            },
+            {
+              "id": "read-m1-04-2",
+              "source": "Rama Cont, Arseniy Kukanov & Sasha Stoikov — The Price Impact of Order Book Events, Journal of Financial Econometrics, 2014",
+              "chapter": "Mục 2, Mục 3 & Mục 4: Định nghĩa Sự kiện Sổ lệnh Cấp 1 và Hồi quy Tác động Giá Ngắn hạn",
+              "url": "https://arxiv.org/abs/1011.6402",
+              "note": "Nắm vững cách tổng hợp thêm lệnh, hủy lệnh và khớp lệnh thành biến OFI giải thích hơn 65% biến thiên giá trung tâm trong các cửa sổ ngắn hạn."
+            },
+            {
+              "id": "read-m1-04-3",
+              "source": "Albert S. Kyle — Continuous Auctions and Insider Trading, Econometrica, 1985",
+              "chapter": "Mục 2 & Mục 3: Cân bằng Đấu giá Đơn lẻ và Giới hạn Liên tục với Chuyển động Brown",
+              "url": "https://doi.org/10.2307/1913210",
+              "note": "Theo dõi cách người giao dịch có thông tin rải lệnh tối ưu theo thời gian để che giấu tín hiệu bên trong luồng nhiễu thanh khoản."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "code": "M2",
+      "title": "Xác suất Chuyên sâu, Chuỗi Markov & Quá trình Martingale",
+      "summary": "Trụ cột quyết định 70% kết quả vòng phỏng vấn kỹ thuật đầu tiên tại Jane Street, Citadel, Two Sigma và WorldQuant: xây dựng tư duy không gian xác suất chặt chẽ, thành thạo phép chiếu kỳ vọng có điều kiện, phân tích bước đầu tiên trên xích Markov và áp dụng định lý dừng tùy ý.",
+      "lessons": [
+        {
+          "id": "m2-01-khong-gian-xac-suat-bayes-va-phan-phoi",
+          "code": "M2.01",
+          "title": "Không gian Xác suất, Suy luận Bayes, Thống kê Thứ tự & Các Phân phối Cốt lõi",
+          "estimated_hours": 32,
+          "simulator_id": null,
+          "summary": "Hệ thống hóa không gian mẫu $(\\Omega, \\mathcal{F}, \\mathbb{P})$, cập nhật tỷ lệ cược Bayes dưới luồng tín hiệu nhiễu, đối ngẫu Beta - Nhị thức và Gamma - Poisson, phép đổi biến số với định thức Jacobi và mật độ đồng thời của các thống kê thứ tự (Order Statistics).",
+          "readings": [
+            {
+              "id": "read-m2-01-1",
+              "source": "Joseph K. Blitzstein & Jessica Hwang — Introduction to Probability, 2nd Ed., 2019",
+              "chapter": "Chương 2, Chương 5, Chương 7 & Chương 8: Xác suất Có điều kiện, Biến Liên tục, Phân phối Đồng thời và Thống kê Thứ tự",
+              "url": "https://projects.iq.harvard.edu/stat110/home",
+              "note": "Đặc biệt chú ý tính không nhớ của phân phối Mũ, bài toán ngân hàng - bưu điện liên kết Beta với Gamma và phân phối khoảng cách giữa các thống kê thứ tự đều."
+            },
+            {
+              "id": "read-m2-01-2",
+              "source": "Xinfeng Zhou — A Practical Guide to Quantitative Finance Interviews, 2008",
+              "chapter": "Chương 3 (Mục 3.1 – 3.4): Các Bài toán Xác suất Tổ hợp, Cập nhật Bayes và Biến Ngẫu nhiên Đều",
+              "url": "/library/READING_GUIDE.md",
+              "note": "Giải toàn bộ nhóm bài bẻ gãy thanh gỗ thành tam giác, so sánh cực đại của các biến ngẫu nhiên độc lập và nhận diện đồng xu gian lận."
+            },
+            {
+              "id": "read-m2-01-3",
+              "source": "Timothy Falcon Crack — Heard on the Street, 21st Ed.",
+              "chapter": "Chương 4: Nhóm Câu hỏi Xác suất Cơ sở, Thống kê Thứ tự và Trực giác Phản biện",
+              "url": "/library/READING_GUIDE.md",
+              "note": "Rèn kỹ năng kiểm tra nhanh nghiệm giải tích bằng các trường hợp biên $n=1, n=2$ và tính đối xứng hoán vị trước khi kết luận trong phòng thi."
+            }
+          ]
+        },
+        {
+          "id": "m2-02-ky-vong-co-dieu-kien-va-tower-property",
+          "code": "M2.02",
+          "title": "Kỳ vọng Có điều kiện như Phép chiếu Trực giao, Tính chất Tháp & Luật Phương sai Toàn phần",
+          "estimated_hours": 30,
+          "simulator_id": null,
+          "summary": "Định nghĩa kỳ vọng có điều kiện $\\mathbb{E}[Y \\mid \\mathcal{G}]$ như xấp xỉ bình phương trung bình tốt nhất trong không gian Hilbert $L^2$, chứng minh tính chất tháp (Tower Property), luật phương sai toàn phần (Law of Total Variance), tính tuyến tính của biến chỉ báo và bất đẳng thức Jensen.",
+          "readings": [
+            {
+              "id": "read-m2-02-1",
+              "source": "Joseph K. Blitzstein & Jessica Hwang — Introduction to Probability, 2nd Ed., 2019",
+              "chapter": "Chương 4, Chương 6 & Chương 9: Biến Chỉ báo, Hàm Sinh Mô-men, Định luật Adam và Định luật Eve",
+              "url": "https://projects.iq.harvard.edu/stat110/home",
+              "note": "Nắm chắc trực giác hình học vì sao phần dư $Y - \\mathbb{E}[Y \\mid X]$ luôn trực giao với mọi hàm đo được $g(X)$ và ứng dụng vào bài toán trích xuất tín hiệu khỏi nhiễu."
+            },
+            {
+              "id": "read-m2-02-2",
+              "source": "David Williams — Probability with Martingales, Cambridge University Press, 1991",
+              "chapter": "Chương 9: Kỳ vọng Có điều kiện theo σ-đại số và Các Tính chất Căn bản",
+              "url": "https://doi.org/10.1017/CBO9780511813658",
+              "note": "Đọc cách xây dựng chặt chẽ thông qua không gian con đóng của $L^2(\\Omega, \\mathcal{F}, \\mathbb{P})$ để hiểu sâu khái niệm luồng thông tin $(\\mathcal{F}_t)_{t \\ge 0}$."
+            },
+            {
+              "id": "read-m2-02-3",
+              "source": "Xinfeng Zhou — A Practical Guide to Quantitative Finance Interviews, 2008",
+              "chapter": "Chương 3 (Mục 3.5) & Chương 4 (Mục 4.1): Ứng dụng Phân rã Có điều kiện trong Tính Kỳ vọng Đệ quy",
+              "url": "/library/READING_GUIDE.md",
+              "note": "Luyện kỹ thuật đặt biến kỳ vọng theo trạng thái đầu tiên kết hợp tổng biến chỉ báo để giải các bài toán đếm số cực trị địa phương trong hoán vị ngẫu nhiên."
+            }
+          ]
+        },
+        {
+          "id": "m2-03-chuoi-markov-va-first-step-analysis",
+          "code": "M2.03",
+          "title": "Chuỗi Markov Thời gian Rời rạc, Phân tích Bước Đầu tiên & Trạng thái Hấp thụ",
+          "estimated_hours": 32,
+          "simulator_id": null,
+          "summary": "Khảo sát ma trận chuyển trạng thái, phương trình Chapman-Kolmogorov, phân loại trạng thái tuần hoàn và bất khả quy, phân phối dừng duy nhất, điều kiện cân bằng chi tiết và phương pháp phân tích bước đầu tiên (First-Step Analysis) giải thời gian chạm mẫu chuỗi ký tự.",
+          "readings": [
+            {
+              "id": "read-m2-03-1",
+              "source": "Joseph K. Blitzstein & Jessica Hwang — Introduction to Probability, 2nd Ed., 2019",
+              "chapter": "Chương 11: Chuỗi Markov, Phân phối Dừng, Tính Thuận nghịch và Trạng thái Hấp thụ",
+              "url": "https://projects.iq.harvard.edu/stat110/home",
+              "note": "Thực hành thiết lập hệ phương trình tuyến tính cho xác suất hấp thụ và thời gian chờ trung bình xuất hiện chuỗi HHT so với HTH khi tung đồng xu."
+            },
+            {
+              "id": "read-m2-03-2",
+              "source": "Xinfeng Zhou — A Practical Guide to Quantitative Finance Interviews, 2008",
+              "chapter": "Chương 4 (Mục 4.2): Chuỗi Markov, Hệ Phương trình Bước Đầu tiên và Bài toán Mẫu Chuỗi",
+              "url": "/library/READING_GUIDE.md",
+              "note": "Đối chiếu phương pháp giải hệ phương trình trạng thái Markov với phương pháp đặt cược công bằng để thấy tốc độ rút gọn phép tính."
+            },
+            {
+              "id": "read-m2-03-3",
+              "source": "J. R. Norris — Markov Chains, Cambridge University Press, 1997",
+              "chapter": "Chương 1: Xích Markov Rời rạc, Xác suất Chạm và Định lý Hội tụ Ergodic",
+              "url": "https://www.statslab.cam.ac.uk/~james/Markov/",
+              "note": "Tham khảo bản giảng mở chính thức của Đại học Cambridge về chứng minh định lý hội tụ tới phân phối dừng và ma trận cơ sở $N = (I - Q)^{-1}$."
+            }
+          ]
+        },
+        {
+          "id": "m2-04-random-walk-martingale-optional-stopping",
+          "code": "M2.04",
+          "title": "Bước đi Ngẫu nhiên, Quá trình Martingale, Định lý Dừng Tùy ý & Phá sản Con bạc",
+          "estimated_hours": 36,
+          "simulator_id": "sim-martingale",
+          "summary": "Định nghĩa luồng lọc thông tin, thời gian dừng $\\tau$ và quá trình Martingale, chứng minh các điều kiện đủ của định lý dừng tùy ý (Optional Stopping Theorem), đẳng thức Wald và giải trọn vẹn xác suất chạm biên cùng kỳ vọng thời gian dừng cho bài toán phá sản con bạc (Gambler's Ruin) đối xứng lẫn lệch.",
+          "readings": [
+            {
+              "id": "read-m2-04-1",
+              "source": "David Williams — Probability with Martingales, Cambridge University Press, 1991",
+              "chapter": "Chương 10: Định nghĩa Martingale, Biến đổi Đặt cược Dự báo được và Định lý Dừng Doob",
+              "url": "https://doi.org/10.1017/CBO9780511813658",
+              "note": "Ghi nhớ ba bộ điều kiện biên đảm bảo $\\mathbb{E}[M_\\tau] = \\mathbb{E}[M_0]$ và phản ví dụ kinh điển khi dừng bước đi ngẫu nhiên tại ngưỡng $+1$ với $\\mathbb{E}[\\tau] = \\infty$."
+            },
+            {
+              "id": "read-m2-04-2",
+              "source": "Xinfeng Zhou — A Practical Guide to Quantitative Finance Interviews, 2008",
+              "chapter": "Chương 4 (Mục 4.3 & Mục 4.4): Thời gian Dừng, Martingale Nhân tử $M_t = (q/p)^{S_t}$ và Thời gian Chờ Chuỗi Ký tự Conway",
+              "url": "/library/READING_GUIDE.md",
+              "note": "Thành thạo kỹ thuật dựng ba Martingale chuẩn gồm $S_t - \\mu t$, $(S_t - \\mu t)^2 - \\sigma^2 t$ và hàm mũ để tìm cả xác suất thắng cuộc lẫn kỳ vọng thời gian giao dịch."
+            },
+            {
+              "id": "read-m2-04-3",
+              "source": "Sheldon M. Ross — Stochastic Processes, 2nd Ed., 1996",
+              "chapter": "Chương 6: Martingale, Bất đẳng thức Cực đại Doob và Đẳng thức Wald",
+              "url": "/library/READING_GUIDE.md",
+              "note": "Liên hệ bất đẳng thức cực đại của quá trình dưới Martingale không âm với xác suất sụt giảm vốn tối đa của một chiến lược giao dịch."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "code": "M3",
+      "title": "Suy luận Thống kê Nhiễu cao, Hồi quy Điều chuẩn & Kiểm soát Quá khớp",
+      "summary": "Trang bị bộ công cụ kinh tế lượng dành riêng cho dữ liệu tài chính đuôi dày và tương quan chéo mạnh: từ ước lượng hợp lý cực đại, hình học hồi quy co rút, sai số chuẩn bền vững tự tương quan đến điều chỉnh đa kiểm định và kiểm định chéo chuỗi thời gian.",
+      "lessons": [
+        {
+          "id": "m3-01-mle-cramer-rao-va-phan-phoi-duoi-day",
+          "code": "M3.01",
+          "title": "Ước lượng Hợp lý Cực đại, Cận dưới Cramér-Rao, Co rút James-Stein & Đuôi dày",
+          "estimated_hours": 28,
+          "simulator_id": null,
+          "summary": "Xây dựng hàm hợp lý cực đại (Maximum Likelihood Estimation), thông tin Fisher và chứng minh cận dưới phương sai Cramér-Rao; giải thích nghịch lý James-Stein trong không gian từ ba chiều trở lên và hậu quả của phân phối Student-$t$ đuôi dày đối với ước lượng trung bình mẫu.",
+          "readings": [
+            {
+              "id": "read-m3-01-1",
+              "source": "Larry Wasserman — All of Statistics: A Concise Course in Statistical Inference, 2004",
+              "chapter": "Chương 6 & Chương 9: Đánh đổi Chệch - Phương sai, Ước lượng Hợp lý Cực đại và Thông tin Fisher",
+              "url": "https://link.springer.com/book/10.1007/978-0-387-21736-9",
+              "note": "Tự chứng minh đẳng thức $\\mathbb{E}[s(\\theta)^2] = -\\mathbb{E}[\\ell''(\\theta)]$ và phân phối tiệm cận chuẩn $\\sqrt{n}(\\hat{\\theta}_{\\text{MLE}} - \\theta_0) \\xrightarrow{d} \\mathcal{N}(0, I(\\theta_0)^{-1})$."
+            },
+            {
+              "id": "read-m3-01-2",
+              "source": "Bradley Efron & Trevor Hastie — Computer Age Statistical Inference, Cambridge University Press, 2016",
+              "chapter": "Chương 7: Ước lượng Bayes Thực nghiệm và Định lý Co rút James-Stein",
+              "url": "https://hastie.su.domains/CASI/",
+              "note": "Đọc bản PDF học thuật mở chính thức để hiểu vì sao kéo các ước lượng lợi nhuận kỳ vọng riêng lẻ về trung bình chung luôn giảm tổng sai số bình phương kỳ vọng khi $N \\ge 3$."
+            },
+            {
+              "id": "read-m3-01-3",
+              "source": "Ruey S. Tsay — Analysis of Financial Time Series, 3rd Ed., 2010",
+              "chapter": "Chương 1 & Chương 7: Độ nhọn Phụ trội, Phân phối Đuôi nặng và Lý thuyết Giá trị Cực trị",
+              "url": "https://www.wiley.com/en-us/Analysis+of+Financial+Time+Series%2C+3rd+Edition-p-9780470414354",
+              "note": "Kiểm tra sự suy giảm hiệu quả nghiêm trọng của trung bình mẫu và hiệp phương sai mẫu khi bậc tự do $\\nu$ của phân phối Student-$t$ tiến gần 3 hoặc 4."
+            }
+          ]
+        },
+        {
+          "id": "m3-02-hinh-hoc-ols-ridge-lasso-va-newey-west",
+          "code": "M3.02",
+          "title": "Hình học Bình phương Tối thiểu, Định lý Frisch-Waugh-Lovell, Ridge/LASSO & Sai số Newey-West",
+          "estimated_hours": 32,
+          "simulator_id": null,
+          "summary": "Diễn giải ước lượng bình phương tối thiểu thông thường (Ordinary Least Squares) qua ma trận chiếu trực giao, chứng minh định lý Frisch-Waugh-Lovell làm nền tảng cho trung hòa nhân tố, so sánh hình học nghiệm co rút bậc hai Ridge với nghiệm thưa bậc nhất LASSO trong môi trường $\\text{SNR} \\ll 1$, và hiệu chỉnh phương sai tự tương quan bằng ma trận Newey-West.",
+          "readings": [
+            {
+              "id": "read-m3-02-1",
+              "source": "Gilbert Strang — Introduction to Linear Algebra, 5th Ed., 2016 & Linear Algebra and Learning from Data, 2019",
+              "chapter": "18.06 Chương 4 (Phép chiếu Trực giao & Bình phương Tối thiểu) và 18.065 Phần III (Điều chuẩn Ridge & LASSO)",
+              "url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/",
+              "note": "Vẽ rõ hình học tiếp xúc của quả cầu chuẩn $\\ell_1$ tạo nghiệm thưa tại các đỉnh trục tọa độ đối chiếu với mặt cầu chuẩn $\\ell_2$ xoay trơn."
+            },
+            {
+              "id": "read-m3-02-2",
+              "source": "Trevor Hastie, Robert Tibshirani & Jerome Friedman — The Elements of Statistical Learning, 2nd Ed., 2009",
+              "chapter": "Chương 3 (Mục 3.2 – 3.6): Hồi quy Tuyến tính, Định lý Gauss-Markov và Các Phương pháp Co rút Hệ số",
+              "url": "https://hastie.su.domains/ElemStatLearn/",
+              "note": "Khai thác bản sách điện tử mở chính thức để biến đổi bậc tự do hiệu dụng $\\text{df}(\\lambda) = \\sum_j \\frac{d_j^2}{d_j^2 + \\lambda}$ của hồi quy Ridge qua giá trị kỳ dị."
+            },
+            {
+              "id": "read-m3-02-3",
+              "source": "Whitney K. Newey & Kenneth D. West — A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation Consistent Covariance Matrix, Econometrica, 1987",
+              "chapter": "Mục 2: Trọng số Nhân Bartlett đảm bảo Tính Xác định Nửa Dương của Ước lượng Hiệp phương sai HAC",
+              "url": "https://doi.org/10.2307/1913610",
+              "note": "Hiểu vì sao kiểm định $t$ trên lợi nhuận chồng lấp nhiều ngày luôn phóng đại ý nghĩa thống kê nếu không dùng trọng số Bartlett $w_l = 1 - \\frac{l}{L+1}$."
+            }
+          ]
+        },
+        {
+          "id": "m3-03-multiple-testing-fdr-va-deflated-sharpe",
+          "code": "M3.03",
+          "title": "Đa Kiểm định Giả thuyết, Thủ tục Benjamini-Hochberg & Tỷ số Sharpe Giảm phát",
+          "estimated_hours": 28,
+          "simulator_id": null,
+          "summary": "Định lượng hiện tượng phình đại cực đại của $K$ quá trình nhiễu chuẩn độc lập $\\mathbb{E}[\\max_{k \\le K} Z_k] \\approx \\sqrt{2 \\ln K}$, chứng minh thủ tục kiểm soát tỷ lệ khám phá sai (False Discovery Rate) của Benjamini-Hochberg và xây dựng công thức Tỷ số Sharpe Giảm phát (Deflated Sharpe Ratio) hiệu chỉnh cả số lần thử nghiệm lẫn độ lệch và độ nhọn.",
+          "readings": [
+            {
+              "id": "read-m3-03-1",
+              "source": "Larry Wasserman — All of Statistics: A Concise Course in Statistical Inference, 2004",
+              "chapter": "Chương 10 (Mục 10.7): Đa Kiểm định, Hiệu chỉnh Bonferroni và Kiểm soát Tỷ lệ Khám phá Sai Benjamini-Hochberg",
+              "url": "https://link.springer.com/book/10.1007/978-0-387-21736-9",
+              "note": "So sánh lực kiểm định vượt trội của ngưỡng bậc thang $p_{(i)} \\le \\frac{i}{K}\\alpha$ so với hiệu chỉnh Bonferroni quá bảo thủ khi sàng lọc hàng trăm tín hiệu."
+            },
+            {
+              "id": "read-m3-03-2",
+              "source": "David H. Bailey & Marcos López de Prado — The Deflated Sharpe Ratio, Journal of Portfolio Management, 2014",
+              "chapter": "Mục 2 & Mục 3: Phương sai Tiệm cận của Tỷ số Sharpe dưới Phân phối Không Chuẩn và Ngưỡng Kỳ vọng Cực đại",
+              "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2460551",
+              "note": "Chú ý hệ số phạt độ lệch âm $\\hat{\\gamma}_3$ và độ nhọn $\\hat{\\gamma}_4$ trong mẫu số sai số chuẩn của tỷ số Sharpe thực nghiệm."
+            },
+            {
+              "id": "read-m3-03-3",
+              "source": "Marcos López de Prado — Advances in Financial Machine Learning, 2018",
+              "chapter": "Chương 14: Các Thống kê Kiểm thử Lịch sử, Độ dài Chuỗi Kiểm thử Tối thiểu và Xác suất Quá khớp",
+              "url": "https://www.wiley.com/en-us/Advances+in+Financial+Machine+Learning-p-9781119482086",
+              "note": "Áp dụng công thức Độ dài Chuỗi Hồ sơ Tối thiểu để biết cần bao nhiêu năm dữ liệu mới đủ bác bỏ giả thuyết tỷ số Sharpe bằng không."
+            }
+          ]
+        },
+        {
+          "id": "m3-04-kiem-dinh-cheo-chuoi-thoi-gian-purged-cv",
+          "code": "M3.04",
+          "title": "Rò rỉ Nhãn Chồng lấp, Kiểm định Chéo Cắt bỏ, Khoảng Cách ly & Cửa sổ Trượt",
+          "estimated_hours": 26,
+          "simulator_id": null,
+          "summary": "Giải thích cơ chế thất bại của kiểm định chéo ngẫu nhiên $k$ phần trên chuỗi thời gian tài chính có nhãn lợi nhuận dự phóng nhiều kỳ; thiết kế thuật toán kiểm định chéo cắt bỏ (Purged K-Fold Cross-Validation) kết hợp khoảng cách ly sau tập kiểm tra, kiểm định chéo tổ hợp và trọng số độc nhất mẫu.",
+          "readings": [
+            {
+              "id": "read-m3-04-1",
+              "source": "Marcos López de Prado — Advances in Financial Machine Learning, 2018",
+              "chapter": "Chương 4 & Chương 7: Trọng số Độc nhất Mẫu Chồng lấp, Cắt bỏ Vùng Giao thoa và Khoảng Cách ly",
+              "url": "https://www.wiley.com/en-us/Advances+in+Financial+Machine+Learning-p-9781119482086",
+              "note": "Cài đặt chính xác điều kiện loại bỏ mọi quan sát huấn luyện $[t_{i,0}, t_{i,1}]$ giao cắt với khoảng thời gian nhãn $[t_{j,0}, t_{j,1}]$ của tập kiểm định."
+            },
+            {
+              "id": "read-m3-04-2",
+              "source": "Trevor Hastie, Robert Tibshirani & Jerome Friedman — The Elements of Statistical Learning, 2nd Ed., 2009",
+              "chapter": "Chương 7 (Mục 7.10): Sai lầm Chọn lọc Đặc trưng Trước khi Chia Tập Kiểm định Chéo",
+              "url": "https://hastie.su.domains/ElemStatLearn/",
+              "note": "Đọc thí nghiệm kinh điển chứng minh việc chuẩn hóa hoặc lọc tương quan trên toàn bộ mẫu trước khi chia tập huấn luyện tạo ra lợi nhuận ảo hoàn toàn trên nhiễu trắng."
+            },
+            {
+              "id": "read-m3-04-3",
+              "source": "MIT 18.S096 — Topics in Mathematics with Applications in Finance",
+              "chapter": "Bài giảng 6 & Bài giảng 7: Đánh giá Mô hình Dự báo Ngoài mẫu và Kiểm định Tính Ổn định Tham số Trượt",
+              "url": "https://ocw.mit.edu/courses/18-s096-topics-in-mathematics-with-applications-in-finance-fall-2013/",
+              "note": "So sánh ưu nhược điểm giữa cửa sổ mở rộng tích lũy và cửa sổ trượt độ dài cố định trước sự dịch chuyển chế độ thị trường."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m4",
+      "code": "M4",
+      "title": "Đại số Tuyến tính Số, Ma trận Ngẫu nhiên & Kinh tế lượng Chuỗi Thời gian",
+      "summary": "Làm chủ cấu trúc phổ của ma trận hiệp phương sai chiều cao khi số lượng cổ phiếu xấp xỉ độ dài chuỗi quan sát, kết hợp các mô hình biến động tự hồi quy có điều kiện, đồng liên kết và bộ lọc không gian trạng thái Kalman.",
+      "lessons": [
+        {
+          "id": "m4-01-svd-pca-va-eigenportfolios",
+          "code": "M4.01",
+          "title": "Phân rã Phổ, Phân rã Giá trị Kỳ dị, Thành phần Chính & Danh mục Trị riêng",
+          "estimated_hours": 30,
+          "simulator_id": null,
+          "summary": "Chứng minh phân rã phổ cho ma trận đối xứng thực $S = Q \\Lambda Q^\\top$, phân rã giá trị kỳ dị (Singular Value Decomposition) $X = U \\Sigma V^\\top$ và định lý xấp xỉ hạng thấp Eckart-Young-Mirsky; xây dựng các danh mục trị riêng (Eigenportfolios) trực giao nhằm tách nhân tố thị trường và ngành ra khỏi phần dư đặc thù.",
+          "readings": [
+            {
+              "id": "read-m4-01-1",
+              "source": "Gilbert Strang — Linear Algebra and Learning from Data, 2019",
+              "chapter": "Phần I (Mục I.6 – I.9): Ma trận Xác định Dương, Phân rã Giá trị Kỳ dị, Định lý Eckart-Young và Thành phần Chính",
+              "url": "https://math.mit.edu/~gs/learningfromdata/",
+              "note": "Hiểu sâu mối liên hệ giữa vector kỳ dị phải của ma trận lợi nhuận đã chuẩn hóa tâm với vector riêng của ma trận hiệp phương sai mẫu."
+            },
+            {
+              "id": "read-m4-01-2",
+              "source": "Marco Avellaneda & Jeong-Hyun Lee — Statistical Arbitrage in the U.S. Equities Market, Quantitative Finance, 2010",
+              "chapter": "Mục 2: Xây dựng Danh mục Trị riêng từ Ma trận Tương quan Thực nghiệm và Trích xuất Phần dư",
+              "url": "https://arxiv.org/abs/0807.2211",
+              "note": "Chú ý bước chia trọng số vector riêng cho độ biến động từng mã cổ phiếu để dựng danh mục nhân tố thị trường và ngành tự động không cần phân ngành tĩnh."
+            },
+            {
+              "id": "read-m4-01-3",
+              "source": "MIT 18.S096 — Topics in Mathematics with Applications in Finance",
+              "chapter": "Bài giảng 13: Phân tích Thành phần Chính trên Đường cong Lãi suất Kho bạc Mỹ và Danh mục Cổ phiếu",
+              "url": "https://ocw.mit.edu/courses/18-s096-topics-in-mathematics-with-applications-in-finance-fall-2013/",
+              "note": "Quan sát cách ba trị riêng đầu tiên giải thích dịch chuyển song song, độ dốc và độ cong của cấu trúc kỳ hạn lãi suất."
+            }
+          ]
+        },
+        {
+          "id": "m4-02-marchenko-pastur-va-ledoit-wolf-shrinkage",
+          "code": "M4.02",
+          "title": "Định luật Phổ Marchenko-Pastur, Lọc Nhiễu Ma trận Ngẫu nhiên & Làm co Ledoit-Wolf",
+          "estimated_hours": 34,
+          "simulator_id": "sim-rmt",
+          "summary": "Ứng dụng lý thuyết ma trận ngẫu nhiên (Random Matrix Theory) trong chế độ chiều cao $q = N/T \\in (0, 1)$, xác lập cận phổ nhiễu $\\lambda_{\\pm} = \\sigma^2 (1 \\pm \\sqrt{q})^2$, giải thích tại sao ma trận nghịch đảo $\\hat{\\Sigma}^{-1}$ phóng đại các danh mục nhiễu có trị riêng nhỏ nhất, và chứng minh ước lượng làm co tuyến tính tối ưu Ledoit-Wolf.",
+          "readings": [
+            {
+              "id": "read-m4-02-1",
+              "source": "Laurent Laloux, Pierre Cizeau, Jean-Philippe Bouchaud & Marc Potters — Noise Dressing of Financial Correlation Matrices, Physical Review Letters, 1999",
+              "chapter": "Toàn văn bài báo: Đối chiếu Phổ Ma trận Tương quan S&P 500 với Mật độ Marchenko-Pastur",
+              "url": "https://arxiv.org/abs/cond-mat/9810255",
+              "note": "Quan sát kết quả thực nghiệm cho thấy 94% các trị riêng của ma trận tương quan cổ phiếu nằm gọn bên trong dải nhiễu ngẫu nhiên thuần túy."
+            },
+            {
+              "id": "read-m4-02-2",
+              "source": "Olivier Ledoit & Michael Wolf — A Well-Conditioned Estimator for Large-Dimensional Covariance Matrices, Journal of Multivariate Analysis, 2004",
+              "chapter": "Mục 2 & Mục 3: Tối ưu Tổ hợp Lồi $\\Sigma^* = (1 - \\delta) S + \\delta \\mu I$ dưới Chuẩn Frobenius",
+              "url": "https://doi.org/10.1016/S0047-259X(03)00096-4",
+              "note": "Nắm rõ cách số điều kiện $\\kappa(\\Sigma^*)$ được ghim chặt ngay cả khi số mã tài sản $N$ vượt quá độ dài cửa sổ mẫu $T$."
+            },
+            {
+              "id": "read-m4-02-3",
+              "source": "Joël Bun, Jean-Philippe Bouchaud & Marc Potters — Cleaning Large Correlation Matrices: Tools from Random Matrix Theory, Physics Reports, 2017",
+              "chapter": "Mục 2 & Mục 4: Định luật Marchenko-Pastur, Cắt gọt Trị riêng và Làm co Phi tuyến",
+              "url": "https://arxiv.org/abs/1610.08104",
+              "note": "So sánh phương pháp thay thế toàn bộ các trị riêng nằm dưới ngưỡng $\\lambda_+$ bằng hằng số bảo toàn vết ma trận với phương pháp làm co Ledoit-Wolf."
+            }
+          ]
+        },
+        {
+          "id": "m4-03-tinh-dung-arma-garch-va-du-bao-bien-dong",
+          "code": "M4.03",
+          "title": "Tính dừng Hiệp phương sai, Mô hình ARMA, Phân cụm Biến động GARCH & Điều chỉnh Quy mô Rủi ro",
+          "estimated_hours": 30,
+          "simulator_id": null,
+          "summary": "Phân biệt tính dừng mạnh với tính dừng hiệp phương sai yếu, điều kiện nghiệm đa thức đặc trưng nằm ngoài vòng tròn đơn vị của mô hình trung bình trượt tự hồi quy, sai phân bậc phân số giữ bộ nhớ dài hạn, và dự báo phương sai có điều kiện bằng họ mô hình GARCH nhằm chuẩn hóa quy mô vị thế theo mục tiêu biến động.",
+          "readings": [
+            {
+              "id": "read-m4-03-1",
+              "source": "Ruey S. Tsay — Analysis of Financial Time Series, 3rd Ed., 2010",
+              "chapter": "Chương 2 & Chương 3: Chuỗi Thời gian Tuyến tính ARMA, Kiểm định Nghiệm Đơn vị ADF và Họ Mô hình ARCH/GARCH",
+              "url": "https://www.wiley.com/en-us/Analysis+of+Financial+Time+Series%2C+3rd+Edition-p-9780470414354",
+              "note": "Tự biến đổi phương sai không điều kiện $\\sigma^2 = \\frac{\\omega}{1 - \\alpha_1 - \\beta_1}$ của GARCH(1,1) và công thức dự báo phương sai nhiều bước tới hạn."
+            },
+            {
+              "id": "read-m4-03-2",
+              "source": "Marcos López de Prado — Advances in Financial Machine Learning, 2018",
+              "chapter": "Chương 5: Đặc trưng Sai phân Bậc Phân số và Đánh đổi Tính Dừng - Bộ nhớ Dài hạn",
+              "url": "https://www.wiley.com/en-us/Advances+in+Financial+Machine+Learning-p-9781119482086",
+              "note": "Hiểu vì sao lấy sai phân bậc nguyên $d=1$ lên chuỗi log-giá xóa sạch toàn bộ thông tin xu hướng dài hạn trong khi $d \\in (0.3, 0.5)$ vừa đạt tính dừng vừa giữ tương quan cao với mức giá gốc."
+            },
+            {
+              "id": "read-m4-03-3",
+              "source": "Alan Moreira & Tyler Muir — Volatility-Managed Portfolios, Journal of Finance, 2017",
+              "chapter": "Mục I & Mục II: Cải thiện Tỷ số Sharpe bằng Quy tắc Co giãn Vị thế Nghịch đảo Phương sai Thực hiện",
+              "url": "https://doi.org/10.1111/jofi.12513",
+              "note": "Kiểm chứng hiện tượng biến động có tính dai dẳng cao trong khi phần bù rủi ro không tăng tương ứng ngay lập tức sau các cú sốc thị trường."
+            }
+          ]
+        },
+        {
+          "id": "m4-04-dong-lien-ket-ornstein-uhlenbeck-va-kalman",
+          "code": "M4.04",
+          "title": "Đồng liên kết, Quá trình Hồi quy Trung bình Ornstein-Uhlenbeck & Bộ lọc Kalman Tuyến tính",
+          "estimated_hours": 36,
+          "simulator_id": null,
+          "summary": "Phân biệt tương quan lợi nhuận ngắn hạn với đồng liên kết (Cointegration) của các chuỗi giá tích hợp bậc một $I(1)$ qua kiểm định Engle-Granger và Johansen; giải phương trình vi phân ngẫu nhiên Ornstein-Uhlenbeck để suy ra chu kỳ bán rã $t_{1/2} = \\frac{\\ln 2}{\\kappa}$, và chứng minh trọn vẹn hệ phương trình dự báo - cập nhật của bộ lọc Kalman (Kalman Filter).",
+          "readings": [
+            {
+              "id": "read-m4-04-1",
+              "source": "Ruey S. Tsay — Analysis of Financial Time Series, 3rd Ed., 2010",
+              "chapter": "Chương 8 (Mục 8.5 – 8.6) & Chương 11: Đồng liên kết, Mô hình Hiệu chỉnh Sai số Vector và Không gian Trạng thái Kalman",
+              "url": "https://www.wiley.com/en-us/Analysis+of+Financial+Time+Series%2C+3rd+Edition-p-9780470414354",
+              "note": "Viết tường minh ma trận độ lợi Kalman $K_t = P_{t|t-1} H_t^\\top (H_t P_{t|t-1} H_t^\\top + R_t)^{-1}$ và hàm hợp lý đổi mới để ước lượng tham số nhiễu trạng thái."
+            },
+            {
+              "id": "read-m4-04-2",
+              "source": "Marco Avellaneda & Jeong-Hyun Lee — Statistical Arbitrage in the U.S. Equities Market, Quantitative Finance, 2010",
+              "chapter": "Mục 3 & Mục 4: Khớp Quá trình Ornstein-Uhlenbeck qua AR(1) Rời rạc và Tín hiệu Điểm chuẩn s-score",
+              "url": "https://arxiv.org/abs/0807.2211",
+              "note": "Tự chứng minh phép ánh xạ chính xác từ hệ số tự hồi quy rời rạc $X_{t+\\Delta t} = a + b X_t + \\varepsilon_t$ sang tốc độ hồi quy $\\kappa = -\\frac{\\ln b}{\\Delta t}$ và phương sai cân bằng."
+            },
+            {
+              "id": "read-m4-04-3",
+              "source": "Ernest P. Chan — Algorithmic Trading: Winning Strategies and Their Rationale, 2013",
+              "chapter": "Chương 2 & Chương 3: Cặp Giao dịch Đồng liên kết, Kiểm định Johansen và Tỷ số Phòng vệ Động bằng Bộ lọc Kalman",
+              "url": "https://www.wiley.com/en-us/Algorithmic+Trading%3A+Winning+Strategies+and+Their+Rationale-p-9781118460146",
+              "note": "Theo dõi cách bộ lọc Kalman cập nhật trực tuyến cả hệ số chặn lẫn tỷ số phòng vệ giữa hai rổ tài sản mà không bị cứng nhắc như cửa sổ trượt cố định."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m5",
+      "code": "M5",
+      "title": "Lý thuyết Danh mục Chủ động, Tối ưu hóa Lồi, Thực thi Lệnh & Học máy Tài chính",
+      "summary": "Chuyển hóa dự báo thống kê thành danh mục giao dịch thực tế có lợi nhuận ròng bền vững sau chi phí: định luật Grinold-Kahn, quy hoạch lồi có ràng buộc trung hòa và hàm phạt vòng quay vốn, lịch thực thi lệnh tối ưu Almgren-Chriss cùng phân rã lãi lỗ đa nhân tố.",
+      "lessons": [
+        {
+          "id": "m5-01-dinh-luat-grinold-kahn-ic-ir-breadth",
+          "code": "M5.01",
+          "title": "Định luật Cơ bản Grinold-Kahn: Hệ số Thông tin, Bề rộng Đặt cược & Hệ số Chuyển đổi",
+          "estimated_hours": 30,
+          "simulator_id": "sim-grinold",
+          "summary": "Chứng minh Định luật Cơ bản của Quản trị Chủ động $\\text{IR} \\approx \\text{TC} \\cdot \\text{IC} \\cdot \\sqrt{\\text{BR}}$ liên kết tỷ số thông tin (Information Ratio) với hệ số thông tin (Information Coefficient), số lượt đặt cược độc lập thực sự mỗi năm và hệ số chuyển đổi dưới ràng buộc danh mục; thiết lập quy tắc chuyển đổi điểm chuẩn hóa thành lợi nhuận kỳ vọng phụ trội $\\alpha_i = \\sigma_i \\cdot \\text{IC} \\cdot z_i$.",
+          "readings": [
+            {
+              "id": "read-m5-01-1",
+              "source": "Richard C. Grinold & Ronald N. Kahn — Active Portfolio Management, 2nd Ed., 1999",
+              "chapter": "Chương 6 & Chương 10: Định luật Cơ bản của Quản trị Chủ động và Quy tắc Chuyển đổi Dự báo Alpha",
+              "url": "https://www.mheducation.com/highered/product/active-portfolio-management-grinold-kahn/M9780070248823.html",
+              "note": "Hiểu sâu sự ảo tưởng về bề rộng đặt cược khi các tín hiệu có tương quan chéo theo ngành hoặc tự tương quan cao theo ngày."
+            },
+            {
+              "id": "read-m5-01-2",
+              "source": "Roger Clarke, Harindra de Silva & Steven Thorley — Portfolio Constraints and the Fundamental Law of Active Management, Financial Analysts Journal, 2002",
+              "chapter": "Mục 1 đến Mục 3: Định nghĩa Hệ số Chuyển đổi và Tác động của Ràng buộc Không Bán khống, Giới hạn Trọng số",
+              "url": "https://doi.org/10.2469/faj.v58.n5.2468",
+              "note": "Chứng minh $\\text{TC}$ chính là tương quan chéo có trọng số rủi ro giữa trọng số chủ động thực tế sau ràng buộc và trọng số tối ưu không ràng buộc $\\Sigma^{-1}\\alpha$."
+            },
+            {
+              "id": "read-m5-01-3",
+              "source": "Edward E. Qian, Ronald H. Hua & Eric H. Sorensen — Quantitative Equity Portfolio Management, 2007",
+              "chapter": "Chương 4 & Chương 5: Phân tích IC theo Từng Kỳ, Tương quan Hạng Spearman và Bề rộng Hiệu dụng",
+              "url": "/library/READING_GUIDE.md",
+              "note": "So sánh độ bền vững trước ngoại lai của tương quan hạng Spearman so với tương quan tuyến tính Pearson khi đánh giá chất lượng tín hiệu cổ phiếu."
+            }
+          ]
+        },
+        {
+          "id": "m5-02-toi-uu-hoa-loi-danh-muc-va-phat-turnover",
+          "code": "M5.02",
+          "title": "Tối ưu hóa Lồi Danh mục, Điều kiện KKT, Trung hòa Nhân tố & Hàm phạt Vòng quay Vốn",
+          "estimated_hours": 34,
+          "simulator_id": null,
+          "summary": "Thiết lập bài toán quy hoạch bậc hai lồi cực đại hóa hữu dụng ròng $\\alpha^\\top w - \\frac{\\gamma}{2} w^\\top \\Sigma w - \\kappa^\\top |w - w_{\\text{prev}}|$ dưới ràng buộc trung hòa tiền mặt, trung hòa beta và trung hòa ngành; phân tích điều kiện tối ưu Karush-Kuhn-Tucker giải thích vùng không giao dịch quanh danh mục hiện hữu.",
+          "readings": [
+            {
+              "id": "read-m5-02-1",
+              "source": "Stephen Boyd & Lieven Vandenberghe — Convex Optimization, Cambridge University Press, 2004",
+              "chapter": "Chương 4 (Mục 4.4 Quy hoạch Bậc hai) & Chương 5 (Đối ngẫu Lagrange và Điều kiện Tối ưu KKT)",
+              "url": "https://web.stanford.edu/~boyd/cvxbook/",
+              "note": "Khai thác bản sách PDF chính thức miễn phí của Giáo sư Stephen Boyd để biến đổi dưới vi phân của chuẩn $\\ell_1$ tạo ra dải băng không giao dịch khi tín hiệu thay đổi nhỏ hơn phí giao dịch biên."
+            },
+            {
+              "id": "read-m5-02-2",
+              "source": "Stephen Boyd, Enzo Busseti, Steven Diamond, Ronald N. Kahn, Kwangmoo Koh, Peter Nystrup & Jan Speth — Multi-Period Trading via Convex Optimization, Foundations and Trends in Optimization, 2017",
+              "chapter": "Mục 2, Mục 3 & Mục 4: Tối ưu Đơn Chu kỳ, Đa Chu kỳ và Mô hình Phí Trượt giá Lũy thừa 3/2",
+              "url": "https://stanford.edu/~boyd/papers/cvx_portfolio.html",
+              "note": "Nghiên cứu kiến trúc tối ưu hóa danh mục thực chiến đồng tác giả bởi Stephen Boyd và Ronald Kahn dùng trực tiếp tại các quỹ định lượng hiện đại."
+            },
+            {
+              "id": "read-m5-02-3",
+              "source": "Richard C. Grinold & Ronald N. Kahn — Active Portfolio Management, 2nd Ed., 1999",
+              "chapter": "Chương 14 & Chương 16: Xây dựng Danh mục Thực tế và Khấu hao Vòng quay Vốn",
+              "url": "https://www.mheducation.com/highered/product/active-portfolio-management-grinold-kahn/M9780070248823.html",
+              "note": "Nắm rõ phương pháp làm mượt tín hiệu bằng trung bình động mũ trước khi đưa vào bộ tối ưu nhằm cắt giảm chi phí đảo vị thế vô ích."
+            }
+          ]
+        },
+        {
+          "id": "m5-03-thuc-thi-lenh-almgren-chriss-va-kelly",
+          "code": "M5.03",
+          "title": "Lịch Thực thi Lệnh Tối ưu Almgren-Chriss, Luật Căn bậc Hai & Tiêu chuẩn Kelly Đa Tài sản",
+          "estimated_hours": 32,
+          "simulator_id": null,
+          "summary": "Tách biệt tác động giá vĩnh viễn và tác động giá tạm thời trong bài toán thanh lý khối lượng lớn của Almgren-Chriss để tìm quỹ đạo rải lệnh hàm sinh hyperbolic tối ưu; khảo sát quy luật tác động thị trường căn bậc hai và chứng minh tiêu chuẩn tăng trưởng logarit tối ưu Kelly kèm hiệu chỉnh nửa Kelly dưới sai số ước lượng.",
+          "readings": [
+            {
+              "id": "read-m5-03-1",
+              "source": "Robert Almgren & Neil Chriss — Optimal Execution of Portfolio Transactions, Journal of Risk, 2000",
+              "chapter": "Mục 1, Mục 2 & Mục 3: Thiếu hụt Thực thi, Biên Hiệu quả Thực thi Lệnh và Quỹ đạo Đóng Giải tích",
+              "url": "https://www.smallake.kr/wp-content/uploads/2016/03/optliq.pdf",
+              "note": "Chứng minh khi hệ số ngại rủi ro tiến về 0 thì nghiệm tối ưu suy biến thành lịch rải lệnh đều TWAP, còn khi biến động hoặc ngại rủi ro tăng cao thì khối lượng phải dồn mạnh về đầu phiên."
+            },
+            {
+              "id": "read-m5-03-2",
+              "source": "Álvaro Cartea, Sebastian Jaimungal & José Penalva — Algorithmic and High-Frequency Trading, Cambridge University Press, 2015",
+              "chapter": "Chương 6 & Chương 7: Thực thi Tối ưu dưới Tác động Vĩnh viễn/Tạm thời và Điều chỉnh Theo Luồng Lệnh Thực tế",
+              "url": "https://doi.org/10.1017/CBO9781107475090",
+              "note": "Mở rộng bài toán Almgren-Chriss khi có thêm tín hiệu alpha ngắn hạn dự báo hướng dịch chuyển giá trong chính khoảng thời gian thực thi."
+            },
+            {
+              "id": "read-m5-03-3",
+              "source": "Edward O. Thorp — The Kelly Criterion in Blackjack, Sports Betting, and the Stock Market, Handbook of Asset and Liability Management, 2006",
+              "chapter": "Mục 4 đến Mục 7: Công thức Kelly Liên tục $f^* = \\Sigma^{-1}(\\mu - r\\mathbf{1})$ và Đặc tính Rủi ro Sụt giảm Vốn của Fractional Kelly",
+              "url": "https://www.eecs.harvard.edu/cs286r/courses/fall12/papers/Thorpe_KellyCriterion2007.pdf",
+              "note": "Chứng minh đặt cược gấp đôi mức Kelly làm tốc độ tăng trưởng hình học kỳ vọng rơi về 0 trong khi nửa Kelly giữ lại 75% tốc độ tăng trưởng nhưng giảm một nửa phương sai."
+            }
+          ]
+        },
+        {
+          "id": "m5-04-hoc-may-tai-chinh-truc-giao-hoa-va-pnl-attribution",
+          "code": "M5.04",
+          "title": "Kết hợp Phi tuyến Có kiểm soát, Trực giao hóa Gram-Schmidt/Đối xứng & Phân rã PnL Chuẩn Quỹ",
+          "estimated_hours": 34,
+          "simulator_id": null,
+          "summary": "So sánh mô hình tuyến tính điều chuẩn với cây quyết định tăng cường độ dốc nông dưới tỷ số tín hiệu thấp, áp dụng trực giao hóa Gram-Schmidt và trực giao hóa đối xứng Löwdin để khử phần phơi nhiễm nhân tố rủi ro khỏi tín hiệu mới, và lập báo cáo phân rã lãi lỗ (PnL Attribution) tách bạch lợi nhuận nhân tố, lợi nhuận đặc thù và hao hụt thực thi.",
+          "readings": [
+            {
+              "id": "read-m5-04-1",
+              "source": "Marcos López de Prado — Advances in Financial Machine Learning, 2018",
+              "chapter": "Chương 3 (Gán nhãn Siêu Mức cược Meta-Labeling) & Chương 8 (Tầm quan trọng Đặc trưng Trực giao hóa)",
+              "url": "https://www.wiley.com/en-us/Advances+in+Financial+Machine+Learning-p-9781119482086",
+              "note": "Hiểu kiến trúc tách riêng mô hình tuyến tính minh bạch quyết định chiều giao dịch khỏi mô hình học máy quyết định quy mô đặt cược."
+            },
+            {
+              "id": "read-m5-04-2",
+              "source": "Bryan Kelly, Semyon Malamud & Kangying Zhou — The Virtue of Complexity in Return Prediction, Journal of Finance, 2024",
+              "chapter": "Mục I & Mục II: Hiện tượng Điều chuẩn Ngầm của Hồi quy Ridge Chiều cao trong Dự báo Lợi nhuận Tài sản",
+              "url": "https://doi.org/10.1111/jofi.13298",
+              "note": "Nắm bắt lý thuyết hiện đại giải thích vì sao đặc trưng phi tuyến ngẫu nhiên bắt buộc phải đi kèm hệ số phạt co rút mạnh mới có tỷ số Sharpe ngoài mẫu dương."
+            },
+            {
+              "id": "read-m5-04-3",
+              "source": "Richard C. Grinold & Ronald N. Kahn — Active Portfolio Management, 2nd Ed., 1999",
+              "chapter": "Chương 7 & Chương 17: Mô hình Rủi ro Đa Nhân tố Cấu trúc và Phân tích Quy kết Hiệu quả Danh mục",
+              "url": "https://www.mheducation.com/highered/product/active-portfolio-management-grinold-kahn/M9780070248823.html",
+              "note": "Thực hành phân tích phương trình $r_P = (X^\\top w)^\\top f + \\varepsilon^\\top w - \\text{TCost}$ để chứng minh trước giám đốc danh mục rằng lợi nhuận đến từ alpha thuần túy chứ không phải đu bám nhân tố thị trường ẩn."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "semester_id": "sem-1",
+      "code": "CAP-01",
+      "title": "US Equities Cross-Sectional Alpha Research Engine & WorldQuant BRAIN Consultant",
+      "target_firms": [
+        "WorldQuant BRAIN",
+        "Trexquant",
+        "Two Sigma",
+        "Squarepoint Capital"
+      ],
+      "dataset_guide": "Sử dụng lịch sử giá - khối lượng hàng ngày đã điều chỉnh chia tách/cổ tức kết hợp phân ngành GICS và thành phần vũ trụ thanh khoản động TOP1500/TOP3000 cổ phiếu Mỹ tối thiểu 10 năm (từ nguồn dữ liệu chuẩn Point-in-Time như Sharadar/CRSP hoặc mô phỏng trên nền tảng WorldQuant BRAIN). Chia cứng giai đoạn Nghiên cứu trong mẫu (6 năm đầu), Tinh chỉnh cấu trúc (2 năm kế) và Kiểm chứng ngoài mẫu khóa kín (2 năm cuối).",
+      "math_formulation": "Xây dựng ma trận tín hiệu thô $S_{t,i}$ chỉ phụ thuộc vào tập thông tin $\\mathcal{F}_{t}$ trước phiên khớp lệnh ngày $t+1$. Thực hiện chuẩn hóa hạng chéo đưa về phân phối đều đối xứng $u_{t,i} = \\operatorname{Rank}_i(S_{t,i}) - \\frac{1}{2}$, cắt ngưỡng ngoại lai $3\\sigma$, sau đó trung hòa trực giao với ma trận giả chỉ báo ngành $G_t$ thông qua phép chiếu phần dư:\n$$\\tilde{\\alpha}_t = (I - G_t (G_t^\\top G_t)^{-1} G_t^\\top) u_t, \\qquad w_t = \\frac{\\tilde{\\alpha}_t}{\\|\\tilde{\\alpha}_t\\|_1}$$\nsao cho danh mục thỏa mãn trung hòa tiền mặt $\\mathbf{1}^\\top w_t = 0$ và tổng giá trị phơi nhiễm hai đầu $\\|w_t\\|_1 = 1$. Đánh giá bằng chuỗi tương quan hạng hàng ngày $\\text{RankIC}_t = \\operatorname{Corr}_{\\text{Spearman}}(\\tilde{\\alpha}_t, r_{t+1})$, tỷ số $\\text{ICIR} = \\frac{\\overline{\\text{IC}}}{\\hat{\\sigma}_{\\text{IC}}} \\sqrt{252}$ và lợi nhuận ròng $R^{\\text{net}}_{t+1} = w_t^\\top r_{t+1} - c \\|w_t - w_{t-1}^+\\|_1$.",
+      "tasks": [
+        {
+          "id": "task-p1-01",
+          "text": "Xây dựng bộ nạp dữ liệu ma trận 2 chiều $(T \\times N)$ đồng bộ theo lịch giao dịch NYSE, tạo mặt nạ vũ trụ thanh khoản động dựa trên giá trị giao dịch trung bình 20 phiên quá khứ mà không nhìn trước tương lai."
+        },
+        {
+          "id": "task-p1-02",
+          "text": "Cài đặt thư viện toán tử tín hiệu vector hóa bằng NumPy gồm: xếp hạng chéo, chuẩn hóa điểm chuẩn, trung bình suy giảm tuyến tính theo thời gian, tương quan trượt và phép chiếu trung hòa ngành/nhóm vốn hóa."
+        },
+        {
+          "id": "task-p1-03",
+          "text": "Thiết kế tối thiểu 12 tín hiệu alpha có giả thuyết kinh tế rõ ràng thuộc ba họ độc lập: đảo chiều ngắn hạn điều chỉnh thanh khoản, quán tính trung hạn điều chỉnh biến động và bất thường khối lượng - biên độ trong phiên."
+        },
+        {
+          "id": "task-p1-04",
+          "text": "Lập trình bộ máy đánh giá tín hiệu xuất tự động chuỗi IC, RankIC, ICIR, độ phân rã suy giảm hiệu lực tín hiệu từ trễ 1 đến 10 phiên và lợi nhuận đơn điệu của 10 danh mục phân vị."
+        },
+        {
+          "id": "task-p1-05",
+          "text": "Áp dụng bộ làm mượt trọng số theo trung bình động mũ và rào cản tái cân bằng để đưa vòng quay vốn một chiều hàng ngày xuống dưới 25% mà vẫn giữ trên 80% tỷ số Sharpe gộp."
+        },
+        {
+          "id": "task-p1-06",
+          "text": "Thực hiện kiểm định đa giả thuyết Benjamini-Hochberg và tính Tỷ số Sharpe Giảm phát trên toàn bộ số lượng biến thể biểu thức đã chạy thử nghiệm."
+        },
+        {
+          "id": "task-p1-07",
+          "text": "Soạn thảo Báo cáo Nghiên cứu Định lượng số 1 dài 6–8 trang trình bày giả thuyết vi cấu trúc, bảng phân tích nhạy cảm phí giao dịch từ 2 bps đến 15 bps và giới hạn dung lượng vốn."
+        }
+      ],
+      "anti_bias_audits": [
+        {
+          "id": "audit-p1-01",
+          "text": "Tín hiệu ngày $t$ sử dụng giá đóng cửa phiên $t$ chỉ được phép khớp tại giá mở cửa hoặc VWAP phiên $t+1$ (độ trễ tối thiểu Delay-1), tuyệt đối không khớp ngay tại giá đóng cửa phiên $t$."
+        },
+        {
+          "id": "audit-p1-02",
+          "text": "Tập thành phần cổ phiếu TOP1500/TOP3000 được tái lập động vào đầu mỗi tháng chỉ từ dữ liệu thanh khoản quá khứ, bao gồm đầy đủ các mã sau đó bị hủy niêm yết hoặc phá sản."
+        },
+        {
+          "id": "audit-p1-03",
+          "text": "Cổ phiếu bị hủy niêm yết do phá sản hoặc sáp nhập được ghi nhận đúng lợi nhuận thanh lý thực tế cuối cùng thay vì biến mất âm thầm khỏi ma trận lợi nhuận."
+        },
+        {
+          "id": "audit-p1-04",
+          "text": "Mọi dữ liệu báo cáo tài chính quý dùng trong tín hiệu đều căn theo ngày công bố thực tế ra công chúng chứ không căn theo ngày kết thúc kỳ kế toán."
+        },
+        {
+          "id": "audit-p1-05",
+          "text": "Loại bỏ các mã có giá thị trường dưới 5 đô la Mỹ hoặc thanh khoản bình quân ngày quá mỏng khiến giả định khớp lệnh tỷ lệ nhỏ không còn hợp lệ."
+        },
+        {
+          "id": "audit-p1-06",
+          "text": "Khi tính vòng quay vốn $\\|w_t - w_{t-1}^+\\|_1$, trọng số cuối phiên trước $w_{t-1}^+$ đã được cập nhật theo biến động giá tự nhiên của thị trường trước khi tái cân bằng."
+        },
+        {
+          "id": "audit-p1-07",
+          "text": "Phân ngành GICS dùng để trung hòa tại thời điểm $t$ là mã phân ngành lịch sử có hiệu lực tại ngày $t$, không lấy mã ngành mới nhất hiện tại áp ngược về 10 năm trước."
+        },
+        {
+          "id": "audit-p1-08",
+          "text": "Lợi nhuận của 10 phân vị tăng gần như đơn điệu từ phân vị 1 đến phân vị 10 thay vì chỉ phụ thuộc vào vài mã cực đoan ở một phía bán khống khó vay hàng."
+        },
+        {
+          "id": "audit-p1-09",
+          "text": "Ghi nhật ký đầy đủ tổng số biểu thức $K$ đã thử nghiệm để đưa vào công thức Tỷ số Sharpe Giảm phát thay vì chỉ báo cáo biến thể tốt nhất."
+        },
+        {
+          "id": "audit-p1-10",
+          "text": "Giai đoạn kiểm chứng ngoài mẫu 2 năm cuối chỉ được chạy đúng một lần duy nhất sau khi toàn bộ tham số cửa sổ làm mượt và cắt ngưỡng đã khóa cứng."
+        }
+      ]
+    },
+    {
+      "id": "proj-2",
+      "semester_id": "sem-2",
+      "code": "CAP-02",
+      "title": "PCA Residual Statistical Arbitrage & Kalman Filter Pairs/Basket Trading",
+      "target_firms": [
+        "Citadel",
+        "Millennium",
+        "Point72 Cubist",
+        "Balyasny Asset Management"
+      ],
+      "dataset_guide": "Thu thập chuỗi lợi nhuận ngày và trong ngày (khung 30 phút hoặc hàng ngày) của 400–500 cổ phiếu vốn hóa lớn thuộc S&P 500 cùng bộ 11 quỹ hoán đổi danh mục ngành Select Sector SPDR trong tối thiểu 8 năm. Đảm bảo đồng bộ dấu thời gian giao dịch chính xác và tách giai đoạn cửa sổ trượt ước lượng 252 phiên hoàn toàn về phía quá khứ của từng điểm ra quyết định.",
+      "math_formulation": "Trên cửa sổ trượt $T$ phiên quá khứ, chuẩn hóa ma trận lợi nhuận $Z \\in \\mathbb{R}^{T \\times N}$ và trích xuất $K$ thành phần chính có trị riêng vượt ngưỡng biên trên Marchenko-Pastur $\\lambda_+ = (1 + \\sqrt{N/T})^2$ để lập ma trận nhân tố thống kê $F_t$. Tích lũy chuỗi phần dư đặc thù của từng tài sản hoặc rổ đồng liên kết và khớp quá trình hồi quy trung bình Ornstein-Uhlenbeck:\n$$dX_t = \\kappa (\\theta - X_t)\\,dt + \\sigma_{\\text{OU}}\\,dW_t, \\qquad s_i(t) = \\frac{X_{i,t} - \\hat{\\theta}_i}{\\hat{\\sigma}_{\\text{eq},i}}, \\qquad \\hat{\\sigma}_{\\text{eq}} = \\frac{\\hat{\\sigma}_{\\text{OU}}}{\\sqrt{2\\hat{\\kappa}}}$$\nĐối với giao dịch cặp/rổ động, mô hình hóa hệ số phòng vệ biến thiên theo thời gian $\\beta_t = \\beta_{t-1} + \\eta_t$ qua phương trình quan sát $y_t = x_t^\\top \\beta_t + \\varepsilon_t$ cập nhật trực tuyến bằng bộ lọc Kalman, vào lệnh dựa trên sai số dự báo chuẩn hóa $e_t / \\sqrt{Q_t}$.",
+      "tasks": [
+        {
+          "id": "task-p2-01",
+          "text": "Cài đặt mô-đun phân rã phổ ma trận tương quan trượt và tự động xác định số lượng nhân tố thị trường/ngành $K$ nằm ngoài phổ nhiễu Marchenko-Pastur tại mỗi kỳ tái ước lượng."
+        },
+        {
+          "id": "task-p2-02",
+          "text": "Xây dựng bộ ước lượng hồi quy phần dư tách lợi nhuận đặc thù, tích lũy thành quá trình trạng thái $X_{i,t}$ và kiểm định điều kiện tốc độ hồi quy nhanh (chu kỳ bán rã nhỏ hơn 15 ngày giao dịch)."
+        },
+        {
+          "id": "task-p2-03",
+          "text": "Lập trình kiểm định đồng liên kết hai bước Engle-Granger và kiểm định vết/trị riêng cực đại Johansen để sàng lọc các rổ 2–4 cổ phiếu cùng ngành có quan hệ cân bằng dài hạn bền vững."
+        },
+        {
+          "id": "task-p2-04",
+          "text": "Cài đặt từ đầu bộ lọc Kalman tuyến tính bằng NumPy ước lượng đồng thời hệ số chặn và vector tỷ số phòng vệ động $\\beta_t$, kèm tối ưu hóa siêu tham số hiệp phương sai nhiễu $(Q, R)$ bằng hợp lý cực đại đổi mới trên tập huấn luyện."
+        },
+        {
+          "id": "task-p2-05",
+          "text": "Thiết kế quy tắc mở vị thế, đóng vị thế có trễ hysteresis (ví dụ mở khi $|s| > 1.35$, đóng khi $|s| < 0.50$) và cơ chế ngắt mạch dừng lỗ khi cấu trúc đồng liên kết gãy vỡ."
+        },
+        {
+          "id": "task-p2-06",
+          "text": "So sánh trực tiếp hiệu quả ngoài mẫu giữa ba phương pháp: hồi quy phần dư đối với ETF ngành cố định, phần dư danh mục trị riêng PCA và tỷ số phòng vệ động Kalman."
+        },
+        {
+          "id": "task-p2-07",
+          "text": "Xuất Báo cáo Nghiên cứu số 2 phân tích hành vi chiến lược trong các giai đoạn khủng hoảng thanh khoản và kiểm chứng tính trung hòa đối với chỉ số S&P 500 ($|\\beta_{\\text{SPY}}| < 0.05$)."
+        }
+      ],
+      "anti_bias_audits": [
+        {
+          "id": "audit-p2-01",
+          "text": "Ma trận tương quan dùng để trích xuất vector riêng PCA tại ngày $t$ chỉ được tính trên cửa sổ $[t-T, t-1]$, tuyệt đối không bao gồm lợi nhuận ngày $t$ hoặc tương lai."
+        },
+        {
+          "id": "audit-p2-02",
+          "text": "Việc sàng lọc các cặp cổ phiếu đồng liên kết được thực hiện lặp lại độc lập trên từng cửa sổ hình thành quá khứ thay vì chọn trước những cặp không phân kỳ trong toàn bộ 8 năm."
+        },
+        {
+          "id": "audit-p2-03",
+          "text": "Áp dụng kiểm soát tỷ lệ khám phá sai Benjamini-Hochberg khi quét hàng chục ngàn cặp ứng viên để tránh chọn nhầm hai bước đi ngẫu nhiên độc lập tình cờ đi gần nhau."
+        },
+        {
+          "id": "audit-p2-04",
+          "text": "Siêu tham số nhiễu trạng thái $Q$ và nhiễu quan sát $R$ của bộ lọc Kalman chỉ được ước lượng trên dữ liệu trước thời điểm giao dịch, không chạy bộ làm mượt ngược chiều Rauch-Tung-Striebel dùng dữ liệu tương lai."
+        },
+        {
+          "id": "audit-p2-05",
+          "text": "Khấu trừ chi phí vay cổ phiếu bán khống hàng năm cùng chênh lệch giá chào mua - chào bán trên cả hai chân của giao dịch cặp mỗi lần điều chỉnh tỷ số phòng vệ."
+        },
+        {
+          "id": "audit-p2-06",
+          "text": "Kiểm tra dấu tùy ý của vector riêng khi trượt cửa sổ PCA để đảm bảo tính liên tục của chuỗi nhân tố và tránh đảo dấu nhân tạo."
+        },
+        {
+          "id": "audit-p2-07",
+          "text": "Không giao dịch trong vòng 2 phiên xung quanh ngày công bố báo cáo thu nhập quý hoặc thông báo mua bán sáp nhập khi nhảy giá đặc thù phá vỡ giả định khuếch tán liên tục."
+        },
+        {
+          "id": "audit-p2-08",
+          "text": "Có quy tắc đóng vị thế bắt buộc theo thời gian nắm giữ tối đa hoặc ngưỡng lệch $4\\sigma$ khi phần dư chuyển từ hồi quy trung bình sang xu hướng phân kỳ vĩnh viễn."
+        },
+        {
+          "id": "audit-p2-09",
+          "text": "Cổ phiếu thành phần trong cặp giao dịch phải khớp lệnh đồng bộ cùng thời điểm đóng thanh để tránh hiện tượng đồng liên kết giả tạo do giao dịch không đồng thời."
+        },
+        {
+          "id": "audit-p2-10",
+          "text": "Sai số chuẩn của tỷ số Sharpe và thống kê $t$ lợi nhuận chiến lược được tính bằng ước lượng bền vững tự tương quan Newey-West."
+        }
+      ]
+    },
+    {
+      "id": "proj-3",
+      "semester_id": "sem-3",
+      "code": "CAP-03",
+      "title": "L2 Limit Order Book Microstructure, OFI Alpha & Almgren-Chriss Execution",
+      "target_firms": [
+        "Jane Street",
+        "Citadel Securities",
+        "Hudson River Trading",
+        "Tower Research",
+        "Squarepoint Capital"
+      ],
+      "dataset_guide": "Thu thập hoặc nạp dữ liệu ảnh chụp nhanh kết hợp luồng cập nhật sổ lệnh cấp độ 2 (10–20 mức giá hai phía kèm khớp lệnh từng giao dịch) trong tối thiểu 14–30 ngày liên tục từ luồng WebSocket lịch sử chuẩn của Binance/Coinbase đối với cặp thanh khoản cao BTC/ETH hoặc bộ dữ liệu học thuật mẫu LOBSTER của cổ phiếu NASDAQ.",
+      "math_formulation": "Tại mỗi sự kiện sổ lệnh thứ $n$ làm thay đổi mức giá/khối lượng chào mua tốt nhất $(P^B_n, q^B_n)$ và chào bán tốt nhất $(P^A_n, q^A_n)$, tính đóng góp mất cân bằng luồng lệnh theo Cont-Kukanov-Stoikov:\n$$e_n = \\mathbb{I}_{\\{P^B_n \\ge P^B_{n-1}\\}} q^B_n - \\mathbb{I}_{\\{P^B_n \\le P^B_{n-1}\\}} q^B_{n-1} - \\mathbb{I}_{\\{P^A_n \\le P^A_{n-1}\\}} q^A_n + \\mathbb{I}_{\\{P^A_n \\ge P^A_{n-1}\\}} q^A_{n-1}, \\qquad \\text{OFI}_k = \\sum_{n \\in [t_{k-1}, t_k]} e_n$$\nkết hợp độ lệch giá vi mô $I_{\\text{micro}, k} = \\frac{q^B_k P^A_k + q^A_k P^B_k}{q^B_k + q^A_k} - \\frac{P^A_k + P^B_k}{2}$. Trong mô-đun thực thi danh mục cần thanh lý $X$ đơn vị qua $N$ bước thời gian $\\tau = T/N$ dưới tác động vĩnh viễn $\\gamma$ và tạm thời $\\eta$, giải bài toán cực tiểu hóa thiếu hụt thực thi điều chỉnh phương sai $\\min_{\\{n_j\\}} \\mathbb{E}[\\text{IS}] + \\lambda_A \\operatorname{Var}(\\text{IS})$ cho nghiệm đóng:\n$$x_j = X \\frac{\\sinh(\\kappa (T - t_j))}{\\sinh(\\kappa T)}, \\qquad \\tilde{\\kappa}^2 = \\frac{\\lambda_A \\sigma^2}{\\eta\\left(1 - \\frac{\\gamma \\tau}{2\\eta}\\right)}$$",
+      "tasks": [
+        {
+          "id": "task-p3-01",
+          "text": "Xây dựng bộ máy tái tạo trạng thái sổ lệnh L2 tất định từ ảnh chụp gốc cộng luồng cập nhật vi sai tuần tự, tự động phát hiện mất gói tin hoặc lệch số thứ tự sự kiện."
+        },
+        {
+          "id": "task-p3-02",
+          "text": "Trích xuất bộ đặc trưng vi cấu trúc đa tầng gồm OFI ở 5 mức giá đầu tiên, độ lệch giá vi mô, mất cân bằng khối lượng khớp lệnh chủ động và độ dốc đường thanh khoản hai phía."
+        },
+        {
+          "id": "task-p3-03",
+          "text": "Ước lượng mô hình hồi quy tuyến tính và Ridge dự báo biến thiên giá trung tâm $\\Delta P_{t + \\Delta}$ ở các chân trời $\\Delta \\in \\{100\\text{ms}, 1\\text{s}, 5\\text{s}, 30\\text{s}\\}$, kiểm chứng quan hệ tỷ lệ nghịch giữa hệ số tác động giá $\\beta_k$ và độ sâu sổ lệnh."
+        },
+        {
+          "id": "task-p3-04",
+          "text": "Phân biệt rõ lợi nhuận dự báo giá trung tâm trên lý thuyết với lợi nhuận thực hiện sau khi phải vượt chênh lệch giá mua - bán hoặc xếp hàng chờ khớp lệnh giới hạn."
+        },
+        {
+          "id": "task-p3-05",
+          "text": "Hiệu chỉnh tham số tác động giá tạm thời $\\eta$, tác động vĩnh viễn $\\gamma$ và biến động $\\sigma$ từ chính dữ liệu sổ lệnh thực nghiệm để dựng đường biên hiệu quả Almgren-Chriss."
+        },
+        {
+          "id": "task-p3-06",
+          "text": "Mô phỏng phát lại trên sổ lệnh lịch sử để so sánh chi phí thiếu hụt thực thi thực tế giữa bốn chiến lược: khớp toàn bộ tức thời, TWAP, VWAP và lịch Almgren-Chriss thích nghi tín hiệu OFI ngắn hạn."
+        },
+        {
+          "id": "task-p3-07",
+          "text": "Viết Báo cáo Nghiên cứu số 3 phân tích ngưỡng độ trễ mạng tối đa mà tại đó tín hiệu vi cấu trúc vẫn bảo toàn giá trị gia tăng trong thực thi lệnh thuật toán."
+        }
+      ],
+      "anti_bias_audits": [
+        {
+          "id": "audit-p3-01",
+          "text": "Sử dụng dấu thời gian nhận gói tin phía máy khách cộng độ trễ mạng thực tế (ví dụ 5–25 mili-giây) thay vì dấu thời gian máy chủ khớp lệnh mà thuật toán ngoài đời chưa thể biết tức thì."
+        },
+        {
+          "id": "audit-p3-02",
+          "text": "Khi mô phỏng đặt lệnh giới hạn cung cấp thanh khoản, áp dụng mô hình vị trí cuối hàng đợi bảo thủ: lệnh chỉ được khớp khi tổng khối lượng khớp xuyên qua toàn bộ lượng lệnh đứng trước ở mức giá đó."
+        },
+        {
+          "id": "audit-p3-03",
+          "text": "Tính đầy đủ hiện tượng lựa chọn bất lợi trên lệnh giới hạn: những lần khớp được thường rơi đúng vào thời điểm giá chuẩn bị đi ngược chiều vị thế vừa mở."
+        },
+        {
+          "id": "audit-p3-04",
+          "text": "Lệnh thị trường kích thước lớn trong mô phỏng phải quét xuyên qua từng bậc thanh khoản thực tế của sổ lệnh L2 thay vì giả định khớp không giới hạn ở mức giá chào đầu tiên."
+        },
+        {
+          "id": "audit-p3-05",
+          "text": "Tuyệt đối không đánh giá lợi nhuận chiến lược vượt chênh lệch giá bằng giá trung tâm ảo mà phải tính theo giá chào bán thực tế khi mua và giá chào mua thực tế khi bán."
+        },
+        {
+          "id": "audit-p3-06",
+          "text": "Khấu trừ chính xác biểu phí phân biệt Maker và Taker (hoặc phí giao dịch cơ sở cộng phí sàn) cũng như dòng thanh toán lãi suất tài trợ nếu nắm giữ hợp đồng vĩnh cửu qua mốc thanh toán."
+        },
+        {
+          "id": "audit-p3-07",
+          "text": "Kiểm tra không có hiện tượng sổ lệnh bị vắt chéo giả tạo do ghép lệch nhịp giữa kênh dữ liệu khớp lệnh và kênh cập nhật độ sâu sổ lệnh."
+        },
+        {
+          "id": "audit-p3-08",
+          "text": "Tách tập kiểm chứng ngoài mẫu theo các ngày giao dịch hoàn toàn khác biệt (bao gồm cả ngày biến động thấp và ngày biến động mạnh), không chia ngẫu nhiên các giây trong cùng một ngày."
+        },
+        {
+          "id": "audit-p3-09",
+          "text": "Tuân thủ bước nhảy giá tối thiểu và đơn vị khối lượng lô tối thiểu của sàn giao dịch khi làm tròn kích thước từng lệnh con trong lịch rải lệnh."
+        },
+        {
+          "id": "audit-p3-10",
+          "text": "Ghi nhận tác động hao hụt thanh khoản giữa các lệnh con liên tiếp: lượng thanh khoản đã bị lệnh con thứ $j$ tiêu thụ không được tự động hồi phục tức thời ở mili-giây kế tiếp nếu dữ liệu lịch sử không có lệnh bù."
+        }
+      ]
+    },
+    {
+      "id": "proj-4",
+      "semester_id": "sem-4",
+      "code": "CAP-04",
+      "title": "Multi-Alpha Convex Portfolio Optimizer & Institutional Risk Attribution System",
+      "target_firms": [
+        "Two Sigma",
+        "Citadel",
+        "WorldQuant",
+        "Millennium",
+        "Point72 Cubist",
+        "Balyasny Asset Management",
+        "Squarepoint Capital"
+      ],
+      "dataset_guide": "Tổng hợp bảng dữ liệu đa nhân tố cổ phiếu Mỹ thanh khoản cao ($N \\approx 500\\text{--}1000$ mã trong 10 năm) kết hợp ít nhất 8–12 tín hiệu alpha độc lập từ các họ Động lượng điều chỉnh rủi ro, Đảo chiều phần dư ngắn hạn, Định giá cơ bản Point-in-Time và Bất thường vi cấu trúc khối lượng, đi kèm ma trận phơi nhiễm nhân tố phong cách (Beta, Quy mô vốn hóa, Giá trị, Biến động, Thanh khoản) và phân ngành GICS.",
+      "math_formulation": "Trực giao hóa đối xứng ma trận các tín hiệu chuẩn hóa $A_t \\in \\mathbb{R}^{N \\times M}$ bằng phép biến đổi Löwdin $A^{\\perp}_t = A_t (A_t^\\top A_t)^{-1/2}$ và kết hợp theo trọng số ICIR trượt nhân với quy tắc Grinold $\\hat{\\alpha}_t = \\operatorname{diag}(\\hat{\\sigma}_t) \\cdot \\text{IC}_{\\text{comb}, t} \\cdot z_t$. Xây dựng mô hình rủi ro cấu trúc kết hợp làm co Ledoit-Wolf $\\hat{\\Sigma}_t = B_t \\Sigma_{F,t} B_t^\\top + D_t$ và giải bài toán tối ưu hóa danh mục lồi mỗi kỳ:\n$$\\max_{w_t \\in \\mathbb{R}^N} \\quad \\hat{\\alpha}_t^\\top w_t - \\frac{\\gamma}{2} w_t^\\top \\hat{\\Sigma}_t w_t - \\sum_{i=1}^N \\left( c_i |w_{t,i} - w_{t-1,i}^+| + \\eta_i \\sigma_{t,i} \\left(\\frac{|w_{t,i} - w_{t-1,i}^+| \\cdot \\text{NAV}}{\\text{ADV}_{t,i}}\\right)^{3/2} \\right)$$\nthỏa mãn $\\mathbf{1}^\\top w_t = 0$, $\\|w_t\\|_1 \\le L_{\\max}$, $|w_{t,i}| \\le w_{\\max}$ và trung hòa nhân tố $|B_t^\\top w_t| \\le \\epsilon_F$. Cuối cùng, phân rã lợi nhuận thực hiện từng phiên thành $R_t^{\\text{net}} = R_t^{\\text{factor}} + R_t^{\\text{specific}} - R_t^{\\text{linear cost}} - R_t^{\\text{impact}}$.",
+      "tasks": [
+        {
+          "id": "task-p4-01",
+          "text": "Xây dựng đường ống tiền xử lý, trực giao hóa đối xứng Löwdin cho tập đa tín hiệu và loại bỏ phần tương quan trùng lặp với các nhân tố rủi ro phong cách đã biết."
+        },
+        {
+          "id": "task-p4-02",
+          "text": "Lập trình bộ ước lượng trọng số kết hợp đa alpha dựa trên ma trận hiệp phương sai chuỗi IC trượt có co rút Ridge, đối chiếu với phương pháp bình quân trọng số bằng nhau và mô hình cây quyết định nông có kiểm định chéo cắt bỏ."
+        },
+        {
+          "id": "task-p4-03",
+          "text": "Thiết kế mô hình rủi ro đa nhân tố kết hợp ma trận hiệp phương sai làm co Ledoit-Wolf và kiểm định độ chính xác của phương sai danh mục dự báo so với biến động thực hiện ngoài mẫu (tỷ số Bias statistic gần 1.0)."
+        },
+        {
+          "id": "task-p4-04",
+          "text": "Cài đặt bộ giải tối ưu hóa bậc hai lồi (bằng thuật toán chiếu độ dốc cận kề ADMM/FISTA tự viết trên NumPy hoặc đối chiếu nghiệm KKT chính xác) tích hợp đầy đủ ràng buộc đòn bẩy, giới hạn tỷ trọng mã đơn lẻ, trung hòa ngành/beta và hàm phạt vòng quay vốn."
+        },
+        {
+          "id": "task-p4-05",
+          "text": "Đo lường thực nghiệm Hệ số Chuyển đổi theo Clarke-de Silva-Thorley khi thắt chặt dần các ràng buộc phơi nhiễm nhân tố và giới hạn vị thế để chứng minh đánh đổi giữa kiểm soát rủi ro và giữ lại tín hiệu gốc."
+        },
+        {
+          "id": "task-p4-06",
+          "text": "Xây dựng hệ thống báo cáo Phân rã Lãi lỗ và Rủi ro chuẩn quỹ đa chiến lược: bóc tách lợi nhuận đặc thù thuần túy, phơi nhiễm từng nhân tố phong cách, mức sụt giảm vốn tối đa và đường cong suy giảm tỷ số Sharpe khi nâng quy mô vốn quản lý từ 5 triệu lên 250 triệu đô la Mỹ."
+        },
+        {
+          "id": "task-p4-07",
+          "text": "Hoàn thiện Báo cáo Nghiên cứu Flagship số 4 định dạng bài báo khoa học 10–12 trang kèm bộ slide trình bày 20 phút sẵn sàng cho phiên bảo vệ nghiên cứu tại vòng Superday."
+        }
+      ],
+      "anti_bias_audits": [
+        {
+          "id": "audit-p4-01",
+          "text": "Trọng số kết hợp giữa các tín hiệu con tại ngày $t$ chỉ được ước lượng trên lịch sử hiệu quả IC trước ngày $t$ với khoảng cách ly đầy đủ cho nhãn lợi nhuận nhiều kỳ."
+        },
+        {
+          "id": "audit-p4-02",
+          "text": "Ma trận phơi nhiễm nhân tố $B_t$, hiệp phương sai nhân tố $\\Sigma_{F,t}$ và phương sai đặc thù $D_t$ đều là ước lượng đúng thời điểm trước khi mở phiên tái cân bằng."
+        },
+        {
+          "id": "audit-p4-03",
+          "text": "Hàm chi phí tác động thị trường lũy thừa 3/2 được tính trên giá trị giao dịch trung bình ngày quá khứ $\\text{ADV}_{t,i}$ thực tế ứng với từng mức quy mô tài sản ròng giả định."
+        },
+        {
+          "id": "audit-p4-04",
+          "text": "Áp đặt ràng buộc thanh khoản thực thi: khối lượng giao dịch mỗi phiên của bất kỳ cổ phiếu nào không vượt quá 3%–5% giá trị giao dịch trung bình ngày của mã đó."
+        },
+        {
+          "id": "audit-p4-05",
+          "text": "Kiểm tra điều kiện hội tụ và sai số ràng buộc nguyên thủy - đối ngẫu của bộ giải tối ưu lồi tại mọi ngày giao dịch, có cơ chế giữ nguyên danh mục an toàn nếu dữ liệu đầu vào bất thường."
+        },
+        {
+          "id": "audit-p4-06",
+          "text": "Khi sử dụng mô hình học máy kết hợp tín hiệu, toàn bộ bước chuẩn hóa đặc trưng, chọn siêu tham số và trực giao hóa đều nằm gọn bên trong từng lát cắt của kiểm định chéo cắt bỏ."
+        },
+        {
+          "id": "audit-p4-07",
+          "text": "Báo cáo quy kết hiệu quả xác nhận phần lợi nhuận đặc thù chiếm tỷ trọng áp đảo (> 80% tổng lợi nhuận gộp) và thống kê $t$ của alpha đặc thù ngoài mẫu vượt ngưỡng 2.5."
+        },
+        {
+          "id": "audit-p4-08",
+          "text": "Kiểm định sức chịu đựng của danh mục qua các giai đoạn sụp đổ nhân tố định lượng lịch sử (như Quant Quake, cú sốc COVID-19 năm 2020 và chu kỳ tăng lãi suất gắt năm 2022)."
+        },
+        {
+          "id": "audit-p4-09",
+          "text": "Tính đầy đủ lãi vay ký quỹ đòn bẩy và chi phí mượn kho bán khống biến thiên theo độ khan hiếm cổ phiếu vào dòng lợi nhuận ròng cuối cùng."
+        },
+        {
+          "id": "audit-p4-10",
+          "text": "Toàn bộ đường ống từ dữ liệu đầu vào đến bảng chỉ số cuối cùng chạy tái lập 100% chỉ bằng một lệnh duy nhất với hạt giống ngẫu nhiên cố định và kiểm thử đơn vị bảo vệ không rò rỉ tương lai."
+        }
+      ]
+    }
+  ]
+}
