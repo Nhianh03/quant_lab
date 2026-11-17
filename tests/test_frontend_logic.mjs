@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { computeNextReview, isProblemDue } from '../web/js/spaced_repetition.js';
+import { parseNumericExpression, checkProblemAnswer } from '../web/js/answer_checker.js';
 import { renderMarkdownWithMath } from '../web/js/markdown_math.js';
 import { mountSimulator } from '../web/js/simulators.js';
 import {
@@ -23,40 +23,38 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const APP_ROOT = path.resolve(__dirname, '..');
 
-test('SM-2 schedules again=1d, hard=3d, good escalating intervals', () => {
-  assert.equal(isProblemDue(null, '2026-11-16'), false);
-  assert.equal(isProblemDue(undefined, '2026-11-16'), false);
+test('answer_checker parses numbers, fractions, percentages, units, and math expressions accurately', () => {
+  assert.equal(parseNumericExpression('286'), 286);
+  assert.equal(parseNumericExpression('1,374'), 1374);
+  assert.equal(parseNumericExpression('+$99,000'), 99000);
+  assert.equal(parseNumericExpression('25.0 bps'), 25);
+  assert.ok(Math.abs(parseNumericExpression('1/6') - 1 / 6) < 1e-12);
+  assert.ok(Math.abs(parseNumericExpression('-9/26') - (-9 / 26)) < 1e-12);
+  assert.ok(Math.abs(parseNumericExpression('sqrt(3)/2') - Math.sqrt(3) / 2) < 1e-12);
+  assert.ok(Math.abs(parseNumericExpression('15 * ln(2)') - 15 * Math.log(2)) < 1e-12);
+  assert.equal(parseNumericExpression(''), null);
+  assert.equal(parseNumericExpression('abc'), null);
 
-  const r1 = computeNextReview(null, 'good', '2026-11-16');
-  assert.equal(r1.interval_days, 4);
-  assert.equal(r1.repetitions, 1);
-  assert.equal(r1.last_grade, 'good');
-  assert.equal(r1.next_due, '2026-11-20');
-  assert.equal(isProblemDue(r1, '2026-11-19'), false);
-  assert.equal(isProblemDue(r1, '2026-11-20'), true);
-  assert.equal(isProblemDue(r1, '2026-11-25'), true);
+  // Probability unit: accepts fraction, decimal, or explicit %
+  const probSpec = { label: 'Xác suất', target: 1 / 6, tolerance: 0.002, unit: 'prob', display: '1/6 ≈ 0.1667' };
+  assert.equal(checkProblemAnswer('1/6', probSpec).ok, true);
+  assert.equal(checkProblemAnswer('0.1667', probSpec).ok, true);
+  assert.equal(checkProblemAnswer('16.67%', probSpec).ok, true);
+  assert.equal(checkProblemAnswer('0.25', probSpec).ok, false);
+  assert.equal(checkProblemAnswer('   ', probSpec).empty, true);
 
-  const r2 = computeNextReview(r1, 'good', '2026-11-20');
-  assert.ok(r2.interval_days >= 9);
-  assert.equal(r2.repetitions, 2);
+  // Percent unit: accepts percentage points, explicit %, or fraction a/b
+  const pctSpec = { label: 'Tỷ suất (%)', target: 87.03, tolerance: 0.1, unit: 'percent', display: '87.03%' };
+  assert.equal(checkProblemAnswer('87.03', pctSpec).ok, true);
+  assert.equal(checkProblemAnswer('87.03%', pctSpec).ok, true);
+  assert.equal(checkProblemAnswer('59049/67849', pctSpec).ok, true);
+  assert.equal(checkProblemAnswer('50%', pctSpec).ok, false);
 
-  const hardFirst = computeNextReview(null, 'hard', '2026-11-16');
-  assert.equal(hardFirst.interval_days, 3);
-  assert.equal(hardFirst.next_due, '2026-11-19');
-  assert.equal(hardFirst.last_grade, 'hard');
-
-  const reset = computeNextReview(r2, 'again', '2026-11-30');
-  assert.equal(reset.interval_days, 1);
-  assert.equal(reset.repetitions, 0);
-  assert.equal(reset.next_due, '2026-12-01');
-  assert.equal(reset.last_grade, 'again');
-
-  // Ease factor never drops below 1.3 even after repeated 'again' grades
-  let state = reset;
-  for (let i = 0; i < 15; i += 1) {
-    state = computeNextReview(state, 'again', '2026-12-02');
-  }
-  assert.ok(state.ease >= 1.3);
+  // Standard number unit
+  const numSpec = { label: 'Giá chào mua tối ưu (USD)', target: 40, tolerance: 0.05, unit: 'number', display: '40 USD' };
+  assert.equal(checkProblemAnswer('$40', numSpec).ok, true);
+  assert.equal(checkProblemAnswer('40.00', numSpec).ok, true);
+  assert.equal(checkProblemAnswer('80', numSpec).ok, false);
 });
 
 test('Markdown renderer preserves underscores and asterisks inside LaTeX blocks', () => {
@@ -347,8 +345,9 @@ test('app.js progress payload normalization matches server.py validate_progress_
     completed_readings: { 'read-m1-01-1': true },
     completed_milestones: { 'ms-s1-01': true },
     lesson_notes: { 'm1-04-mo-hinh-roll-glosten-milgrom-kyle-ofi': 'Chứng minh $\\lambda = \\frac{1}{2}\\sqrt{\\Sigma_0/\\sigma_u^2}$' },
-    problem_reviews: {
-      'prob-m1-01': computeNextReview(null, 'good', '2026-11-16'),
+    problem_attempts: {
+      'prob-m1-01': { answer: '40', scratch: 'B* = 40, A* = 80', status: 'correct' },
+      'prob-m1-02': { answer: '-0.2', scratch: '', status: 'incorrect' },
     },
     projects: {
       'proj-1': {
@@ -364,6 +363,9 @@ test('app.js progress payload normalization matches server.py validate_progress_
 
   assert.deepEqual(richPayload.study_days, ['2026-11-15', '2026-11-16']);
   assert.equal(richPayload.completed_lessons['m1-02'], undefined);
+  assert.equal(richPayload.problem_attempts['prob-m1-01'].status, 'correct');
+  assert.equal(richPayload.problem_attempts['prob-m1-01'].answer, '40');
+  assert.equal(richPayload.problem_attempts['prob-m1-02'].status, 'incorrect');
   assert.equal(richPayload.projects['proj-1'].metrics.sharpe, '1.92');
 
   // Reject malformed payloads
@@ -379,7 +381,7 @@ test('app.js progress payload normalization matches server.py validate_progress_
     'from server import validate_progress_payload, default_progress',
     'p1 = validate_progress_payload(json.loads(sys.argv[1]))',
     'p2 = validate_progress_payload(json.loads(sys.argv[2]))',
-    'assert p1["version"] == 1 and p2["projects"]["proj-1"]["metrics"]["sharpe"] == "1.92"',
+    'assert p1["version"] == 1 and "problem_attempts" in p1 and p2["problem_attempts"]["prob-m1-01"]["status"] == "correct"',
     'print("OK")',
   ].join('; ');
 
@@ -429,26 +431,47 @@ test('app.js route hash parser, streak calculator, problem queue filter, and H1 
     totalDays: 1,
   });
 
-  // Problem queue filtering
+  // Problem queue filtering based on answer attempts
   const sampleProbs = [
     { id: 'p1', module_id: 'm1', difficulty: 'Medium', firms: ['Jane Street'] },
     { id: 'p2', module_id: 'm2', difficulty: 'Hard', firms: ['Citadel', 'Two Sigma'] },
     { id: 'p3', module_id: 'm2', difficulty: 'Medium', firms: ['WorldQuant'] },
   ];
-  const reviews = {
-    p1: { ease: 2.5, interval_days: 1, repetitions: 0, next_due: '2026-11-16', last_grade: 'again' },
-    p2: { ease: 2.55, interval_days: 4, repetitions: 1, next_due: '2026-11-20', last_grade: 'good' },
+  const attempts = {
+    p1: { answer: '35', scratch: '', status: 'incorrect' },
+    p2: { answer: '40', scratch: 'ok', status: 'correct' },
   };
-  assert.equal(filterProblemsList(sampleProbs, { queue: 'due' }, reviews, '2026-11-16').length, 1);
-  assert.equal(filterProblemsList(sampleProbs, { queue: 'unseen' }, reviews, '2026-11-16').length, 1);
-  assert.equal(filterProblemsList(sampleProbs, { queue: 'mastered' }, reviews, '2026-11-16').length, 1);
-  assert.equal(filterProblemsList(sampleProbs, { module: 'm2', firm: 'Two Sigma' }, reviews, '2026-11-16').length, 1);
+  assert.equal(filterProblemsList(sampleProbs, { queue: 'retry' }, attempts).length, 1);
+  assert.equal(filterProblemsList(sampleProbs, { queue: 'unanswered' }, attempts).length, 1);
+  assert.equal(filterProblemsList(sampleProbs, { queue: 'solved' }, attempts).length, 1);
+  assert.equal(filterProblemsList(sampleProbs, { module: 'm2', firm: 'Two Sigma' }, attempts).length, 1);
 
   assert.equal(stripLeadingMarkdownH1('# M1.01 — Title\n\n## 1. Body'), '## 1. Body');
   assert.equal(createDefaultProjectState().metrics.max_dd, '');
   assert.equal(formatDifficultyLabel('Easy'), 'Cơ bản');
   assert.equal(formatDifficultyLabel('Medium'), 'Chuẩn Phỏng vấn');
   assert.equal(formatDifficultyLabel('Hard'), 'Superday');
+});
+
+test('all 120 problems include verified answer_check specs and SM-2 self-grading UI is removed', () => {
+  const probsRaw = JSON.parse(fs.readFileSync(path.join(APP_ROOT, 'content', 'problems.json'), 'utf8'));
+  const problems = probsRaw.problems || [];
+  assert.equal(problems.length, 120);
+  for (const prob of problems) {
+    assert.ok(prob.answer_check, `${prob.id} missing answer_check`);
+    const res = checkProblemAnswer(String(prob.answer_check.target), prob.answer_check);
+    assert.equal(res.ok, true, `${prob.id} target failed self-check: ${JSON.stringify(prob.answer_check)}`);
+  }
+
+  const indexHtml = fs.readFileSync(path.join(APP_ROOT, 'web', 'index.html'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(APP_ROOT, 'web', 'styles.css'), 'utf8');
+  const appJs = fs.readFileSync(path.join(APP_ROOT, 'web', 'js', 'app.js'), 'utf8');
+
+  assert.ok(!indexHtml.includes('nav-due-badge'), 'nav-due-badge must be removed from index.html');
+  assert.ok(!appJs.includes('sm2-grade-bar'), 'sm2-grade-bar must be removed from app.js');
+  assert.ok(!appJs.includes('Tự đánh giá độ trôi chảy'), 'SM-2 caption must be removed from app.js');
+  assert.ok(!stylesCss.includes('.sm2-grade-bar'), '.sm2-grade-bar must be removed from styles.css');
+  assert.ok(appJs.includes('data-prob-answer-input'), 'app.js must render answer input box');
 });
 
 test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial deduplication', () => {
@@ -464,7 +487,6 @@ test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial 
     'app-sidebar',
     'sidebar-backdrop',
     'mobile-menu-btn',
-    'nav-due-badge',
     'sidebar-search-input',
     'sidebar-search-kbd',
     'sidebar-search-clear',

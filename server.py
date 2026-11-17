@@ -25,6 +25,7 @@ PROGRESS_DICT_KEYS = (
     "completed_milestones",
     "lesson_notes",
     "problem_reviews",
+    "problem_attempts",
     "projects",
 )
 
@@ -59,6 +60,7 @@ def default_progress() -> dict:
         "completed_milestones": {},
         "lesson_notes": {},
         "problem_reviews": {},
+        "problem_attempts": {},
         "projects": {},
     }
 

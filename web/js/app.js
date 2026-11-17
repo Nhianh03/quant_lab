@@ -4,11 +4,12 @@
  * Workspaces:
  *  1. #roadmap          — 24-Month Curriculum, Semesters, Modules & Hiring Milestones
  *  2. #lesson/<id>      — Scholarly Reader, Interactive Canvas Simulators & 50/50 Split View
- *  3. #problems         — Wall Street Quant Interview Drill with Progressive Hints & SM-2
+ *  3. #problems         — Wall Street Quant Interview Drill with Progressive Hints & Auto-Check
  *  4. #projects/<id>    — Capstone Research Lab & 10-Point Anti-Bias Backtest Audit
  */
 
-import { computeNextReview, getTodayIso, isProblemDue } from './spaced_repetition.js';
+import { checkProblemAnswer } from './answer_checker.js';
+import { getTodayIso } from './spaced_repetition.js';
 import { escapeHtml, renderMarkdownWithMath } from './markdown_math.js';
 import { mountSimulator } from './simulators.js';
 
@@ -65,6 +66,7 @@ export function createDefaultProgress() {
     completed_milestones: {},
     lesson_notes: {},
     problem_reviews: {},
+    problem_attempts: {},
     projects: {},
   };
 }
@@ -130,6 +132,7 @@ export function normalizeProgressPayload(raw) {
     'completed_milestones',
     'lesson_notes',
     'problem_reviews',
+    'problem_attempts',
     'projects',
   ];
   for (const key of dictKeys) {
@@ -182,6 +185,20 @@ export function normalizeProgressPayload(raw) {
           next_due: rev.next_due,
           last_grade: typeof rev.last_grade === 'string' ? rev.last_grade : 'good',
         };
+      }
+    }
+  }
+
+  if (isPlainObject(raw.problem_attempts)) {
+    for (const [pid, att] of Object.entries(raw.problem_attempts)) {
+      if (pid && isPlainObject(att)) {
+        const answer = typeof att.answer === 'string' ? att.answer : '';
+        const scratch = typeof att.scratch === 'string' ? att.scratch : '';
+        const status =
+          att.status === 'correct' || att.status === 'incorrect' ? att.status : 'draft';
+        if (answer || scratch || status !== 'draft') {
+          clean.problem_attempts[pid] = { answer, scratch, status };
+        }
       }
     }
   }
@@ -275,15 +292,15 @@ export function parseRouteHash(
 }
 
 /**
- * Filter interview problems by Module, Difficulty, Firm tag, and SM-2 Queue.
+ * Filter interview problems by Module, Difficulty, Firm tag, and Attempt Status.
  */
-export function filterProblemsList(problems, filters, problemReviews, todayIso = getTodayIso()) {
+export function filterProblemsList(problems, filters, problemAttempts) {
   if (!Array.isArray(problems)) return [];
   const modFilter = filters?.module || 'all';
   const diffFilter = filters?.difficulty || 'all';
   const firmFilter = filters?.firm || 'all';
   const queueFilter = filters?.queue || 'all';
-  const reviews = problemReviews || {};
+  const attempts = problemAttempts || {};
 
   return problems.filter((prob) => {
     if (modFilter !== 'all' && prob.module_id !== modFilter) return false;
@@ -293,15 +310,16 @@ export function filterProblemsList(problems, filters, problemReviews, todayIso =
       if (!firms.includes(firmFilter)) return false;
     }
 
-    const rev = reviews[prob.id];
-    if (queueFilter === 'due') {
-      return isProblemDue(rev, todayIso);
+    const att = attempts[prob.id];
+    const st = att?.status || 'draft';
+    if (queueFilter === 'unanswered') {
+      return st !== 'correct' && st !== 'incorrect';
     }
-    if (queueFilter === 'unseen') {
-      return !rev;
+    if (queueFilter === 'retry') {
+      return st === 'incorrect';
     }
-    if (queueFilter === 'mastered') {
-      return Boolean(rev) && !isProblemDue(rev, todayIso) && rev.last_grade === 'good';
+    if (queueFilter === 'solved') {
+      return st === 'correct';
     }
     return true;
   });
@@ -402,6 +420,7 @@ function bootBrowserApp() {
       queue: 'all',
     },
     problemReveals: {},
+    problemNotices: {},
 
     // Persistence state
     isStaticHost: false,
@@ -417,7 +436,6 @@ function bootBrowserApp() {
     sidebarBackdrop: document.getElementById('sidebar-backdrop'),
     mobileMenuBtn: document.getElementById('mobile-menu-btn'),
     workspaceTabs: [...document.querySelectorAll('[data-nav-view]')],
-    navDueBadge: document.getElementById('nav-due-badge'),
     searchInput: document.getElementById('sidebar-search-input'),
     searchKbd: document.getElementById('sidebar-search-kbd'),
     searchClearBtn: document.getElementById('sidebar-search-clear'),
@@ -667,17 +685,6 @@ function bootBrowserApp() {
     }
   }
 
-  function countDueProblemsToday() {
-    const today = getTodayIso();
-    let due = 0;
-    for (const prob of state.problems) {
-      if (isProblemDue(state.progress.problem_reviews[prob.id], today)) {
-        due += 1;
-      }
-    }
-    return due;
-  }
-
   /* ------------------------------------------------------------------------
    * Sidebar Rendering (Tabs, Quick Search, Collapsible Tree, Progress Footer)
    * ---------------------------------------------------------------------- */
@@ -705,12 +712,6 @@ function bootBrowserApp() {
     const { streakDays, totalDays } = computeStreakStats(state.progress.study_days, getTodayIso());
     if (els.streakText) {
       els.streakText.textContent = `Chuỗi học: ${streakDays} ngày • Tích lũy: ${totalDays} ngày`;
-    }
-
-    const dueCount = countDueProblemsToday();
-    if (els.navDueBadge) {
-      els.navDueBadge.textContent = String(dueCount);
-      els.navDueBadge.hidden = dueCount === 0;
     }
 
     for (const tabBtn of els.workspaceTabs) {
@@ -1376,22 +1377,34 @@ function bootBrowserApp() {
     return [...set].sort((a, b) => a.localeCompare(b));
   }
 
-  function renderProblemCardHtml(prob, todayIso, katexInst) {
-    const rev = state.progress.problem_reviews[prob.id] || null;
-    const isDue = isProblemDue(rev, todayIso);
+  function ensureProblemAttempt(probId) {
+    const cur = state.progress.problem_attempts[probId];
+    if (isPlainObject(cur)) {
+      return cur;
+    }
+    const fresh = { answer: '', scratch: '', status: 'draft' };
+    state.progress.problem_attempts[probId] = fresh;
+    return fresh;
+  }
+
+  function renderProblemCardHtml(prob, katexInst) {
+    const att = state.progress.problem_attempts[prob.id] || null;
+    const status = att?.status || 'draft';
+    const savedAnswer = att?.answer || '';
+    const savedScratch = att?.scratch || '';
+    const notice = state.problemNotices[prob.id] || '';
     const reveal = state.problemReveals[prob.id] || { hint1: false, hint2: false, solution: false };
     const firms = Array.isArray(prob.firms) ? prob.firms : [prob.firms];
+    const spec = prob.answer_check || null;
 
     let revLabel = 'Chưa làm';
     let revCls = 'prob-review-state';
-    if (rev) {
-      if (isDue) {
-        revLabel = `Đến hạn ôn tập (${rev.next_due})`;
-        revCls += ' is-due';
-      } else {
-        revLabel = `Ôn tiếp: ${rev.next_due} (${rev.interval_days} ngày)`;
-        if (rev.last_grade === 'good') revCls += ' is-mastered';
-      }
+    if (status === 'correct') {
+      revLabel = 'Đã giải đúng ✓';
+      revCls += ' is-mastered';
+    } else if (status === 'incorrect') {
+      revLabel = 'Cần làm lại';
+      revCls += ' is-due';
     }
 
     const diffCls =
@@ -1405,9 +1418,18 @@ function bootBrowserApp() {
     const hint1Text = hints[0] || '';
     const hint2Text = hints.slice(1).join('\n\n');
 
-    const nextAgain = computeNextReview(rev, 'again', todayIso).interval_days;
-    const nextHard = computeNextReview(rev, 'hard', todayIso).interval_days;
-    const nextGood = computeNextReview(rev, 'good', todayIso).interval_days;
+    const inputStateCls =
+      status === 'correct' ? ' is-correct' : status === 'incorrect' ? ' is-incorrect' : '';
+
+    let feedbackHtml = '';
+    if (notice) {
+      feedbackHtml = `<span class="problem-answer-feedback is-hint">${escapeHtml(notice)}</span>`;
+    } else if (status === 'correct') {
+      const disp = spec?.display ? ` · Đáp số chuẩn: ${spec.display}` : '';
+      feedbackHtml = `<span class="problem-answer-feedback is-correct">✓ Chính xác${escapeHtml(disp)}</span>`;
+    } else if (status === 'incorrect') {
+      feedbackHtml = `<span class="problem-answer-feedback is-incorrect">✕ Chưa khớp — hãy kiểm tra lại phép tính</span>`;
+    }
 
     return `
       <article class="problem-card" data-problem-card="${escapeHtml(prob.id)}">
@@ -1424,6 +1446,41 @@ function bootBrowserApp() {
 
         <div class="problem-prompt prose">
           ${renderMarkdownWithMath(prob.prompt || '', katexInst)}
+        </div>
+
+        <div class="problem-answer-panel">
+          <textarea
+            class="problem-scratch-input"
+            rows="2"
+            data-prob-scratch="${escapeHtml(prob.id)}"
+            placeholder="Nháp nhanh các bước biến đổi hoặc công thức của bạn..."
+          >${escapeHtml(savedScratch)}</textarea>
+          ${
+            spec
+              ? `<label class="problem-answer-label" for="ans-input-${escapeHtml(prob.id)}">
+                   Đáp số kiểm tra — ${escapeHtml(spec.label)}:
+                 </label>
+                 <div class="problem-answer-row">
+                   <input
+                     id="ans-input-${escapeHtml(prob.id)}"
+                     type="text"
+                     class="problem-answer-input${inputStateCls}"
+                     data-prob-answer-input="${escapeHtml(prob.id)}"
+                     value="${escapeHtml(savedAnswer)}"
+                     placeholder="Nhập số, phân số 1/6 hoặc %..."
+                     autocomplete="off"
+                   />
+                   <button
+                     type="button"
+                     class="btn btn-primary"
+                     data-prob-check="${escapeHtml(prob.id)}"
+                   >
+                     Kiểm tra
+                   </button>
+                   ${feedbackHtml}
+                 </div>`
+              : ''
+          }
         </div>
 
         <div class="problem-reveal-controls">
@@ -1446,7 +1503,7 @@ function bootBrowserApp() {
           </button>
           <button
             type="button"
-            class="btn ${reveal.solution ? 'btn-teal' : 'btn-primary'}"
+            class="btn ${reveal.solution ? 'btn-teal' : ''}"
             data-prob-action="solution"
             data-prob-id="${escapeHtml(prob.id)}"
           >
@@ -1480,61 +1537,30 @@ function bootBrowserApp() {
                </div>`
             : ''
         }
-
-        <div class="sm2-grade-bar">
-          <span class="sm2-grade-caption">Tự đánh giá độ trôi chảy để lập lịch ôn tập SM-2:</span>
-          <div class="sm2-grade-buttons">
-            <button
-              type="button"
-              class="sm2-btn sm2-btn-again${rev?.last_grade === 'again' ? ' is-last-grade' : ''}"
-              data-sm2-grade="again"
-              data-prob-id="${escapeHtml(prob.id)}"
-            >
-              Làm lại · ${nextAgain} ngày
-            </button>
-            <button
-              type="button"
-              class="sm2-btn sm2-btn-hard${rev?.last_grade === 'hard' ? ' is-last-grade' : ''}"
-              data-sm2-grade="hard"
-              data-prob-id="${escapeHtml(prob.id)}"
-            >
-              Còn ngập ngừng · ${nextHard} ngày
-            </button>
-            <button
-              type="button"
-              class="sm2-btn sm2-btn-good${rev?.last_grade === 'good' ? ' is-last-grade' : ''}"
-              data-sm2-grade="good"
-              data-prob-id="${escapeHtml(prob.id)}"
-            >
-              Đã nắm chắc · ${nextGood} ngày
-            </button>
-          </div>
-        </div>
       </article>`;
   }
 
   function updateProblemStatsStripDom() {
     const statsEl = document.getElementById('problems-stats-strip');
     if (!statsEl) return;
-    const todayIso = getTodayIso();
-    const reviews = state.progress.problem_reviews;
+    const attempts = state.progress.problem_attempts;
 
-    let dueCount = 0;
-    let unseenCount = 0;
-    let masteredCount = 0;
+    let unansweredCount = 0;
+    let retryCount = 0;
+    let solvedCount = 0;
     for (const p of state.problems) {
-      const r = reviews[p.id];
-      if (!r) unseenCount += 1;
-      else if (isProblemDue(r, todayIso)) dueCount += 1;
-      else if (r.last_grade === 'good') masteredCount += 1;
+      const st = attempts[p.id]?.status || 'draft';
+      if (st === 'correct') solvedCount += 1;
+      else if (st === 'incorrect') retryCount += 1;
+      else unansweredCount += 1;
     }
 
-    const filtered = filterProblemsList(state.problems, state.problemFilters, reviews, todayIso);
+    const filtered = filterProblemsList(state.problems, state.problemFilters, attempts);
     statsEl.innerHTML = `
       <span>Hiển thị: <strong>${filtered.length} / ${state.problems.length}</strong> đề</span>
-      <span>Đến hạn hôm nay: <strong>${dueCount}</strong></span>
-      <span>Chưa làm: <strong>${unseenCount}</strong></span>
-      <span>Đã vững: <strong>${masteredCount}</strong></span>
+      <span>Đã giải đúng: <strong>${solvedCount}</strong></span>
+      <span>Cần làm lại: <strong>${retryCount}</strong></span>
+      <span>Chưa làm: <strong>${unansweredCount}</strong></span>
     `;
   }
 
@@ -1550,7 +1576,7 @@ function bootBrowserApp() {
       renderProblemsListOnly();
       return;
     }
-    cardEl.outerHTML = renderProblemCardHtml(prob, getTodayIso(), getKatex());
+    cardEl.outerHTML = renderProblemCardHtml(prob, getKatex());
     updateProblemStatsStripDom();
   }
 
@@ -1558,23 +1584,22 @@ function bootBrowserApp() {
     const listWrap = document.getElementById('problems-cards-list');
     if (!listWrap) return;
 
-    const todayIso = getTodayIso();
     const katexInst = getKatex();
-    const reviews = state.progress.problem_reviews;
-    const filtered = filterProblemsList(state.problems, state.problemFilters, reviews, todayIso);
+    const attempts = state.progress.problem_attempts;
+    const filtered = filterProblemsList(state.problems, state.problemFilters, attempts);
 
     updateProblemStatsStripDom();
 
     if (filtered.length === 0) {
       listWrap.innerHTML = `
         <div class="empty-state">
-          Không có câu hỏi nào khớp với bộ lọc hiện tại. Hãy chuyển Hàng đợi sang <strong>Tất cả</strong> để duyệt toàn bộ ngân hàng đề.
+          Không có câu hỏi nào khớp với bộ lọc hiện tại. Hãy chuyển Trạng thái sang <strong>Tất cả</strong> để duyệt toàn bộ ngân hàng đề.
         </div>`;
       return;
     }
 
     listWrap.innerHTML = filtered
-      .map((prob) => renderProblemCardHtml(prob, todayIso, katexInst))
+      .map((prob) => renderProblemCardHtml(prob, katexInst))
       .join('');
   }
 
@@ -1608,9 +1633,9 @@ function bootBrowserApp() {
 
     const queueOptions = [
       { value: 'all', label: 'Tất cả' },
-      { value: 'due', label: 'Đến hạn ôn hôm nay' },
-      { value: 'unseen', label: 'Chưa làm' },
-      { value: 'mastered', label: 'Đã vững' },
+      { value: 'unanswered', label: 'Chưa làm' },
+      { value: 'retry', label: 'Cần làm lại' },
+      { value: 'solved', label: 'Đã giải đúng' },
     ];
 
     els.problemsContainer.innerHTML = `
@@ -1618,7 +1643,7 @@ function bootBrowserApp() {
         <div class="eyebrow-label">Phòng Luyện Đề Phỏng Vấn Định Lượng</div>
         <h1 class="page-title">Ngân Hàng Bài Toán Xác Suất, Thống Kê &amp; Vi Cấu Trúc</h1>
         <p class="page-subtitle">
-          Tự bấm giờ giải trên giấy nháp trước khi mở từng bậc gợi ý. Đánh giá trung thực sau mỗi lần giải để thuật toán SM-2 tự động nhắc lại đúng thời điểm điểm rơi trí nhớ.
+          Tự biến đổi trên khung nháp và điền đáp số chốt để chấm kiểm tra ngay lập tức trước khi mở gợi ý hoặc xem lời giải chứng minh.
         </p>
         <div id="problems-stats-strip" class="drill-stats-strip"></div>
       </header>
@@ -1662,7 +1687,7 @@ function bootBrowserApp() {
         </div>
 
         <div class="filter-field">
-          <label class="filter-label" for="filter-prob-queue">Hàng đợi ôn tập</label>
+          <label class="filter-label" for="filter-prob-queue">Trạng thái</label>
           <select id="filter-prob-queue" class="filter-select" data-prob-filter="queue">
             ${queueOptions
               .map(
@@ -2336,7 +2361,47 @@ function bootBrowserApp() {
       refreshLibraryList(true);
     });
 
-    // Problem Drill filters, progressive hints & SM-2 grading
+    // Problem Drill filters, scratchpad, answer auto-check & progressive hints
+    function handleCheckProblem(probId) {
+      const prob = state.problems.find((p) => p.id === probId);
+      if (!prob || !prob.answer_check) return;
+      const cardEl = els.problemsContainer
+        ? [...els.problemsContainer.querySelectorAll('[data-problem-card]')].find(
+            (el) => el.getAttribute('data-problem-card') === probId
+          )
+        : null;
+      const inputEl = cardEl?.querySelector('[data-prob-answer-input]');
+      const scratchEl = cardEl?.querySelector('[data-prob-scratch]');
+      const rawAnswer = inputEl ? inputEl.value : ensureProblemAttempt(probId).answer;
+
+      const att = ensureProblemAttempt(probId);
+      att.answer = rawAnswer;
+      if (scratchEl) att.scratch = scratchEl.value;
+
+      const verdict = checkProblemAnswer(rawAnswer, prob.answer_check);
+      if (verdict.empty) {
+        state.problemNotices[probId] = 'Hãy điền một con số hoặc phân số trước khi kiểm tra';
+        rerenderSingleProblemCard(probId);
+        return;
+      }
+      if (verdict.invalid) {
+        state.problemNotices[probId] = 'Định dạng chưa hợp lệ — hãy nhập số, phân số 1/6 hoặc %';
+        rerenderSingleProblemCard(probId);
+        return;
+      }
+
+      delete state.problemNotices[probId];
+      att.status = verdict.ok ? 'correct' : 'incorrect';
+      recordStudyToday();
+      renderSidebarMetricsAndBadges();
+      if (state.problemFilters.queue === 'all') {
+        rerenderSingleProblemCard(probId);
+      } else {
+        renderProblemsListOnly();
+      }
+      scheduleProgressSave(0);
+    }
+
     els.problemsContainer?.addEventListener('change', (evt) => {
       const sel = evt.target.closest('[data-prob-filter]');
       if (!sel) return;
@@ -2347,7 +2412,45 @@ function bootBrowserApp() {
       }
     });
 
+    els.problemsContainer?.addEventListener('input', (evt) => {
+      const scratchEl = evt.target.closest('[data-prob-scratch]');
+      if (scratchEl) {
+        const probId = scratchEl.getAttribute('data-prob-scratch');
+        if (probId) {
+          const att = ensureProblemAttempt(probId);
+          att.scratch = scratchEl.value;
+          scheduleProgressSave(400);
+        }
+        return;
+      }
+      const ansEl = evt.target.closest('[data-prob-answer-input]');
+      if (ansEl) {
+        const probId = ansEl.getAttribute('data-prob-answer-input');
+        if (probId) {
+          const att = ensureProblemAttempt(probId);
+          att.answer = ansEl.value;
+          scheduleProgressSave(400);
+        }
+      }
+    });
+
+    els.problemsContainer?.addEventListener('keydown', (evt) => {
+      if (evt.key !== 'Enter') return;
+      const ansEl = evt.target.closest('[data-prob-answer-input]');
+      if (!ansEl) return;
+      evt.preventDefault();
+      const probId = ansEl.getAttribute('data-prob-answer-input');
+      if (probId) handleCheckProblem(probId);
+    });
+
     els.problemsContainer?.addEventListener('click', (evt) => {
+      const checkBtn = evt.target.closest('[data-prob-check]');
+      if (checkBtn) {
+        const probId = checkBtn.getAttribute('data-prob-check');
+        if (probId) handleCheckProblem(probId);
+        return;
+      }
+
       const actionBtn = evt.target.closest('[data-prob-action]');
       if (actionBtn) {
         const probId = actionBtn.getAttribute('data-prob-id');
@@ -2359,25 +2462,6 @@ function bootBrowserApp() {
         else if (action === 'solution') cur.solution = !cur.solution;
         state.problemReveals[probId] = cur;
         rerenderSingleProblemCard(probId);
-        return;
-      }
-
-      const gradeBtn = evt.target.closest('[data-sm2-grade]');
-      if (gradeBtn) {
-        const probId = gradeBtn.getAttribute('data-prob-id');
-        const grade = gradeBtn.getAttribute('data-sm2-grade');
-        if (!probId || !grade) return;
-        const todayIso = getTodayIso();
-        const prev = state.progress.problem_reviews[probId] || null;
-        state.progress.problem_reviews[probId] = computeNextReview(prev, grade, todayIso);
-        recordStudyToday();
-        renderSidebarMetricsAndBadges();
-        if (state.problemFilters.queue === 'all') {
-          rerenderSingleProblemCard(probId);
-        } else {
-          renderProblemsListOnly();
-        }
-        scheduleProgressSave(0);
       }
     });
 

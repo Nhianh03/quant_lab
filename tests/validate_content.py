@@ -681,6 +681,28 @@ def validate_problems(base_dir: Path) -> list[str]:
         if not isinstance(hints, list) or len(hints) < 2 or not all(_is_non_empty_str(h) for h in hints):
             errors.append(f"{p_ctx}: 'hints' must be a list of at least 2 non-empty strings.")
 
+        ans_chk = prob.get("answer_check")
+        if not isinstance(ans_chk, dict):
+            errors.append(f"{p_ctx}: missing required 'answer_check' object.")
+        else:
+            for ak in ("label", "display"):
+                aval = ans_chk.get(ak)
+                if not _is_non_empty_str(aval):
+                    errors.append(f"{p_ctx}.answer_check.{ak}: must be a non-empty string.")
+                elif isinstance(aval, str) and "$" in aval:
+                    errors.append(f"{p_ctx}.answer_check.{ak}: must be plain text without LaTeX '$'.")
+            unit_val = ans_chk.get("unit")
+            if unit_val not in {"number", "percent", "prob"}:
+                errors.append(
+                    f"{p_ctx}.answer_check.unit: must be one of ('number', 'percent', 'prob'), got {unit_val!r}."
+                )
+            target_val = ans_chk.get("target")
+            if isinstance(target_val, bool) or not isinstance(target_val, (int, float)):
+                errors.append(f"{p_ctx}.answer_check.target: must be a finite number.")
+            tol_val = ans_chk.get("tolerance")
+            if isinstance(tol_val, bool) or not isinstance(tol_val, (int, float)) or tol_val <= 0:
+                errors.append(f"{p_ctx}.answer_check.tolerance: must be a positive number.")
+
         # Validate balanced LaTeX across problem text fields
         latex_chunks: list[tuple[str, str]] = []
         for field_name in ("title", "prompt", "solution"):
