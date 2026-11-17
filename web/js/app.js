@@ -882,7 +882,13 @@ function bootBrowserApp() {
         ? state.progress.last_active_lesson
         : DEFAULT_LESSON_ID;
     const resumeLesson = state.lessonMap.get(resumeId) || state.orderedLessons[0];
-    const dueCount = countDueProblemsToday();
+    let retryCount = 0;
+    let solvedCount = 0;
+    for (const prob of state.problems) {
+      const st = state.progress.problem_attempts[prob.id]?.status;
+      if (st === 'incorrect') retryCount += 1;
+      else if (st === 'correct') solvedCount += 1;
+    }
 
     const checkSvg = `
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -890,10 +896,10 @@ function bootBrowserApp() {
         <path d="M5.2 8.2L7.1 10.1L11 6.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`;
 
-    const dueBtnHtml =
-      dueCount > 0
-        ? `<button type="button" class="btn btn-teal" data-open-due-reviews="1">Ôn tập câu đến hạn hôm nay (${dueCount})</button>`
-        : `<a href="#problems" class="btn">Mở ngân hàng luyện đề (${state.problems.length} câu)</a>`;
+    const drillBtnHtml =
+      retryCount > 0
+        ? `<button type="button" class="btn btn-teal" data-open-retry-problems="1">Làm lại câu chưa khớp (${retryCount})</button>`
+        : `<a href="#problems" class="btn">Luyện đề phỏng vấn (${solvedCount}/${state.problems.length} câu)</a>`;
 
     const semestersHtml = (state.syllabus.semesters || [])
       .map((sem, semIdx) => {
@@ -1031,7 +1037,7 @@ function bootBrowserApp() {
               ? `<a href="#lesson/${encodeURIComponent(resumeLesson.id)}" class="btn btn-primary">Tiếp tục bài học &rarr;</a>`
               : ''
           }
-          ${dueBtnHtml}
+          ${drillBtnHtml}
         </div>
       </div>
 
@@ -2324,9 +2330,9 @@ function bootBrowserApp() {
     });
 
     els.roadmapContainer?.addEventListener('click', (evt) => {
-      const dueBtn = evt.target.closest('[data-open-due-reviews]');
-      if (!dueBtn) return;
-      state.problemFilters.queue = 'due';
+      const retryBtn = evt.target.closest('[data-open-retry-problems]');
+      if (!retryBtn) return;
+      state.problemFilters.queue = 'retry';
       state.problemFilters.module = 'all';
       state.problemFilters.difficulty = 'all';
       state.problemFilters.firm = 'all';

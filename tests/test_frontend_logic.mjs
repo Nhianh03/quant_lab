@@ -701,3 +701,170 @@ test('Vercel static bundle builder packages web, 36 lessons, 120 problems, libra
     fs.rmSync(tmpOut, { recursive: true, force: true });
   }
 });
+
+test('bootBrowserApp renders #roadmap, #lesson, #problems, and #projects in Vercel Static Mode without runtime errors', async () => {
+  const syllabusJson = fs.readFileSync(path.join(APP_ROOT, 'content', 'syllabus.json'), 'utf8');
+  const problemsJson = fs.readFileSync(path.join(APP_ROOT, 'content', 'problems.json'), 'utf8');
+  const lessonMd = fs.readFileSync(
+    path.join(APP_ROOT, 'content', 'lessons', 'm0-01-to-hop-phep-dem-bu-tru-va-doi-xung.md'),
+    'utf8'
+  );
+
+  const elementsById = new Map();
+  const makeStubElement = (id = '', tag = 'DIV') => {
+    const listeners = new Map();
+    const el = {
+      id,
+      tagName: tag,
+      className: '',
+      textContent: '',
+      innerHTML: '',
+      value: '',
+      hidden: false,
+      style: {},
+      dataset: {},
+      attributes: {},
+      children: [],
+      parentNode: null,
+      ownerDocument: null,
+      classList: {
+        add(...cls) {
+          const cur = new Set(el.className.split(/\s+/).filter(Boolean));
+          cls.forEach((c) => cur.add(c));
+          el.className = [...cur].join(' ');
+        },
+        remove(...cls) {
+          const cur = new Set(el.className.split(/\s+/).filter(Boolean));
+          cls.forEach((c) => cur.delete(c));
+          el.className = [...cur].join(' ');
+        },
+        toggle(c, force) {
+          const has = el.className.split(/\s+/).includes(c);
+          const next = force !== undefined ? Boolean(force) : !has;
+          if (next) this.add(c);
+          else this.remove(c);
+          return next;
+        },
+        contains(c) {
+          return el.className.split(/\s+/).includes(c);
+        },
+      },
+      setAttribute(k, v) { el.attributes[k] = String(v); },
+      getAttribute(k) { return el.attributes[k] ?? null; },
+      appendChild(child) { child.parentNode = el; el.children.push(child); return child; },
+      insertAdjacentElement() {},
+      addEventListener(ev, fn) {
+        if (!listeners.has(ev)) listeners.set(ev, []);
+        listeners.get(ev).push(fn);
+      },
+      querySelector() { return null; },
+      querySelectorAll() { return []; },
+      closest() { return null; },
+    };
+    return el;
+  };
+
+  const docListeners = new Map();
+  const winListeners = new Map();
+  const fakeDoc = {
+    readyState: 'complete',
+    documentElement: { scrollHeight: 1000 },
+    createElement: (tag) => {
+      const e = makeStubElement('', String(tag).toUpperCase());
+      e.ownerDocument = fakeDoc;
+      return e;
+    },
+    getElementById: (id) => {
+      if (!elementsById.has(id)) {
+        const e = makeStubElement(id);
+        e.ownerDocument = fakeDoc;
+        elementsById.set(id, e);
+      }
+      return elementsById.get(id);
+    },
+    querySelector: () => null,
+    querySelectorAll: () => [],
+    addEventListener: (ev, fn) => {
+      if (!docListeners.has(ev)) docListeners.set(ev, []);
+      docListeners.get(ev).push(fn);
+    },
+  };
+
+  const storage = new Map();
+  const fakeWin = {
+    location: { hash: '#roadmap' },
+    innerHeight: 900,
+    innerWidth: 1280,
+    scrollY: 0,
+    scrollTo() {},
+    requestAnimationFrame: (cb) => cb(),
+    getSelection: () => ({ isCollapsed: true, rangeCount: 0 }),
+    localStorage: {
+      getItem: (k) => (storage.has(k) ? storage.get(k) : null),
+      setItem: (k, v) => storage.set(k, String(v)),
+    },
+    addEventListener: (ev, fn) => {
+      if (!winListeners.has(ev)) winListeners.set(ev, []);
+      winListeners.get(ev).push(fn);
+    },
+  };
+
+  const prevWin = globalThis.window;
+  const prevDoc = globalThis.document;
+  const prevFetch = globalThis.fetch;
+
+  globalThis.window = fakeWin;
+  globalThis.document = fakeDoc;
+  globalThis.fetch = async (url) => {
+    const u = String(url);
+    if (u.startsWith('/api/')) {
+      return { ok: false, status: 404, headers: { get: () => 'text/html' }, text: async () => '' };
+    }
+    if (u === '/static-content/syllabus.json') {
+      return { ok: true, status: 200, headers: { get: () => 'application/json' }, json: async () => JSON.parse(syllabusJson) };
+    }
+    if (u === '/static-content/problems.json') {
+      return { ok: true, status: 200, headers: { get: () => 'application/json' }, json: async () => JSON.parse(problemsJson) };
+    }
+    if (u === '/static-content/library-index.json') {
+      return { ok: true, status: 200, headers: { get: () => 'application/json' }, json: async () => ({ files: [] }) };
+    }
+    if (u.startsWith('/static-content/lessons/')) {
+      return { ok: true, status: 200, headers: { get: () => 'text/markdown' }, text: async () => lessonMd };
+    }
+    return { ok: false, status: 404, headers: { get: () => 'text/plain' }, text: async () => '' };
+  };
+
+  try {
+    await import(`../web/js/app.js?boot=${Date.now()}`);
+    await new Promise((r) => setTimeout(r, 30));
+
+    // 1. Roadmap view rendered completely (no stuck loading state)
+    const roadmapHtml = fakeDoc.getElementById('roadmap-container').innerHTML;
+    assert.ok(roadmapHtml.includes('semester-block'), 'Roadmap must render semester blocks');
+
+    const triggerHash = async (hash) => {
+      fakeWin.location.hash = hash;
+      for (const fn of winListeners.get('hashchange') || []) {
+        await fn();
+      }
+      await new Promise((r) => setTimeout(r, 20));
+    };
+
+    // 2. Lesson view
+    await triggerHash('#lesson/m0-01-to-hop-phep-dem-bu-tru-va-doi-xung');
+    assert.ok(fakeDoc.getElementById('lesson-markdown-body').innerHTML.length > 500);
+
+    // 3. Problems view
+    await triggerHash('#problems');
+    assert.ok(fakeDoc.getElementById('problems-container').innerHTML.includes('drill-filter-bar'));
+
+    // 4. Projects view
+    await triggerHash('#projects/proj-1');
+    assert.ok(fakeDoc.getElementById('projects-container').innerHTML.includes('proj-1'));
+  } finally {
+    globalThis.window = prevWin;
+    globalThis.document = prevDoc;
+    globalThis.fetch = prevFetch;
+  }
+});
