@@ -9,6 +9,12 @@
  */
 
 import { checkProblemAnswer } from './answer_checker.js';
+import {
+  deleteInlineNote,
+  mountInlineNotesInContainer,
+  normalizeInlineNotesMap,
+  upsertInlineNote,
+} from './inline_notes.js';
 import { getTodayIso } from './spaced_repetition.js';
 import { escapeHtml, renderMarkdownWithMath } from './markdown_math.js';
 import { mountSimulator } from './simulators.js';
@@ -65,6 +71,7 @@ export function createDefaultProgress() {
     completed_readings: {},
     completed_milestones: {},
     lesson_notes: {},
+    inline_notes: {},
     problem_reviews: {},
     problem_attempts: {},
     projects: {},
@@ -131,6 +138,7 @@ export function normalizeProgressPayload(raw) {
     'completed_readings',
     'completed_milestones',
     'lesson_notes',
+    'inline_notes',
     'problem_reviews',
     'problem_attempts',
     'projects',
@@ -168,6 +176,8 @@ export function normalizeProgressPayload(raw) {
       }
     }
   }
+
+  clean.inline_notes = normalizeInlineNotesMap(raw.inline_notes);
 
   if (isPlainObject(raw.problem_reviews)) {
     for (const [pid, rev] of Object.entries(raw.problem_reviews)) {
@@ -421,6 +431,8 @@ function bootBrowserApp() {
     },
     problemReveals: {},
     problemNotices: {},
+    editingNoteIds: new Set(),
+    pendingSelection: null,
 
     // Persistence state
     isStaticHost: false,
@@ -490,7 +502,53 @@ function bootBrowserApp() {
     btnRefreshLibrary: document.getElementById('btn-refresh-library'),
     linkOpenLibraryRaw: document.getElementById('link-open-library-raw'),
     libraryViewerBody: document.getElementById('library-viewer-body'),
+
+    selectionPopover: document.getElementById('selection-note-popover'),
+    btnSelectionAddNote: document.getElementById('btn-selection-add-note'),
   };
+
+  function hideSelectionPopover() {
+    state.pendingSelection = null;
+    if (els.selectionPopover) {
+      els.selectionPopover.hidden = true;
+    }
+  }
+
+  function findScopeContainerDom(scopeKey) {
+    if (!scopeKey) return null;
+    if (els.lessonBody?.getAttribute('data-note-scope') === scopeKey) {
+      return els.lessonBody;
+    }
+    const allScopes = document.querySelectorAll('[data-note-scope]');
+    for (const el of allScopes) {
+      if (el.getAttribute('data-note-scope') === scopeKey) return el;
+    }
+    return null;
+  }
+
+  function remountScopeInlineNotes(scopeKey, focusNoteId = null) {
+    const containerEl = findScopeContainerDom(scopeKey);
+    if (!containerEl) return;
+    const isLessonScope = containerEl === els.lessonBody;
+    mountInlineNotesInContainer(
+      containerEl,
+      scopeKey,
+      state.progress.inline_notes,
+      state.editingNoteIds,
+      getKatex(),
+      { showHeadingButtons: isLessonScope }
+    );
+    if (focusNoteId) {
+      const ta = [...containerEl.querySelectorAll('[data-inline-note-input]')].find(
+        (el) => el.getAttribute('data-inline-note-input') === focusNoteId
+      );
+      if (ta) {
+        ta.focus();
+        ta.selectionStart = ta.value.length;
+        ta.selectionEnd = ta.value.length;
+      }
+    }
+  }
 
   /* ------------------------------------------------------------------------
    * Utility & Persistence Helpers
@@ -1229,6 +1287,14 @@ function bootBrowserApp() {
     if (state.activeLessonId !== requestedId || !els.lessonBody) return;
     const bodyWithoutTopH1 = stripLeadingMarkdownH1(mdText);
     els.lessonBody.innerHTML = renderMarkdownWithMath(bodyWithoutTopH1, getKatex());
+    mountInlineNotesInContainer(
+      els.lessonBody,
+      requestedId,
+      state.progress.inline_notes,
+      state.editingNoteIds,
+      getKatex(),
+      { showHeadingButtons: true }
+    );
   }
 
   /* ------------------------------------------------------------------------
@@ -1564,6 +1630,24 @@ function bootBrowserApp() {
     `;
   }
 
+  function mountProblemPromptNotes(rootEl) {
+    if (!rootEl) return;
+    for (const cardEl of rootEl.querySelectorAll('[data-problem-card]')) {
+      const pid = cardEl.getAttribute('data-problem-card');
+      const promptEl = cardEl.querySelector('.problem-prompt');
+      if (pid && promptEl) {
+        mountInlineNotesInContainer(
+          promptEl,
+          pid,
+          state.progress.inline_notes,
+          state.editingNoteIds,
+          getKatex(),
+          { showHeadingButtons: false }
+        );
+      }
+    }
+  }
+
   function rerenderSingleProblemCard(probId) {
     const prob = state.problems.find((p) => p.id === probId);
     if (!prob) return;
@@ -1577,6 +1661,7 @@ function bootBrowserApp() {
       return;
     }
     cardEl.outerHTML = renderProblemCardHtml(prob, getKatex());
+    mountProblemPromptNotes(els.problemsContainer);
     updateProblemStatsStripDom();
   }
 
@@ -1601,6 +1686,7 @@ function bootBrowserApp() {
     listWrap.innerHTML = filtered
       .map((prob) => renderProblemCardHtml(prob, katexInst))
       .join('');
+    mountProblemPromptNotes(listWrap);
   }
 
   function renderProblemsView() {
@@ -2546,8 +2632,193 @@ function bootBrowserApp() {
       }
     });
 
+    // Notion-style Inline Notes: section "+ Ghi chú", text-selection popover & card actions
+    function finishEditingInlineNote(scopeKey, noteId) {
+      if (!scopeKey || !noteId) return;
+      state.editingNoteIds.delete(noteId);
+      const list = state.progress.inline_notes[scopeKey] || [];
+      const target = list.find((n) => n.id === noteId);
+      if (target && !target.text.trim() && !target.quote) {
+        deleteInlineNote(state.progress.inline_notes, scopeKey, noteId);
+      }
+      remountScopeInlineNotes(scopeKey);
+      scheduleProgressSave(0);
+    }
+
+    function checkTextSelectionForNote() {
+      if (!els.selectionPopover) return;
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
+        hideSelectionPopover();
+        return;
+      }
+      const selectedText = sel.toString().replace(/\s+/g, ' ').trim();
+      if (selectedText.length < 2) {
+        hideSelectionPopover();
+        return;
+      }
+
+      const range = sel.getRangeAt(0);
+      const anchorNode =
+        range.commonAncestorContainer.nodeType === 1
+          ? range.commonAncestorContainer
+          : range.commonAncestorContainer.parentElement;
+      if (!anchorNode || anchorNode.closest('.inline-note-stack')) {
+        hideSelectionPopover();
+        return;
+      }
+
+      const scopeEl = anchorNode.closest('[data-note-scope]');
+      const blockEl = anchorNode.closest('[data-note-block-idx]');
+      if (!scopeEl || !blockEl || !scopeEl.contains(blockEl)) {
+        hideSelectionPopover();
+        return;
+      }
+
+      const scopeKey = scopeEl.getAttribute('data-note-scope');
+      const blockIdx = Number(blockEl.getAttribute('data-note-block-idx')) || 0;
+      const rect = range.getBoundingClientRect();
+      if (!scopeKey || (rect.width === 0 && rect.height === 0)) {
+        hideSelectionPopover();
+        return;
+      }
+
+      state.pendingSelection = {
+        scopeKey,
+        blockIdx,
+        quote: selectedText.slice(0, 240),
+      };
+
+      const leftPx = Math.min(
+        window.innerWidth - 95,
+        Math.max(95, rect.left + rect.width / 2)
+      );
+      const topPx = Math.max(44, rect.top - 8);
+      els.selectionPopover.style.left = `${Math.round(leftPx)}px`;
+      els.selectionPopover.style.top = `${Math.round(topPx)}px`;
+      els.selectionPopover.hidden = false;
+    }
+
+    document.addEventListener('mouseup', () => {
+      window.requestAnimationFrame(checkTextSelectionForNote);
+    });
+    document.addEventListener('keyup', (evt) => {
+      if (evt.key.startsWith('Arrow') || evt.key === 'Shift') {
+        checkTextSelectionForNote();
+      }
+    });
+
+    els.btnSelectionAddNote?.addEventListener('mousedown', (evt) => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      const pending = state.pendingSelection;
+      if (!pending) return;
+      hideSelectionPopover();
+      window.getSelection()?.removeAllRanges();
+
+      const rec = upsertInlineNote(state.progress.inline_notes, pending.scopeKey, {
+        block_index: pending.blockIdx,
+        quote: pending.quote,
+        text: '',
+      });
+      if (rec) {
+        state.editingNoteIds.add(rec.id);
+        recordStudyToday();
+        renderSidebarMetricsAndBadges();
+        remountScopeInlineNotes(pending.scopeKey, rec.id);
+        scheduleProgressSave(300);
+      }
+    });
+
+    document.addEventListener('click', (evt) => {
+      const addBlockBtn = evt.target.closest('[data-add-block-note]');
+      if (addBlockBtn) {
+        evt.preventDefault();
+        const scopeKey = addBlockBtn.getAttribute('data-note-scope-owner');
+        const blockIdx = Number(addBlockBtn.getAttribute('data-add-block-note')) || 0;
+        if (!scopeKey) return;
+        const rec = upsertInlineNote(state.progress.inline_notes, scopeKey, {
+          block_index: blockIdx,
+          quote: '',
+          text: '',
+        });
+        if (rec) {
+          state.editingNoteIds.add(rec.id);
+          recordStudyToday();
+          renderSidebarMetricsAndBadges();
+          remountScopeInlineNotes(scopeKey, rec.id);
+        }
+        return;
+      }
+
+      const doneBtn = evt.target.closest('[data-inline-note-done]');
+      if (doneBtn) {
+        const noteId = doneBtn.getAttribute('data-inline-note-done');
+        const scopeKey = doneBtn.getAttribute('data-note-scope-owner');
+        finishEditingInlineNote(scopeKey, noteId);
+        return;
+      }
+
+      const deleteBtn = evt.target.closest('[data-inline-note-delete]');
+      if (deleteBtn) {
+        const noteId = deleteBtn.getAttribute('data-inline-note-delete');
+        const scopeKey = deleteBtn.getAttribute('data-note-scope-owner');
+        if (scopeKey && noteId) {
+          state.editingNoteIds.delete(noteId);
+          deleteInlineNote(state.progress.inline_notes, scopeKey, noteId);
+          remountScopeInlineNotes(scopeKey);
+          scheduleProgressSave(0);
+        }
+        return;
+      }
+
+      const editTrigger = evt.target.closest('[data-inline-note-edit]');
+      if (editTrigger && !evt.target.closest('a')) {
+        const noteId = editTrigger.getAttribute('data-inline-note-edit');
+        const scopeKey = editTrigger.getAttribute('data-note-scope-owner');
+        if (scopeKey && noteId) {
+          state.editingNoteIds.add(noteId);
+          remountScopeInlineNotes(scopeKey, noteId);
+        }
+      }
+    });
+
+    document.addEventListener('input', (evt) => {
+      const noteInput = evt.target.closest('[data-inline-note-input]');
+      if (!noteInput) return;
+      const noteId = noteInput.getAttribute('data-inline-note-input');
+      const scopeKey = noteInput.getAttribute('data-note-scope-owner');
+      if (!scopeKey || !noteId) return;
+      const list = state.progress.inline_notes[scopeKey] || [];
+      const existing = list.find((n) => n.id === noteId);
+      if (existing) {
+        existing.text = noteInput.value;
+      } else {
+        upsertInlineNote(state.progress.inline_notes, scopeKey, {
+          id: noteId,
+          block_index: Number(noteInput.getAttribute('data-note-block')) || 0,
+          quote: noteInput.getAttribute('data-note-quote') || '',
+          text: noteInput.value,
+        });
+      }
+      recordStudyToday();
+      scheduleProgressSave(350);
+    });
+
+    document.addEventListener('keydown', (evt) => {
+      const noteInput = evt.target.closest('[data-inline-note-input]');
+      if (!noteInput) return;
+      if ((evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) || evt.key === 'Escape') {
+        evt.preventDefault();
+        const noteId = noteInput.getAttribute('data-inline-note-input');
+        const scopeKey = noteInput.getAttribute('data-note-scope-owner');
+        finishEditingInlineNote(scopeKey, noteId);
+      }
+    });
+
     // Update reading hairline progress bar on scroll inside #view-lesson
     const updateReaderScrollProgress = () => {
+      hideSelectionPopover();
       if (!els.readerScrollProgress || state.route.view !== 'lesson') return;
       const docEl = document.documentElement;
       const maxScroll = Math.max(0, docEl.scrollHeight - window.innerHeight);

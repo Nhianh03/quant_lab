@@ -6,6 +6,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { parseNumericExpression, checkProblemAnswer } from '../web/js/answer_checker.js';
+import {
+  upsertInlineNote,
+  deleteInlineNote,
+  getInlineNotesForScope,
+  renderInlineNoteCardHtml,
+  mountInlineNotesInContainer,
+} from '../web/js/inline_notes.js';
 import { renderMarkdownWithMath } from '../web/js/markdown_math.js';
 import { mountSimulator } from '../web/js/simulators.js';
 import {
@@ -349,6 +356,11 @@ test('app.js progress payload normalization matches server.py validate_progress_
       'prob-m1-01': { answer: '40', scratch: 'B* = 40, A* = 80', status: 'correct' },
       'prob-m1-02': { answer: '-0.2', scratch: '', status: 'incorrect' },
     },
+    inline_notes: {
+      'm1-04-mo-hinh-roll-glosten-milgrom-kyle-ofi': [
+        { id: 'n1', block_index: 2, quote: 'Hệ số Kyle lambda', text: 'Độ sâu thị trường tỉ lệ nghịch với $\\lambda$.' },
+      ],
+    },
     projects: {
       'proj-1': {
         checked_tasks: { 'task-p1-01': true },
@@ -366,6 +378,10 @@ test('app.js progress payload normalization matches server.py validate_progress_
   assert.equal(richPayload.problem_attempts['prob-m1-01'].status, 'correct');
   assert.equal(richPayload.problem_attempts['prob-m1-01'].answer, '40');
   assert.equal(richPayload.problem_attempts['prob-m1-02'].status, 'incorrect');
+  assert.equal(
+    richPayload.inline_notes['m1-04-mo-hinh-roll-glosten-milgrom-kyle-ofi'][0].quote,
+    'Hệ số Kyle lambda'
+  );
   assert.equal(richPayload.projects['proj-1'].metrics.sharpe, '1.92');
 
   // Reject malformed payloads
@@ -381,7 +397,7 @@ test('app.js progress payload normalization matches server.py validate_progress_
     'from server import validate_progress_payload, default_progress',
     'p1 = validate_progress_payload(json.loads(sys.argv[1]))',
     'p2 = validate_progress_payload(json.loads(sys.argv[2]))',
-    'assert p1["version"] == 1 and "problem_attempts" in p1 and p2["problem_attempts"]["prob-m1-01"]["status"] == "correct"',
+    'assert p1["version"] == 1 and "inline_notes" in p1 and len(p2["inline_notes"]["m1-04-mo-hinh-roll-glosten-milgrom-kyle-ofi"]) == 1',
     'print("OK")',
   ].join('; ');
 
@@ -474,6 +490,89 @@ test('all 120 problems include verified answer_check specs and SM-2 self-grading
   assert.ok(appJs.includes('data-prob-answer-input'), 'app.js must render answer input box');
 });
 
+test('inline_notes manages anchored notes per block and renders Notion-style cards safely', () => {
+  const map = {};
+  const n1 = upsertInlineNote(map, 'm6-02', {
+    id: 'note-1',
+    block_index: 4,
+    quote: 'Bổ đề Itô bậc hai',
+    text: 'Nhớ cộng thêm số hạng $\\frac{1}{2}\\sigma^2 f_{xx} dt$.',
+  });
+  const n2 = upsertInlineNote(map, 'm6-02', {
+    id: 'note-2',
+    block_index: 1,
+    quote: '',
+    text: 'Ghi chú đầu chương.',
+  });
+  assert.equal(n1.block_index, 4);
+  assert.equal(n2.block_index, 1);
+
+  // Ordered by block_index ascending
+  const ordered = getInlineNotesForScope(map, 'm6-02');
+  assert.deepEqual(ordered.map((n) => n.id), ['note-2', 'note-1']);
+
+  // Update existing note in place
+  upsertInlineNote(map, 'm6-02', {
+    id: 'note-1',
+    block_index: 4,
+    quote: 'Bổ đề Itô bậc hai',
+    text: 'Đã cập nhật nội dung.',
+  });
+  assert.equal(getInlineNotesForScope(map, 'm6-02')[1].text, 'Đã cập nhật nội dung.');
+
+  // Render card HTML in both read and edit modes
+  const readHtml = renderInlineNoteCardHtml(getInlineNotesForScope(map, 'm6-02')[1], false, null);
+  assert.ok(readHtml.includes('Bổ đề Itô bậc hai'));
+  assert.ok(readHtml.includes('Đã cập nhật nội dung.'));
+
+  const editHtml = renderInlineNoteCardHtml(getInlineNotesForScope(map, 'm6-02')[1], true, null);
+  assert.ok(editHtml.includes('inline-note-textarea'));
+
+  // Verify mountInlineNotesInContainer attaches + Ghi chú to headings and inserts stacks after target blocks
+  const makeFakeEl = (tag) => {
+    const el = {
+      tagName: tag,
+      className: '',
+      textContent: '',
+      innerHTML: '',
+      attributes: {},
+      children: [],
+      parentNode: null,
+      ownerDocument: null,
+      classList: { add(c) { el.className = `${el.className} ${c}`.trim(); } },
+      setAttribute(k, v) { el.attributes[k] = String(v); },
+      getAttribute(k) { return el.attributes[k] || null; },
+      appendChild(child) { child.parentNode = el; el.children.push(child); return child; },
+      insertAdjacentElement(pos, node) {
+        if (pos === 'afterend' && el.parentNode) {
+          const idx = el.parentNode.children.indexOf(el);
+          node.parentNode = el.parentNode;
+          el.parentNode.children.splice(idx + 1, 0, node);
+        }
+      },
+      querySelectorAll() { return []; },
+    };
+    return el;
+  };
+  const root = makeFakeEl('ARTICLE');
+  root.ownerDocument = { createElement: (t) => makeFakeEl(t.toUpperCase()) };
+  const h2 = makeFakeEl('H2');
+  const p1 = makeFakeEl('P');
+  root.appendChild(h2);
+  root.appendChild(p1);
+
+  mountInlineNotesInContainer(root, 'm6-02', map, new Set(['note-1']), null, { showHeadingButtons: true });
+  assert.equal(root.getAttribute('data-note-scope'), 'm6-02');
+  assert.equal(h2.children[0].textContent, '+ Ghi chú');
+  assert.ok(root.children.some((c) => c.className === 'inline-note-stack'));
+
+  // Delete cleans up empty scope array
+  deleteInlineNote(map, 'm6-02', 'note-1');
+  assert.equal(getInlineNotesForScope(map, 'm6-02').length, 1);
+  deleteInlineNote(map, 'm6-02', 'note-2');
+  assert.equal(map['m6-02'], undefined);
+});
+
 test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial deduplication', () => {
   const indexHtml = fs.readFileSync(path.join(APP_ROOT, 'web', 'index.html'), 'utf8');
   const stylesCss = fs.readFileSync(path.join(APP_ROOT, 'web', 'styles.css'), 'utf8');
@@ -530,6 +629,8 @@ test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial 
     'btn-refresh-library',
     'link-open-library-raw',
     'library-viewer-body',
+    'selection-note-popover',
+    'btn-selection-add-note',
     'katex-script',
   ];
   for (const id of requiredStaticIds) {
