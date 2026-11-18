@@ -255,44 +255,56 @@
     </button>
   </div>
 
-  <!-- Minimal Floating Ink Toolbar: Pen • Eraser • Undo • Color Palette -->
+  <!-- Minimal Floating Ink Toolbar: Pen • Eraser • Undo • Color Palette • Sizes • Collapse -->
   <div id="ink-floating-bar" class="ink-floating-bar" role="toolbar" aria-label="Thanh bút vẽ trực tiếp">
-    <button type="button" id="btn-ink-pen" class="ink-tool-btn" aria-pressed="false" title="Bút vẽ và gạch chân">
+    <button type="button" id="btn-ink-expand-fab" class="ink-expand-fab" title="Mở thanh bút vẽ" aria-label="Mở thanh bút vẽ">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <path d="M11.6 2.2a1.4 1.4 0 0 1 2 2L5.3 12.5 2.2 13.4l.9-3.1L11.6 2.2Z" stroke="currentColor" stroke-width="1.45" stroke-linejoin="round"/>
       </svg>
     </button>
-    <button type="button" id="btn-ink-eraser" class="ink-tool-btn" aria-pressed="false" title="Cục gôm xóa nét">
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <path d="M6.2 13.2H13.5M3.1 9.6l5.8-5.8a1.4 1.4 0 0 1 2 0l2.3 2.3a1.4 1.4 0 0 1 0 2l-4.5 4.5a1.4 1.4 0 0 1-1 .4H5.3L3.1 10.8a.85.85 0 0 1 0-1.2Z" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <button type="button" id="btn-ink-undo" class="ink-tool-btn" disabled title="Quay lại bước trước">
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <path d="M5.5 4.2L2.5 7.2l3 3" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M2.8 7.2h6.4a4.1 4.1 0 1 1 0 8.2H7.2" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/>
-      </svg>
-    </button>
-    <span class="ink-bar-sep" aria-hidden="true"></span>
-    <div class="ink-palette" role="group" aria-label="Bảng màu bút">
-      <button type="button" class="ink-swatch is-active" data-ink-color="sage" style="--swatch-color: #2f6349" title="Xanh rêu" aria-label="Xanh rêu"></button>
-      <button type="button" class="ink-swatch" data-ink-color="coral" style="--swatch-color: #d9534f" title="Đỏ cam" aria-label="Đỏ cam"></button>
-      <button type="button" class="ink-swatch" data-ink-color="ocean" style="--swatch-color: #2b6cb0" title="Xanh biển" aria-label="Xanh biển"></button>
-      <button type="button" class="ink-swatch is-highlighter" data-ink-color="highlighter" style="--swatch-color: #f2c94c" title="Vàng dạ quang" aria-label="Vàng dạ quang"></button>
+    <div class="ink-bar-controls">
+      <button type="button" id="btn-ink-pen" class="ink-tool-btn" aria-pressed="false" title="Bút vẽ và gạch chân">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M11.6 2.2a1.4 1.4 0 0 1 2 2L5.3 12.5 2.2 13.4l.9-3.1L11.6 2.2Z" stroke="currentColor" stroke-width="1.45" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button type="button" id="btn-ink-eraser" class="ink-tool-btn" aria-pressed="false" title="Cục gôm xóa nét">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M6.2 13.2H13.5M3.1 9.6l5.8-5.8a1.4 1.4 0 0 1 2 0l2.3 2.3a1.4 1.4 0 0 1 0 2l-4.5 4.5a1.4 1.4 0 0 1-1 .4H5.3L3.1 10.8a.85.85 0 0 1 0-1.2Z" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button type="button" id="btn-ink-undo" class="ink-tool-btn" disabled title="Quay lại bước trước">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M5.5 4.2L2.5 7.2l3 3" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2.8 7.2h6.4a4.1 4.1 0 1 1 0 8.2H7.2" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <span class="ink-bar-sep" aria-hidden="true"></span>
+      <div class="ink-palette" role="group" aria-label="Bảng màu bút">
+        <button type="button" class="ink-swatch is-active" data-ink-color="sage" style="--swatch-color: #2f6349" title="Xanh rêu" aria-label="Xanh rêu"></button>
+        <button type="button" class="ink-swatch" data-ink-color="coral" style="--swatch-color: #d9534f" title="Đỏ cam" aria-label="Đỏ cam"></button>
+        <button type="button" class="ink-swatch" data-ink-color="ocean" style="--swatch-color: #2b6cb0" title="Xanh biển" aria-label="Xanh biển"></button>
+        <button type="button" class="ink-swatch is-highlighter" data-ink-color="highlighter" style="--swatch-color: #f2c94c" title="Vàng dạ quang" aria-label="Vàng dạ quang"></button>
+      </div>
+      <span class="ink-bar-sep" aria-hidden="true"></span>
+      <div class="ink-sizes" role="group" aria-label="Cỡ nét bút">
+        <button type="button" class="ink-size-btn" data-ink-size="thin" title="Nét mảnh" aria-label="Nét mảnh">
+          <span class="ink-size-dot is-thin" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="ink-size-btn is-active" data-ink-size="small" title="Nét nhỏ" aria-label="Nét nhỏ">
+          <span class="ink-size-dot is-small" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="ink-size-btn" data-ink-size="medium" title="Nét vừa" aria-label="Nét vừa">
+          <span class="ink-size-dot is-medium" aria-hidden="true"></span>
+        </button>
+      </div>
+      <span class="ink-bar-sep" aria-hidden="true"></span>
+      <button type="button" id="btn-ink-collapse" class="ink-tool-btn ink-collapse-btn" title="Thu gọn thanh bút" aria-label="Thu gọn thanh bút">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
-    <span class="ink-bar-sep" aria-hidden="true"></span>
-    <div class="ink-sizes" role="group" aria-label="Cỡ nét bút">
-      <button type="button" class="ink-size-btn" data-ink-size="thin" title="Nét mảnh" aria-label="Nét mảnh">
-        <span class="ink-size-dot is-thin" aria-hidden="true"></span>
-      </button>
-      <button type="button" class="ink-size-btn is-active" data-ink-size="small" title="Nét nhỏ" aria-label="Nét nhỏ">
-        <span class="ink-size-dot is-small" aria-hidden="true"></span>
-      </button>
-      <button type="button" class="ink-size-btn" data-ink-size="medium" title="Nét vừa" aria-label="Nét vừa">
-        <span class="ink-size-dot is-medium" aria-hidden="true"></span>
-      </button>
-    </div>
-    <span id="ink-autosave-badge" class="ink-autosave-badge" hidden>Tự lưu 10s</span>
   </div>
 </body>
 </html>

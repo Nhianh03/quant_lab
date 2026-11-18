@@ -3171,14 +3171,57 @@ a:hover {
   z-index: 75;
   display: inline-flex;
   align-items: center;
-  gap: 0.28rem;
-  padding: 0.32rem 0.48rem;
+  padding: 0.3rem 0.44rem;
   background: rgba(255, 253, 249, 0.96);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--border-strong);
   border-radius: 999px;
   box-shadow: 0 6px 20px rgba(34, 43, 37, 0.1);
+}
+
+.ink-floating-bar.is-collapsed {
+  padding: 0;
+}
+
+.ink-bar-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.ink-floating-bar.is-collapsed .ink-bar-controls {
+  display: none;
+}
+
+.ink-expand-fab {
+  display: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.14s ease, transform 0.12s ease;
+}
+
+.ink-expand-fab:hover {
+  background: var(--accent-soft);
+  transform: scale(1.04);
+}
+
+.ink-floating-bar.is-collapsed .ink-expand-fab {
+  display: inline-flex;
+}
+
+.ink-collapse-btn {
+  width: 26px;
+  height: 26px;
+  color: var(--text-muted);
 }
 
 .ink-tool-btn {
@@ -3304,21 +3347,14 @@ a:hover {
   height: 9.5px;
 }
 
-.ink-autosave-badge {
-  margin-left: 0.18rem;
-  padding: 0.12rem 0.42rem;
-  font-size: 0.68rem;
-  font-weight: 560;
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-radius: 999px;
-  white-space: nowrap;
-}
-
 @media (max-width: 640px) {
   .ink-floating-bar {
     right: 0.75rem;
     bottom: 0.75rem;
-    padding: 0.28rem 0.42rem;
+    padding: 0.26rem 0.38rem;
+  }
+
+  .ink-floating-bar.is-collapsed {
+    padding: 0;
   }
 }

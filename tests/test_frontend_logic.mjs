@@ -663,9 +663,12 @@ test('ink_canvas normalizes strokes, hit-tests eraser swipes, manages undo histo
 
   // DOM contract for minimal floating ink toolbar
   const indexHtml = fs.readFileSync(path.join(APP_ROOT, 'web', 'index.html'), 'utf8');
-  for (const id of ['ink-floating-bar', 'btn-ink-pen', 'btn-ink-eraser', 'btn-ink-undo']) {
+  const appJs = fs.readFileSync(path.join(APP_ROOT, 'web', 'js', 'app.js'), 'utf8');
+  for (const id of ['ink-floating-bar', 'btn-ink-pen', 'btn-ink-eraser', 'btn-ink-undo', 'btn-ink-collapse', 'btn-ink-expand-fab']) {
     assert.ok(indexHtml.includes(`id="${id}"`), `index.html missing id="${id}"`);
   }
+  assert.ok(!indexHtml.includes('ink-autosave-badge'), 'ink-autosave-badge must be removed from index.html');
+  assert.ok(!appJs.includes('Tự lưu 10s'), 'Autosave text badge must be removed from app.js');
   assert.ok(indexHtml.includes('data-ink-color="sage"'), 'index.html must include ink color palette buttons');
   for (const sz of ['thin', 'small', 'medium']) {
     assert.ok(INK_SIZES[sz], `INK_SIZES must define '${sz}' stroke preset`);
@@ -1083,11 +1086,21 @@ test('bootBrowserApp renders #roadmap, #lesson, #problems, and #projects in Verc
     assert.equal(lessonNotes.length, 1, 'Tapping + Ghi chú on iPad must create the anchored inline note');
     assert.equal(lessonNotes[0].quote, 'Nguyên lý bù trừ trên tập hữu hạn');
 
-    // 6. Ink Toolbar Pen & Eraser toggling in bootBrowserApp
+    // 6. Ink Toolbar Pen, Eraser & Collapse/Expand toggling in bootBrowserApp
+    const inkBar = fakeDoc.getElementById('ink-floating-bar');
     const penBtn = fakeDoc.getElementById('btn-ink-pen');
     const eraserBtn = fakeDoc.getElementById('btn-ink-eraser');
+    const collapseBtn = fakeDoc.getElementById('btn-ink-collapse');
+    const expandFabBtn = fakeDoc.getElementById('btn-ink-expand-fab');
+
     penBtn.dispatch('click', {});
     assert.equal(penBtn.getAttribute('aria-pressed'), 'true', 'Clicking Pen activates pen mode');
+    collapseBtn.dispatch('click', {});
+    assert.equal(inkBar.classList.contains('is-collapsed'), true, 'Clicking collapse folds toolbar into compact circle');
+    assert.equal(penBtn.getAttribute('aria-pressed'), 'false', 'Collapsing toolbar turns off drawing mode so scrolling works');
+    expandFabBtn.dispatch('click', {});
+    assert.equal(inkBar.classList.contains('is-collapsed'), false, 'Clicking compact circle expands toolbar again');
+    assert.equal(penBtn.getAttribute('aria-pressed'), 'true', 'Expanding toolbar activates Pen ready to draw');
     eraserBtn.dispatch('click', {});
     assert.equal(eraserBtn.getAttribute('aria-pressed'), 'true', 'Clicking Eraser activates eraser mode');
     assert.equal(penBtn.getAttribute('aria-pressed'), 'false', 'Activating Eraser deactivates Pen');

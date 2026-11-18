@@ -450,10 +450,9 @@ function bootBrowserApp() {
     inkTool: 'off',
     inkColorKey: 'sage',
     inkSizeKey: 'small',
+    inkCollapsed: false,
     inkHistory: createInkHistory(),
     activeInkOverlay: null,
-    inkPendingSave: false,
-    inkBadgeTimer: null,
 
     // Persistence state
     isStaticHost: false,
@@ -529,15 +528,19 @@ function bootBrowserApp() {
     btnSelectionAddNote: document.getElementById('btn-selection-add-note'),
 
     inkFloatingBar: document.getElementById('ink-floating-bar'),
+    btnInkExpandFab: document.getElementById('btn-ink-expand-fab'),
+    btnInkCollapse: document.getElementById('btn-ink-collapse'),
     btnInkPen: document.getElementById('btn-ink-pen'),
     btnInkEraser: document.getElementById('btn-ink-eraser'),
     btnInkUndo: document.getElementById('btn-ink-undo'),
     inkSwatches: [...document.querySelectorAll('[data-ink-color]')],
     inkSizeBtns: [...document.querySelectorAll('[data-ink-size]')],
-    inkAutosaveBadge: document.getElementById('ink-autosave-badge'),
   };
 
   function syncInkToolbarDom() {
+    if (els.inkFloatingBar) {
+      els.inkFloatingBar.classList.toggle('is-collapsed', state.inkCollapsed);
+    }
     const isPen = state.inkTool === 'pen';
     const isEraser = state.inkTool === 'eraser';
     if (els.btnInkPen) {
@@ -562,28 +565,10 @@ function bootBrowserApp() {
     }
   }
 
-  function showInkAutosaveStatus(label, hideAfterMs = 0) {
-    if (!els.inkAutosaveBadge) return;
-    if (state.inkBadgeTimer) {
-      clearTimeout(state.inkBadgeTimer);
-      state.inkBadgeTimer = null;
-    }
-    els.inkAutosaveBadge.textContent = label;
-    els.inkAutosaveBadge.hidden = false;
-    if (hideAfterMs > 0) {
-      state.inkBadgeTimer = setTimeout(() => {
-        state.inkBadgeTimer = null;
-        if (els.inkAutosaveBadge) els.inkAutosaveBadge.hidden = true;
-      }, hideAfterMs);
-    }
-  }
-
   function handleInkStrokeChange() {
-    state.inkPendingSave = true;
     recordStudyToday();
     renderSidebarMetricsAndBadges();
     syncInkToolbarDom();
-    showInkAutosaveStatus('Tự lưu 10s...');
     scheduleProgressSave(INK_AUTOSAVE_MS);
   }
 
@@ -678,10 +663,6 @@ function bootBrowserApp() {
     } else {
       els.saveDot.classList.add('is-saved');
       els.saveText.textContent = state.isStaticHost ? 'Đã lưu trên trình duyệt' : 'Đã lưu vào ổ cứng';
-      if (state.inkPendingSave) {
-        state.inkPendingSave = false;
-        showInkAutosaveStatus('Đã lưu ✓', 1800);
-      }
     }
   }
 
@@ -2305,7 +2286,23 @@ function bootBrowserApp() {
       }
     });
 
-    // Freehand Ink Toolbar: Pen, Eraser, Undo & Color Palette
+    // Freehand Ink Toolbar: Pen, Eraser, Undo, Color Palette, Sizes & Collapse/Expand
+    els.btnInkCollapse?.addEventListener('click', () => {
+      state.inkCollapsed = true;
+      state.inkTool = 'off';
+      hideSelectionPopover();
+      state.activeInkOverlay?.setInteractive?.();
+      syncInkToolbarDom();
+    });
+
+    els.btnInkExpandFab?.addEventListener('click', () => {
+      state.inkCollapsed = false;
+      state.inkTool = 'pen';
+      hideSelectionPopover();
+      state.activeInkOverlay?.setInteractive?.();
+      syncInkToolbarDom();
+    });
+
     els.btnInkPen?.addEventListener('click', () => {
       state.inkTool = state.inkTool === 'pen' ? 'off' : 'pen';
       hideSelectionPopover();
