@@ -936,7 +936,7 @@ function bootBrowserApp() {
               .join('');
 
             return `
-              <div class="sem-module-card">
+              <div class="sem-module-card" data-mod-id="${escapeHtml(mod.id)}">
                 <div class="sem-module-head">
                   <span class="sem-module-name">${escapeHtml(mod.code)} · ${escapeHtml(mod.title)}</span>
                   <span class="sem-module-done">${doneMod}/${lessons.length} bài</span>

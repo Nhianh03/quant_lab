@@ -589,6 +589,9 @@ test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial 
 
   assert.ok(stylesCss.includes('15.5px'), 'styles.css must set 15.5px reading font size');
   assert.ok(stylesCss.includes('.split-open'), 'styles.css must define .split-open layout');
+  assert.ok(stylesCss.includes('#3b6f56'), 'styles.css must apply Mẫu B Matcha Sage primary accent (#3b6f56)');
+  assert.ok(stylesCss.includes('#f9f8f4'), 'styles.css must apply Mẫu B Soft Cream background (#f9f8f4)');
+  assert.ok(appJs.includes('data-mod-id='), 'app.js must attach data-mod-id on roadmap module cards for pastel headers');
 
   // Verify every static element ID bound at startup in app.js exists in index.html
   const requiredStaticIds = [
