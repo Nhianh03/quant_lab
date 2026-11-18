@@ -530,10 +530,12 @@ test('inline_notes manages anchored notes per block and renders Notion-style car
   assert.ok(expandedHtml.includes('Bổ đề Itô bậc hai'));
   assert.ok(expandedHtml.includes('Đã cập nhật nội dung.'));
   assert.ok(expandedHtml.includes('Ẩn'));
+  assert.ok(!expandedHtml.includes('Ghi chú cá nhân'), 'Expanded note must omit bulky uppercase header');
 
   const editHtml = renderInlineNoteCardHtml(getInlineNotesForScope(map, 'm6-02')[1], 'editing', null);
   assert.ok(editHtml.includes('inline-note-textarea'));
   assert.ok(editHtml.includes('Lưu'));
+  assert.ok(!editHtml.includes('inline-note-hint'), 'Editing composer must omit cluttered hint text');
 
   // Verify mountInlineNotesInContainer attaches + Ghi chú to headings and inserts stacks after target blocks
   const makeFakeEl = (tag) => {
@@ -570,7 +572,7 @@ test('inline_notes manages anchored notes per block and renders Notion-style car
 
   mountInlineNotesInContainer(root, 'm6-02', map, new Set(['note-1']), null, { showHeadingButtons: true });
   assert.equal(root.getAttribute('data-note-scope'), 'm6-02');
-  assert.equal(h2.children[0].textContent, '+ Ghi chú');
+  assert.equal(h2.children[0].textContent, '+');
   assert.ok(root.children.some((c) => c.className === 'inline-note-stack'));
 
   // Delete cleans up empty scope array

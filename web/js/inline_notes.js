@@ -133,10 +133,9 @@ export function renderInlineNoteCardHtml(note, mode = 'collapsed', katexInst = n
           data-note-scope-owner="${safeScope}"
           data-note-block="${note.block_index}"
           data-note-quote="${escapeHtml(note.quote || '')}"
-          placeholder="Ghi chú nhanh tại đây (hỗ trợ cả chữ thường và công thức $...$)..."
+          placeholder="Viết ghi chú..."
         >${escapeHtml(note.text || '')}</textarea>
         <div class="inline-note-actions">
-          <span class="inline-note-hint">Ấn Lưu để thu gọn lại · Ctrl/Cmd + Enter</span>
           <div class="inline-note-btns">
             <button type="button" class="inline-note-btn is-danger" data-inline-note-delete="${safeId}" data-note-scope-owner="${safeScope}">Xóa</button>
             <button type="button" class="inline-note-btn is-primary" data-inline-note-done="${safeId}" data-note-scope-owner="${safeScope}">Lưu</button>
@@ -149,20 +148,16 @@ export function renderInlineNoteCardHtml(note, mode = 'collapsed', katexInst = n
     const bodyMd = (note.text || '').trim() || '*Chưa có nội dung ghi chú — nhấn Sửa để bổ sung.*';
     return `
       <div class="inline-note-card is-expanded" data-inline-note-card="${safeId}" data-note-scope-owner="${safeScope}">
-        <div class="inline-note-top">
-          <button type="button" class="inline-note-badge-btn" data-inline-note-toggle="${safeId}" data-note-scope-owner="${safeScope}" title="Chạm để thu gọn">
-            <span class="inline-note-pill-dot" aria-hidden="true"></span>
-            <span>Ghi chú cá nhân</span>
-          </button>
-          <div class="inline-note-btns">
-            <button type="button" class="inline-note-btn" data-inline-note-toggle="${safeId}" data-note-scope-owner="${safeScope}">Ẩn</button>
-            <button type="button" class="inline-note-btn" data-inline-note-edit="${safeId}" data-note-scope-owner="${safeScope}">Sửa</button>
-            <button type="button" class="inline-note-btn is-danger" data-inline-note-delete="${safeId}" data-note-scope-owner="${safeScope}" title="Xóa ghi chú">&times;</button>
-          </div>
-        </div>
         ${quoteHtml}
         <div class="inline-note-body prose prose-compact">
           ${renderMarkdownWithMath(bodyMd, katexInst)}
+        </div>
+        <div class="inline-note-meta-links">
+          <button type="button" class="inline-note-link" data-inline-note-toggle="${safeId}" data-note-scope-owner="${safeScope}">Ẩn</button>
+          <span aria-hidden="true">·</span>
+          <button type="button" class="inline-note-link" data-inline-note-edit="${safeId}" data-note-scope-owner="${safeScope}">Sửa</button>
+          <span aria-hidden="true">·</span>
+          <button type="button" class="inline-note-link is-danger" data-inline-note-delete="${safeId}" data-note-scope-owner="${safeScope}">Xóa</button>
         </div>
       </div>`;
   }
@@ -216,7 +211,9 @@ export function mountInlineNotesInContainer(
       btn.className = 'heading-add-note-btn';
       btn.setAttribute('data-add-block-note', String(idx));
       btn.setAttribute('data-note-scope-owner', scopeKey);
-      btn.textContent = '+ Ghi chú';
+      btn.setAttribute('title', 'Thêm ghi chú');
+      btn.setAttribute('aria-label', 'Thêm ghi chú');
+      btn.textContent = '+';
       el.appendChild(btn);
     }
   });

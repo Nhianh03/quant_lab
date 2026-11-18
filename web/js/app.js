@@ -544,6 +544,10 @@ function bootBrowserApp() {
         (el) => el.getAttribute('data-inline-note-input') === focusNoteId
       );
       if (ta) {
+        if (ta.style && ta.scrollHeight) {
+          ta.style.height = 'auto';
+          ta.style.height = `${Math.max(44, ta.scrollHeight)}px`;
+        }
         ta.focus();
         ta.selectionStart = ta.value.length;
         ta.selectionEnd = ta.value.length;
@@ -2891,6 +2895,10 @@ function bootBrowserApp() {
     document.addEventListener('input', (evt) => {
       const noteInput = evt.target.closest('[data-inline-note-input]');
       if (!noteInput) return;
+      if (noteInput.style && noteInput.scrollHeight) {
+        noteInput.style.height = 'auto';
+        noteInput.style.height = `${Math.max(44, noteInput.scrollHeight)}px`;
+      }
       const noteId = noteInput.getAttribute('data-inline-note-input');
       const scopeKey = noteInput.getAttribute('data-note-scope-owner');
       if (!scopeKey || !noteId) return;
