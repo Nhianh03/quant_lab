@@ -432,6 +432,7 @@ function bootBrowserApp() {
     problemReveals: {},
     problemNotices: {},
     editingNoteIds: new Set(),
+    expandedNoteIds: new Set(),
     pendingSelection: null,
 
     // Persistence state
@@ -536,7 +537,7 @@ function bootBrowserApp() {
       state.progress.inline_notes,
       state.editingNoteIds,
       getKatex(),
-      { showHeadingButtons: showHeadingBtns }
+      { showHeadingButtons: showHeadingBtns, expandedIds: state.expandedNoteIds }
     );
     if (focusNoteId) {
       const ta = [...containerEl.querySelectorAll('[data-inline-note-input]')].find(
@@ -1056,7 +1057,7 @@ function bootBrowserApp() {
           state.progress.inline_notes,
           state.editingNoteIds,
           getKatex(),
-          { showHeadingButtons: true }
+          { showHeadingButtons: true, expandedIds: state.expandedNoteIds }
         );
       }
     }
@@ -1314,7 +1315,7 @@ function bootBrowserApp() {
       state.progress.inline_notes,
       state.editingNoteIds,
       getKatex(),
-      { showHeadingButtons: true }
+      { showHeadingButtons: true, expandedIds: state.expandedNoteIds }
     );
   }
 
@@ -1663,7 +1664,7 @@ function bootBrowserApp() {
           state.progress.inline_notes,
           state.editingNoteIds,
           getKatex(),
-          { showHeadingButtons: false }
+          { showHeadingButtons: false, expandedIds: state.expandedNoteIds }
         );
       }
       const solEl = cardEl.querySelector('.problem-reveal-box.is-solution .prose');
@@ -1674,7 +1675,7 @@ function bootBrowserApp() {
           state.progress.inline_notes,
           state.editingNoteIds,
           getKatex(),
-          { showHeadingButtons: false }
+          { showHeadingButtons: false, expandedIds: state.expandedNoteIds }
         );
       }
     }
@@ -2668,6 +2669,7 @@ function bootBrowserApp() {
     function finishEditingInlineNote(scopeKey, noteId) {
       if (!scopeKey || !noteId) return;
       state.editingNoteIds.delete(noteId);
+      state.expandedNoteIds.delete(noteId);
       const list = state.progress.inline_notes[scopeKey] || [];
       const target = list.find((n) => n.id === noteId);
       if (target && !target.text.trim() && !target.quote) {
@@ -2837,6 +2839,21 @@ function bootBrowserApp() {
         return;
       }
 
+      const toggleBtn = evt.target.closest('[data-inline-note-toggle]');
+      if (toggleBtn) {
+        const noteId = toggleBtn.getAttribute('data-inline-note-toggle');
+        const scopeKey = toggleBtn.getAttribute('data-note-scope-owner');
+        if (scopeKey && noteId) {
+          if (state.expandedNoteIds.has(noteId)) {
+            state.expandedNoteIds.delete(noteId);
+          } else {
+            state.expandedNoteIds.add(noteId);
+          }
+          remountScopeInlineNotes(scopeKey);
+        }
+        return;
+      }
+
       const doneBtn = evt.target.closest('[data-inline-note-done]');
       if (doneBtn) {
         const noteId = doneBtn.getAttribute('data-inline-note-done');
@@ -2851,6 +2868,7 @@ function bootBrowserApp() {
         const scopeKey = deleteBtn.getAttribute('data-note-scope-owner');
         if (scopeKey && noteId) {
           state.editingNoteIds.delete(noteId);
+          state.expandedNoteIds.delete(noteId);
           deleteInlineNote(state.progress.inline_notes, scopeKey, noteId);
           remountScopeInlineNotes(scopeKey);
           scheduleProgressSave(0);
@@ -2863,6 +2881,7 @@ function bootBrowserApp() {
         const noteId = editTrigger.getAttribute('data-inline-note-edit');
         const scopeKey = editTrigger.getAttribute('data-note-scope-owner');
         if (scopeKey && noteId) {
+          state.expandedNoteIds.delete(noteId);
           state.editingNoteIds.add(noteId);
           remountScopeInlineNotes(scopeKey, noteId);
         }

@@ -1,7 +1,7 @@
 /**
  * Notion-style Inline Contextual Notes for Quant Research Academy.
- * Allows learners to highlight any text/formula or click "+ Ghi chú" next to any
- * section heading to attach a persistent Markdown + LaTeX note right below that block.
+ * Saved notes collapse into a slim 1-line pill so lesson layout stays clean;
+ * tapping the pill expands/hides the rendered Markdown + LaTeX note on demand.
  */
 
 import { escapeHtml, renderMarkdownWithMath } from './markdown_math.js';
@@ -73,11 +73,11 @@ export function upsertInlineNote(notesMap, scopeKey, entry) {
       ? Math.max(0, Math.floor(entry.block_index))
       : 0;
   const quote = typeof entry.quote === 'string' ? entry.quote.trim().slice(0, 280) : '';
-  const text = typeof entry.text === 'string' ? entry.text : '';
+  const cleanText = typeof entry.text === 'string' ? entry.text : '';
 
   const list = notesMap[scopeKey];
   const existingIdx = list.findIndex((n) => n.id === id);
-  const record = { id, block_index: blockIndex, quote, text };
+  const record = { id, block_index: blockIndex, quote, text: cleanText };
   if (existingIdx >= 0) {
     list[existingIdx] = record;
   } else {
@@ -100,17 +100,29 @@ export function deleteInlineNote(notesMap, scopeKey, noteId) {
   }
 }
 
+function buildCompactPreview(note) {
+  const raw = (note.text || note.quote || '')
+    .replace(/\$\$[\s\S]*?\$\$/g, ' [công thức] ')
+    .replace(/\$[^$\n]+\$/g, ' [công thức] ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!raw) return '';
+  return raw.length > 42 ? `${raw.slice(0, 42).trim()}…` : raw;
+}
+
 /**
- * Render HTML for a single Notion-style inline note card.
+ * Render HTML for an inline note in 'collapsed' (default pill), 'expanded', or 'editing' mode.
  */
-export function renderInlineNoteCardHtml(note, isEditing, katexInst = null, scopeKey = '') {
+export function renderInlineNoteCardHtml(note, mode = 'collapsed', katexInst = null, scopeKey = '') {
+  const resolvedMode =
+    mode === true ? 'editing' : mode === false ? 'collapsed' : mode || 'collapsed';
   const safeId = escapeHtml(note.id);
   const safeScope = escapeHtml(scopeKey);
   const quoteHtml = note.quote
     ? `<div class="inline-note-quote">“${escapeHtml(note.quote)}”</div>`
     : '';
 
-  if (isEditing) {
+  if (resolvedMode === 'editing') {
     return `
       <div class="inline-note-card is-editing" data-inline-note-card="${safeId}" data-note-scope-owner="${safeScope}">
         ${quoteHtml}
@@ -124,30 +136,50 @@ export function renderInlineNoteCardHtml(note, isEditing, katexInst = null, scop
           placeholder="Ghi chú nhanh tại đây (hỗ trợ cả chữ thường và công thức $...$)..."
         >${escapeHtml(note.text || '')}</textarea>
         <div class="inline-note-actions">
-          <span class="inline-note-hint">Tự động lưu · Nhấn Ctrl/Cmd + Enter để thu gọn</span>
+          <span class="inline-note-hint">Ấn Lưu để thu gọn lại · Ctrl/Cmd + Enter</span>
           <div class="inline-note-btns">
             <button type="button" class="inline-note-btn is-danger" data-inline-note-delete="${safeId}" data-note-scope-owner="${safeScope}">Xóa</button>
-            <button type="button" class="inline-note-btn is-primary" data-inline-note-done="${safeId}" data-note-scope-owner="${safeScope}">Xong</button>
+            <button type="button" class="inline-note-btn is-primary" data-inline-note-done="${safeId}" data-note-scope-owner="${safeScope}">Lưu</button>
           </div>
         </div>
       </div>`;
   }
 
-  const bodyMd = (note.text || '').trim() || '*Nhấn để viết ghi chú...*';
-  return `
-    <div class="inline-note-card" data-inline-note-card="${safeId}" data-note-scope-owner="${safeScope}">
-      <div class="inline-note-top">
-        <span class="inline-note-badge">Ghi chú cá nhân</span>
-        <div class="inline-note-btns">
-          <button type="button" class="inline-note-btn" data-inline-note-edit="${safeId}" data-note-scope-owner="${safeScope}">Sửa</button>
-          <button type="button" class="inline-note-btn is-danger" data-inline-note-delete="${safeId}" data-note-scope-owner="${safeScope}" title="Xóa ghi chú">&times;</button>
+  if (resolvedMode === 'expanded') {
+    const bodyMd = (note.text || '').trim() || '*Chưa có nội dung ghi chú — nhấn Sửa để bổ sung.*';
+    return `
+      <div class="inline-note-card is-expanded" data-inline-note-card="${safeId}" data-note-scope-owner="${safeScope}">
+        <div class="inline-note-top">
+          <button type="button" class="inline-note-badge-btn" data-inline-note-toggle="${safeId}" data-note-scope-owner="${safeScope}" title="Chạm để thu gọn">
+            <span class="inline-note-pill-dot" aria-hidden="true"></span>
+            <span>Ghi chú cá nhân</span>
+          </button>
+          <div class="inline-note-btns">
+            <button type="button" class="inline-note-btn" data-inline-note-toggle="${safeId}" data-note-scope-owner="${safeScope}">Ẩn</button>
+            <button type="button" class="inline-note-btn" data-inline-note-edit="${safeId}" data-note-scope-owner="${safeScope}">Sửa</button>
+            <button type="button" class="inline-note-btn is-danger" data-inline-note-delete="${safeId}" data-note-scope-owner="${safeScope}" title="Xóa ghi chú">&times;</button>
+          </div>
         </div>
-      </div>
-      ${quoteHtml}
-      <div class="inline-note-body prose prose-compact" data-inline-note-edit="${safeId}" data-note-scope-owner="${safeScope}">
-        ${renderMarkdownWithMath(bodyMd, katexInst)}
-      </div>
-    </div>`;
+        ${quoteHtml}
+        <div class="inline-note-body prose prose-compact">
+          ${renderMarkdownWithMath(bodyMd, katexInst)}
+        </div>
+      </div>`;
+  }
+
+  const preview = buildCompactPreview(note);
+  return `
+    <button
+      type="button"
+      class="inline-note-pill"
+      data-inline-note-toggle="${safeId}"
+      data-note-scope-owner="${safeScope}"
+      title="Chạm để mở ghi chú"
+    >
+      <span class="inline-note-pill-dot" aria-hidden="true"></span>
+      <span class="inline-note-pill-label">Ghi chú</span>
+      ${preview ? `<span class="inline-note-pill-snippet">· ${escapeHtml(preview)}</span>` : ''}
+    </button>`;
 }
 
 /**
@@ -160,7 +192,7 @@ export function mountInlineNotesInContainer(
   notesMap,
   editingIds,
   katexInst = null,
-  { showHeadingButtons = true } = {}
+  { showHeadingButtons = true, expandedIds = null } = {}
 ) {
   if (!containerEl || !scopeKey) return;
 
@@ -201,11 +233,21 @@ export function mountInlineNotesInContainer(
   }
 
   for (const [blockIdx, bucket] of grouped.entries()) {
+    const allCollapsed = bucket.every(
+      (n) => !editingIds?.has(n.id) && !expandedIds?.has(n.id)
+    );
     const stackEl = containerEl.ownerDocument.createElement('div');
-    stackEl.className = 'inline-note-stack';
+    stackEl.className = allCollapsed ? 'inline-note-stack is-all-collapsed' : 'inline-note-stack';
     stackEl.setAttribute('data-note-stack-idx', String(blockIdx));
     stackEl.innerHTML = bucket
-      .map((n) => renderInlineNoteCardHtml(n, Boolean(editingIds?.has(n.id)), katexInst, scopeKey))
+      .map((n) => {
+        const mode = editingIds?.has(n.id)
+          ? 'editing'
+          : expandedIds?.has(n.id)
+            ? 'expanded'
+            : 'collapsed';
+        return renderInlineNoteCardHtml(n, mode, katexInst, scopeKey);
+      })
       .join('');
 
     const anchorBlock = blocks[blockIdx];

@@ -520,13 +520,20 @@ test('inline_notes manages anchored notes per block and renders Notion-style car
   });
   assert.equal(getInlineNotesForScope(map, 'm6-02')[1].text, 'Đã cập nhật nội dung.');
 
-  // Render card HTML in both read and edit modes
-  const readHtml = renderInlineNoteCardHtml(getInlineNotesForScope(map, 'm6-02')[1], false, null);
-  assert.ok(readHtml.includes('Bổ đề Itô bậc hai'));
-  assert.ok(readHtml.includes('Đã cập nhật nội dung.'));
+  // Render card HTML in collapsed (default), expanded, and editing modes
+  const collapsedHtml = renderInlineNoteCardHtml(getInlineNotesForScope(map, 'm6-02')[1], 'collapsed', null);
+  assert.ok(collapsedHtml.includes('inline-note-pill'), 'Saved note must default to compact pill');
+  assert.ok(collapsedHtml.includes('data-inline-note-toggle'));
+  assert.ok(!collapsedHtml.includes('inline-note-body'), 'Collapsed pill must hide full note body');
 
-  const editHtml = renderInlineNoteCardHtml(getInlineNotesForScope(map, 'm6-02')[1], true, null);
+  const expandedHtml = renderInlineNoteCardHtml(getInlineNotesForScope(map, 'm6-02')[1], 'expanded', null);
+  assert.ok(expandedHtml.includes('Bổ đề Itô bậc hai'));
+  assert.ok(expandedHtml.includes('Đã cập nhật nội dung.'));
+  assert.ok(expandedHtml.includes('Ẩn'));
+
+  const editHtml = renderInlineNoteCardHtml(getInlineNotesForScope(map, 'm6-02')[1], 'editing', null);
   assert.ok(editHtml.includes('inline-note-textarea'));
+  assert.ok(editHtml.includes('Lưu'));
 
   // Verify mountInlineNotesInContainer attaches + Ghi chú to headings and inserts stacks after target blocks
   const makeFakeEl = (tag) => {
