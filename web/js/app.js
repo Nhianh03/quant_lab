@@ -18,6 +18,7 @@ import {
 import {
   INK_AUTOSAVE_MS,
   INK_COLORS,
+  INK_SIZES,
   createInkHistory,
   mountInkOverlay,
   normalizeInkDrawingsMap,
@@ -448,6 +449,7 @@ function bootBrowserApp() {
     // Freehand Ink Overlay state
     inkTool: 'off',
     inkColorKey: 'sage',
+    inkSizeKey: 'small',
     inkHistory: createInkHistory(),
     activeInkOverlay: null,
     inkPendingSave: false,
@@ -531,6 +533,7 @@ function bootBrowserApp() {
     btnInkEraser: document.getElementById('btn-ink-eraser'),
     btnInkUndo: document.getElementById('btn-ink-undo'),
     inkSwatches: [...document.querySelectorAll('[data-ink-color]')],
+    inkSizeBtns: [...document.querySelectorAll('[data-ink-size]')],
     inkAutosaveBadge: document.getElementById('ink-autosave-badge'),
   };
 
@@ -552,6 +555,10 @@ function bootBrowserApp() {
     for (const sw of els.inkSwatches) {
       const cKey = sw.getAttribute('data-ink-color');
       sw.classList.toggle('is-active', cKey === state.inkColorKey);
+    }
+    for (const sb of els.inkSizeBtns) {
+      const sKey = sb.getAttribute('data-ink-size');
+      sb.classList.toggle('is-active', sKey === state.inkSizeKey);
     }
   }
 
@@ -586,7 +593,11 @@ function bootBrowserApp() {
       scopeKey,
       inkMap: state.progress.ink_drawings,
       history: state.inkHistory,
-      getToolState: () => ({ tool: state.inkTool, colorKey: state.inkColorKey }),
+      getToolState: () => ({
+        tool: state.inkTool,
+        colorKey: state.inkColorKey,
+        sizeKey: state.inkSizeKey,
+      }),
       onChange: handleInkStrokeChange,
     });
     syncInkToolbarDom();
@@ -2329,14 +2340,27 @@ function bootBrowserApp() {
 
     els.inkFloatingBar?.addEventListener('click', (evt) => {
       const swatch = evt.target.closest?.('[data-ink-color]');
-      if (!swatch) return;
-      const colorKey = swatch.getAttribute('data-ink-color');
-      if (!colorKey || !INK_COLORS[colorKey]) return;
-      state.inkColorKey = colorKey;
-      state.inkTool = 'pen';
-      hideSelectionPopover();
-      state.activeInkOverlay?.setInteractive?.();
-      syncInkToolbarDom();
+      if (swatch) {
+        const colorKey = swatch.getAttribute('data-ink-color');
+        if (!colorKey || !INK_COLORS[colorKey]) return;
+        state.inkColorKey = colorKey;
+        state.inkTool = 'pen';
+        hideSelectionPopover();
+        state.activeInkOverlay?.setInteractive?.();
+        syncInkToolbarDom();
+        return;
+      }
+
+      const sizeBtn = evt.target.closest?.('[data-ink-size]');
+      if (sizeBtn) {
+        const sizeKey = sizeBtn.getAttribute('data-ink-size');
+        if (!sizeKey || !INK_SIZES[sizeKey]) return;
+        state.inkSizeKey = sizeKey;
+        state.inkTool = 'pen';
+        hideSelectionPopover();
+        state.activeInkOverlay?.setInteractive?.();
+        syncInkToolbarDom();
+      }
     });
 
     // Mobile drawer

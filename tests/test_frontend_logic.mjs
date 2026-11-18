@@ -16,9 +16,11 @@ import {
 import {
   INK_AUTOSAVE_MS,
   INK_COLORS,
+  INK_SIZES,
   normalizeInkDrawingsMap,
   hitTestStroke,
   createInkHistory,
+  snapHorizontalOrStraightStroke,
 } from '../web/js/ink_canvas.js';
 import { renderMarkdownWithMath } from '../web/js/markdown_math.js';
 import { mountSimulator } from '../web/js/simulators.js';
@@ -665,6 +667,42 @@ test('ink_canvas normalizes strokes, hit-tests eraser swipes, manages undo histo
     assert.ok(indexHtml.includes(`id="${id}"`), `index.html missing id="${id}"`);
   }
   assert.ok(indexHtml.includes('data-ink-color="sage"'), 'index.html must include ink color palette buttons');
+  for (const sz of ['thin', 'small', 'medium']) {
+    assert.ok(INK_SIZES[sz], `INK_SIZES must define '${sz}' stroke preset`);
+    assert.ok(indexHtml.includes(`data-ink-size="${sz}"`), `index.html must include size button data-ink-size="${sz}"`);
+  }
+  assert.ok(INK_SIZES.thin.penWidth < INK_SIZES.small.penWidth && INK_SIZES.small.penWidth < INK_SIZES.medium.penWidth);
+
+  // Horizontal underline auto-straightening
+  const wobblyHorizontal = [
+    [0.1, 200],
+    [0.22, 203.5],
+    [0.36, 198.5],
+    [0.5, 201.5],
+  ];
+  const snappedHoriz = snapHorizontalOrStraightStroke(wobblyHorizontal, 800, { isHighlighter: false, forceStraight: false });
+  assert.equal(snappedHoriz.length, 2, 'Wobbly horizontal underline must snap to 2 straight endpoints');
+  assert.equal(snappedHoriz[0][1], snappedHoriz[1][1], 'Snapped horizontal underline must have identical Y on both ends');
+
+  // Curved handwriting / circle must stay freehand
+  const curvedLoop = [
+    [0.2, 200],
+    [0.3, 155],
+    [0.4, 200],
+    [0.3, 245],
+    [0.21, 202],
+  ];
+  const keptCurved = snapHorizontalOrStraightStroke(curvedLoop, 800, { isHighlighter: false, forceStraight: false });
+  assert.equal(keptCurved.length, curvedLoop.length, 'Curved strokes must remain smooth freehand');
+
+  // Hold-to-straighten snaps diagonal strokes cleanly
+  const diagStroke = [
+    [0.1, 100],
+    [0.2, 144],
+    [0.3, 182],
+  ];
+  const snappedDiag = snapHorizontalOrStraightStroke(diagStroke, 800, { isHighlighter: false, forceStraight: true });
+  assert.deepEqual(snappedDiag, [[0.1, 100], [0.3, 182]]);
 });
 
 test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial deduplication', () => {

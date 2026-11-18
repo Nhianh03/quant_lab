@@ -39,6 +39,27 @@ export const INK_COLORS = {
   },
 };
 
+export const INK_SIZES = {
+  thin: {
+    key: 'thin',
+    penWidth: 1.25,
+    highlighterWidth: 10,
+    label: 'Nét mảnh',
+  },
+  small: {
+    key: 'small',
+    penWidth: 2.1,
+    highlighterWidth: 14,
+    label: 'Nét nhỏ',
+  },
+  medium: {
+    key: 'medium',
+    penWidth: 3.4,
+    highlighterWidth: 19,
+    label: 'Nét vừa',
+  },
+};
+
 function isPlainObject(val) {
   return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
 }
@@ -158,6 +179,81 @@ export function hitTestStroke(stroke, xPx, yPx, containerWidth, radiusPx = 14) {
     }
   }
   return false;
+}
+
+/**
+ * Auto-straighten horizontal underline/highlighter swipes on release,
+ * or snap any direct line when the pointer pauses at the end (forceStraight).
+ */
+export function snapHorizontalOrStraightStroke(
+  pts,
+  containerWidth,
+  { isHighlighter = false, forceStraight = false } = {}
+) {
+  if (!Array.isArray(pts) || pts.length < 2) return pts;
+  const w = Math.max(1, Number(containerWidth) || 800);
+  const p0 = pts[0];
+  const pLast = pts[pts.length - 1];
+
+  const dx = (pLast[0] - p0[0]) * w;
+  const dy = pLast[1] - p0[1];
+  const absDx = Math.abs(dx);
+  const absDy = Math.abs(dy);
+  const chord = Math.hypot(dx, dy);
+
+  let pathLen = 0;
+  let sumY = 0;
+  for (let i = 0; i < pts.length; i += 1) {
+    sumY += pts[i][1];
+    if (i > 0) {
+      const sdx = (pts[i][0] - pts[i - 1][0]) * w;
+      const sdy = pts[i][1] - pts[i - 1][1];
+      pathLen += Math.hypot(sdx, sdy);
+    }
+  }
+  const yMean = round1(sumY / pts.length);
+
+  // 1. Hold-to-straighten (0.35s pause at stroke end): snap any direct line (diagonal, vertical, or horizontal)
+  if (forceStraight && chord >= 16 && pathLen / chord <= 1.38) {
+    if (absDx >= 18 && absDy / absDx <= 0.14) {
+      return [
+        [round4(p0[0]), yMean],
+        [round4(pLast[0]), yMean],
+      ];
+    }
+    if (absDy >= 18 && absDx / absDy <= 0.14) {
+      const xMid = round4((p0[0] + pLast[0]) * 0.5);
+      return [
+        [xMid, round1(p0[1])],
+        [xMid, round1(pLast[1])],
+      ];
+    }
+    return [
+      [round4(p0[0]), round1(p0[1])],
+      [round4(pLast[0]), round1(pLast[1])],
+    ];
+  }
+
+  // 2. Automatic horizontal underline / highlighter snap on pointer release
+  const maxDirectRatio = isHighlighter ? 1.25 : 1.18;
+  const maxSlope = isHighlighter ? 0.24 : 0.18;
+  const maxVerticalWobble = isHighlighter ? 20 : 14;
+
+  if (absDx >= 24 && chord > 0 && pathLen / chord <= maxDirectRatio && absDy / absDx <= maxSlope) {
+    let maxWobble = 0;
+    for (let i = 0; i < pts.length; i += 1) {
+      const dev = Math.abs(pts[i][1] - yMean);
+      if (dev > maxWobble) maxWobble = dev;
+    }
+    if (maxWobble <= maxVerticalWobble) {
+      return [
+        [round4(p0[0]), yMean],
+        [round4(pLast[0]), yMean],
+      ];
+    }
+  }
+
+  return pts;
 }
 
 /**
@@ -299,8 +395,18 @@ export function mountInkOverlay(containerEl, {
 
   let tiles = [];
   let activeStroke = null;
+  let activeStrokeSnapped = false;
+  let activeIsHighlighter = false;
   let activePointerId = null;
+  let holdSnapTimer = null;
   let destroyed = false;
+
+  function clearHoldSnapTimer() {
+    if (holdSnapTimer) {
+      clearTimeout(holdSnapTimer);
+      holdSnapTimer = null;
+    }
+  }
 
   function getStrokesList() {
     if (!Array.isArray(inkMap[scopeKey])) {
@@ -430,14 +536,37 @@ export function mountInkOverlay(containerEl, {
     }
 
     const preset = INK_COLORS[st.colorKey] || INK_COLORS.sage;
+    const sizePreset = INK_SIZES[st.sizeKey] || INK_SIZES.small;
+    activeIsHighlighter = preset.key === 'highlighter';
+    const resolvedWidth = activeIsHighlighter ? sizePreset.highlighterWidth : sizePreset.penWidth;
+    activeStrokeSnapped = false;
+    clearHoldSnapTimer();
+
     activeStroke = {
       id: `st-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
       color: preset.color,
-      width: preset.width,
+      width: resolvedWidth,
       opacity: preset.opacity,
       pts: [[xNorm, round1(yPx)]],
     };
     syncTilesAndRender();
+  }
+
+  function scheduleHoldSnap(width) {
+    clearHoldSnapTimer();
+    holdSnapTimer = setTimeout(() => {
+      holdSnapTimer = null;
+      if (!activeStroke || activeStrokeSnapped || activeStroke.pts.length < 2) return;
+      const snapped = snapHorizontalOrStraightStroke(activeStroke.pts, width, {
+        isHighlighter: activeIsHighlighter,
+        forceStraight: true,
+      });
+      if (snapped.length === 2 && activeStroke.pts.length >= 2) {
+        activeStroke.pts = snapped;
+        activeStrokeSnapped = true;
+        syncTilesAndRender();
+      }
+    }, 350);
   }
 
   function handlePointerMove(evt) {
@@ -455,6 +584,19 @@ export function mountInkOverlay(containerEl, {
     }
 
     if (!activeStroke) return;
+    if (activeStrokeSnapped) {
+      const startPt = activeStroke.pts[0];
+      const dx = (xNorm - startPt[0]) * width;
+      const dy = yPx - startPt[1];
+      if (Math.abs(dx) >= 18 && Math.abs(dy) / Math.abs(dx) <= 0.14) {
+        activeStroke.pts = [startPt, [xNorm, startPt[1]]];
+      } else {
+        activeStroke.pts = [startPt, [xNorm, round1(yPx)]];
+      }
+      syncTilesAndRender();
+      return;
+    }
+
     const pts = activeStroke.pts;
     const prev = pts[pts.length - 1];
     const dx = (xNorm - prev[0]) * width;
@@ -462,6 +604,7 @@ export function mountInkOverlay(containerEl, {
     if (dx * dx + dy * dy < 2.2) return;
 
     pts.push([xNorm, round1(yPx)]);
+    scheduleHoldSnap(width);
     syncTilesAndRender();
   }
 
@@ -469,6 +612,7 @@ export function mountInkOverlay(containerEl, {
     if (activePointerId === null) return;
     if (evt?.pointerId !== undefined && evt.pointerId !== activePointerId) return;
 
+    clearHoldSnapTimer();
     if (evt?.pointerId !== undefined) {
       try {
         layerEl.releasePointerCapture?.(evt.pointerId);
@@ -479,14 +623,23 @@ export function mountInkOverlay(containerEl, {
     activePointerId = null;
 
     if (activeStroke && activeStroke.pts.length > 0) {
+      if (!activeStrokeSnapped && activeStroke.pts.length >= 2) {
+        const { width } = measureContainer();
+        activeStroke.pts = snapHorizontalOrStraightStroke(activeStroke.pts, width, {
+          isHighlighter: activeIsHighlighter,
+          forceStraight: false,
+        });
+      }
       const list = getStrokesList();
       list.push(activeStroke);
       history?.recordAdd(scopeKey, activeStroke);
       activeStroke = null;
+      activeStrokeSnapped = false;
       syncTilesAndRender();
       onChange?.(scopeKey);
     } else {
       activeStroke = null;
+      activeStrokeSnapped = false;
     }
   }
 
@@ -521,6 +674,7 @@ export function mountInkOverlay(containerEl, {
     },
     destroy() {
       destroyed = true;
+      clearHoldSnapTimer();
       resizeObserver?.disconnect?.();
       layerEl.remove?.();
     },
