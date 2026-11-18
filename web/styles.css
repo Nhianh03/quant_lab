@@ -889,7 +889,7 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 0.1rem;
+  margin-top: 0;
 }
 
 #sem-2 .semester-timeline-node {
@@ -924,6 +924,7 @@ a:hover {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  min-height: 34px;
   gap: 0.5rem;
   margin-bottom: 0.35rem;
 }
@@ -2833,13 +2834,9 @@ a:hover {
     padding: 1.65rem 1.15rem 4rem;
   }
 
-  .roadmap-timeline::before {
-    display: none;
-  }
-
   .semester-block {
-    grid-template-columns: 1fr;
-    gap: 0.65rem;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 0.9rem;
   }
 
   .sem-lesson-card {

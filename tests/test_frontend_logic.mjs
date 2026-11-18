@@ -727,6 +727,16 @@ test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial 
     /\.btn\s*\{[\s\S]*?font-size:\s*0\.77rem;[\s\S]*?line-height:\s*1\.25;/,
     '.btn must use compact 0.77rem font-size and 1.25 line-height'
   );
+  assert.doesNotMatch(
+    stylesCss,
+    /\.semester-block\s*\{\s*grid-template-columns:\s*1fr/,
+    '.semester-block must not collapse into 1fr stacking timeline badge above semester meta'
+  );
+  assert.match(
+    stylesCss,
+    /\.semester-top-meta\s*\{[\s\S]*?min-height:\s*34px/,
+    '.semester-top-meta must match 34px timeline node height for horizontal alignment'
+  );
   assert.ok(appJs.includes('data-mod-id='), 'app.js must attach data-mod-id on roadmap module cards for pastel headers');
 
   // Verify every static element ID bound at startup in app.js exists in index.html
