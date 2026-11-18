@@ -597,6 +597,11 @@ test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial 
     /\.roadmap-action-bar\s*\{[\s\S]*?flex-direction:\s*column/,
     '.roadmap-action-bar must stack full-width text above action buttons'
   );
+  assert.match(
+    stylesCss,
+    /\.btn\s*\{[\s\S]*?font-size:\s*0\.77rem;[\s\S]*?line-height:\s*1\.25;/,
+    '.btn must use compact 0.77rem font-size and 1.25 line-height'
+  );
   assert.ok(appJs.includes('data-mod-id='), 'app.js must attach data-mod-id on roadmap module cards for pastel headers');
 
   // Verify every static element ID bound at startup in app.js exists in index.html

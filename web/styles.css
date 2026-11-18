@@ -743,16 +743,17 @@ a:hover {
   max-width: 72ch;
 }
 
-/* Tactile Linear-Style Buttons */
+/* Tactile Compact Linear-Style Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.42rem;
-  padding: 0.48rem 0.92rem;
-  font-size: 0.83rem;
-  font-weight: 550;
-  border-radius: 8px;
+  gap: 0.35rem;
+  padding: 0.32rem 0.72rem;
+  font-size: 0.77rem;
+  line-height: 1.25;
+  font-weight: 560;
+  border-radius: 6px;
   border: 1px solid var(--border-strong);
   background: #ffffff;
   color: var(--text);
@@ -2435,16 +2436,16 @@ a:hover {
 }
 
 .problem-answer-input {
-  flex: 1 1 210px;
-  max-width: 300px;
-  height: 35px;
-  padding: 0 0.75rem;
+  flex: 1 1 200px;
+  max-width: 280px;
+  height: 30px;
+  padding: 0 0.68rem;
   font-family: var(--font-mono);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   color: var(--text);
   background: #ffffff;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 6px;
   transition: border-color 0.14s ease, box-shadow 0.14s ease;
 }
 
