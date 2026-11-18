@@ -423,14 +423,13 @@ export function mountInkOverlay(containerEl, {
 
   function measureContainer() {
     const w = Math.max(280, Number(containerEl.clientWidth || containerEl.offsetWidth || 760));
-    const h = Math.max(320, Number(containerEl.scrollHeight || containerEl.offsetHeight || 900));
+    const h = Math.max(320, Number(containerEl.offsetHeight || containerEl.clientHeight || containerEl.scrollHeight || 900));
     return { width: w, height: h };
   }
 
   function syncTilesAndRender() {
     if (destroyed) return;
     const { width, height } = measureContainer();
-    layerEl.style.height = `${height}px`;
 
     const neededCount = Math.max(1, Math.min(24, Math.ceil(height / INK_TILE_HEIGHT)));
     const dpr =

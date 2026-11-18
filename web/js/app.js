@@ -3147,12 +3147,17 @@ function bootBrowserApp() {
     let progRes = { status: 'rejected' };
     let libData = null;
 
-    // Probe local Python backend (/api/syllabus); if unavailable (e.g. Vercel), switch to Static Mode
-    try {
-      sylData = await fetchJsonStrict('/api/syllabus');
-      state.isStaticHost = false;
-    } catch {
+    // Skip /api/syllabus probe when running from prebuilt Vercel static bundle (avoids 404 console noise)
+    const isPrebuiltStatic = Boolean(document.querySelector?.('meta[name="qra-static-bundle"]'));
+    if (isPrebuiltStatic) {
       state.isStaticHost = true;
+    } else {
+      try {
+        sylData = await fetchJsonStrict('/api/syllabus');
+        state.isStaticHost = false;
+      } catch {
+        state.isStaticHost = true;
+      }
     }
 
     if (!state.isStaticHost) {

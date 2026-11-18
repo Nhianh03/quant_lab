@@ -852,7 +852,14 @@ test('Vercel static bundle builder packages web, 36 lessons, 120 problems, libra
     assert.equal(vercelCfg.buildCommand, 'node scripts/build_static.mjs');
     assert.equal(vercelCfg.outputDirectory, 'dist');
 
+    const distHtml = fs.readFileSync(path.join(tmpOut, 'index.html'), 'utf8');
+    assert.ok(
+      distHtml.includes('name="qra-static-bundle"'),
+      'build_static.mjs must inject qra-static-bundle meta tag so Vercel skips /api/syllabus 404 probe'
+    );
+
     const appJs = fs.readFileSync(path.join(APP_ROOT, 'web', 'js', 'app.js'), 'utf8');
+    assert.ok(appJs.includes('qra-static-bundle'), 'app.js must detect qra-static-bundle meta tag');
     assert.ok(appJs.includes('/static-content/syllabus.json'));
     assert.ok(appJs.includes('/static-content/lessons/'));
   } finally {

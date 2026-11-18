@@ -24,8 +24,18 @@ export function buildStaticBundle(appRoot = DEFAULT_ROOT, outDir = path.join(app
   fs.rmSync(outDir, { recursive: true, force: true });
   fs.mkdirSync(outDir, { recursive: true });
 
-  // 1. Copy web/ static shell & ES modules to dist/
+  // 1. Copy web/ static shell & ES modules to dist/ and stamp static-bundle meta marker
   copyDirRecursive(path.join(appRoot, 'web'), outDir);
+  const distIndexPath = path.join(outDir, 'index.html');
+  const rawIndexHtml = fs.readFileSync(distIndexPath, 'utf8');
+  fs.writeFileSync(
+    distIndexPath,
+    rawIndexHtml.replace(
+      '<meta charset="UTF-8">',
+      '<meta charset="UTF-8">\n  <meta name="qra-static-bundle" content="1">',
+    ),
+    'utf8',
+  );
 
   // 2. Copy syllabus.json & problems.json into dist/static-content/
   const staticContentDir = path.join(outDir, 'static-content');
