@@ -870,6 +870,10 @@ test('bootBrowserApp renders #roadmap, #lesson, #problems, and #projects in Verc
     // 1. Roadmap view rendered completely (no stuck loading state)
     const roadmapHtml = fakeDoc.getElementById('roadmap-container').innerHTML;
     assert.ok(roadmapHtml.includes('semester-block'), 'Roadmap must render semester blocks');
+    assert.ok(
+      roadmapHtml.includes('Quantitative Researcher • US Hedge Fund'),
+      'Roadmap eyebrow must display Quantitative Researcher • US Hedge Fund'
+    );
 
     const triggerHash = async (hash) => {
       fakeWin.location.hash = hash;

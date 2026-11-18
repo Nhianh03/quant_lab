@@ -1024,7 +1024,7 @@ function bootBrowserApp() {
 
     els.roadmapContainer.innerHTML = `
       <header class="page-masthead">
-        <div class="eyebrow-label">Chương trình Nghiên cứu Định lượng Phía Mua</div>
+        <div class="eyebrow-label">Quantitative Researcher • US Hedge Fund</div>
         <h1 class="page-title">${escapeHtml(state.syllabus.program_title)}</h1>
         <p class="page-subtitle">${escapeHtml(state.syllabus.subtitle)}</p>
       </header>
