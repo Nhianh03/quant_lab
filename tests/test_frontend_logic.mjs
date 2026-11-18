@@ -757,6 +757,11 @@ test('bootBrowserApp renders #roadmap, #lesson, #problems, and #projects in Verc
         if (!listeners.has(ev)) listeners.set(ev, []);
         listeners.get(ev).push(fn);
       },
+      dispatch(ev, evtObj) {
+        for (const fn of listeners.get(ev) || []) {
+          fn(evtObj);
+        }
+      },
       querySelector() { return null; },
       querySelectorAll() { return []; },
       closest() { return null; },
@@ -862,6 +867,72 @@ test('bootBrowserApp renders #roadmap, #lesson, #problems, and #projects in Verc
     // 4. Projects view
     await triggerHash('#projects/proj-1');
     assert.ok(fakeDoc.getElementById('projects-container').innerHTML.includes('proj-1'));
+
+    // 5. iPad Touch Selection (768x1024): selectionchange alone (no mouseup) shows popover below selection,
+    //    and touchstart/click on #btn-selection-add-note saves the inline note even if selection collapses
+    fakeWin.innerWidth = 768;
+    fakeWin.innerHeight = 1024;
+    const fakeScopeEl = {
+      getAttribute: (k) => (k === 'data-note-scope' ? 'm0-01-to-hop-phep-dem-bu-tru-va-doi-xung' : null),
+      contains: () => true,
+    };
+    const fakeBlockEl = {
+      getAttribute: (k) => (k === 'data-note-block-idx' ? '2' : null),
+    };
+    const fakeAnchorNode = {
+      nodeType: 1,
+      closest: (sel) => {
+        if (sel === '.inline-note-stack') return null;
+        if (sel === '[data-note-scope]') return fakeScopeEl;
+        if (sel === '[data-note-block-idx]') return fakeBlockEl;
+        return null;
+      },
+    };
+    let selectionCollapsed = false;
+    fakeWin.getSelection = () =>
+      selectionCollapsed
+        ? { isCollapsed: true, rangeCount: 0, removeAllRanges() {} }
+        : {
+            isCollapsed: false,
+            rangeCount: 1,
+            toString: () => 'Nguyên lý bù trừ trên tập hữu hạn',
+            getRangeAt: () => ({
+              commonAncestorContainer: fakeAnchorNode,
+              getBoundingClientRect: () => ({ left: 120, top: 240, bottom: 268, width: 200, height: 28 }),
+            }),
+            removeAllRanges() { selectionCollapsed = true; },
+          };
+
+    assert.ok(
+      (docListeners.get('selectionchange') || []).length > 0,
+      'app.js must listen to selectionchange for iPad/touch selection handles'
+    );
+    for (const fn of docListeners.get('selectionchange') || []) {
+      fn();
+    }
+    await new Promise((r) => setTimeout(r, 120));
+
+    const popoverEl = fakeDoc.getElementById('selection-note-popover');
+    assert.equal(popoverEl.hidden, false, 'Selection popover must appear on selectionchange without mouseup');
+    assert.equal(
+      popoverEl.classList.contains('is-below'),
+      true,
+      'On iPad/tablet viewport, popover must position below selection to avoid iOS native Copy menu'
+    );
+
+    // Simulate iOS touch collapsing selection right as user taps #btn-selection-add-note
+    selectionCollapsed = true;
+    for (const fn of docListeners.get('selectionchange') || []) {
+      fn();
+    }
+    const addBtn = fakeDoc.getElementById('btn-selection-add-note');
+    addBtn.dispatch('touchstart', { preventDefault() {}, stopPropagation() {} });
+    await new Promise((r) => setTimeout(r, 340));
+
+    const savedDraft = JSON.parse(storage.get('qra_progress_draft_v1') || '{}');
+    const lessonNotes = savedDraft.inline_notes?.['m0-01-to-hop-phep-dem-bu-tru-va-doi-xung'] || [];
+    assert.equal(lessonNotes.length, 1, 'Tapping + Ghi chú on iPad must create the anchored inline note');
+    assert.equal(lessonNotes[0].quote, 'Nguyên lý bù trừ trên tập hữu hạn');
   } finally {
     globalThis.window = prevWin;
     globalThis.document = prevDoc;

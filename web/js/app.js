@@ -529,14 +529,14 @@ function bootBrowserApp() {
   function remountScopeInlineNotes(scopeKey, focusNoteId = null) {
     const containerEl = findScopeContainerDom(scopeKey);
     if (!containerEl) return;
-    const isLessonScope = containerEl === els.lessonBody;
+    const showHeadingBtns = containerEl === els.lessonBody || scopeKey.startsWith('roadmap-');
     mountInlineNotesInContainer(
       containerEl,
       scopeKey,
       state.progress.inline_notes,
       state.editingNoteIds,
       getKatex(),
-      { showHeadingButtons: isLessonScope }
+      { showHeadingButtons: showHeadingBtns }
     );
     if (focusNoteId) {
       const ta = [...containerEl.querySelectorAll('[data-inline-note-input]')].find(
@@ -1045,6 +1045,21 @@ function bootBrowserApp() {
         ${semestersHtml}
       </div>
     `;
+
+    for (const semEl of els.roadmapContainer.querySelectorAll('.semester-block')) {
+      const semId = semEl.id;
+      const headerEl = semEl.querySelector('.semester-header');
+      if (semId && headerEl) {
+        mountInlineNotesInContainer(
+          headerEl,
+          `roadmap-${semId}`,
+          state.progress.inline_notes,
+          state.editingNoteIds,
+          getKatex(),
+          { showHeadingButtons: true }
+        );
+      }
+    }
   }
 
   /* ------------------------------------------------------------------------
@@ -1645,6 +1660,17 @@ function bootBrowserApp() {
         mountInlineNotesInContainer(
           promptEl,
           pid,
+          state.progress.inline_notes,
+          state.editingNoteIds,
+          getKatex(),
+          { showHeadingButtons: false }
+        );
+      }
+      const solEl = cardEl.querySelector('.problem-reveal-box.is-solution .prose');
+      if (pid && solEl) {
+        mountInlineNotesInContainer(
+          solEl,
+          `${pid}-sol`,
           state.progress.inline_notes,
           state.editingNoteIds,
           getKatex(),
@@ -2651,16 +2677,36 @@ function bootBrowserApp() {
       scheduleProgressSave(0);
     }
 
-    function checkTextSelectionForNote() {
-      if (!els.selectionPopover) return;
+    let selectionCheckTimer = null;
+    let selectionHideTimer = null;
+
+    function cancelSelectionHideTimer() {
+      if (selectionHideTimer) {
+        clearTimeout(selectionHideTimer);
+        selectionHideTimer = null;
+      }
+    }
+
+    function scheduleDelayedHideSelectionPopover(delayMs = 220) {
+      cancelSelectionHideTimer();
+      selectionHideTimer = setTimeout(() => {
+        selectionHideTimer = null;
+        hideSelectionPopover();
+      }, delayMs);
+    }
+
+    function checkTextSelectionForNote({ immediateHide = false } = {}) {
+      if (typeof window === 'undefined' || !els.selectionPopover) return;
       const sel = window.getSelection();
       if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
-        hideSelectionPopover();
+        if (immediateHide) hideSelectionPopover();
+        else scheduleDelayedHideSelectionPopover(240);
         return;
       }
       const selectedText = sel.toString().replace(/\s+/g, ' ').trim();
       if (selectedText.length < 2) {
-        hideSelectionPopover();
+        if (immediateHide) hideSelectionPopover();
+        else scheduleDelayedHideSelectionPopover(240);
         return;
       }
 
@@ -2685,42 +2731,71 @@ function bootBrowserApp() {
       const blockIdx = Number(blockEl.getAttribute('data-note-block-idx')) || 0;
       const rect = range.getBoundingClientRect();
       if (!scopeKey || (rect.width === 0 && rect.height === 0)) {
-        hideSelectionPopover();
         return;
       }
 
+      cancelSelectionHideTimer();
       state.pendingSelection = {
         scopeKey,
         blockIdx,
         quote: selectedText.slice(0, 240),
       };
 
+      const isTouchOrTablet =
+        window.innerWidth <= 1024 ||
+        Boolean(window.matchMedia?.('(pointer: coarse)')?.matches) ||
+        rect.top < 72;
+
       const leftPx = Math.min(
         window.innerWidth - 95,
         Math.max(95, rect.left + rect.width / 2)
       );
-      const topPx = Math.max(44, rect.top - 8);
+      const rawBottom = typeof rect.bottom === 'number' ? rect.bottom : rect.top + rect.height;
+      const topPx = isTouchOrTablet
+        ? Math.min(window.innerHeight - 52, Math.max(44, rawBottom + 10))
+        : Math.max(44, rect.top - 8);
+
+      els.selectionPopover.classList.toggle('is-below', isTouchOrTablet);
       els.selectionPopover.style.left = `${Math.round(leftPx)}px`;
       els.selectionPopover.style.top = `${Math.round(topPx)}px`;
       els.selectionPopover.hidden = false;
     }
 
-    document.addEventListener('mouseup', () => {
-      window.requestAnimationFrame(checkTextSelectionForNote);
+    function scheduleSelectionCheck(delayMs = 55) {
+      if (selectionCheckTimer) clearTimeout(selectionCheckTimer);
+      selectionCheckTimer = setTimeout(() => {
+        selectionCheckTimer = null;
+        checkTextSelectionForNote({ immediateHide: false });
+      }, delayMs);
+    }
+
+    document.addEventListener('selectionchange', () => {
+      scheduleSelectionCheck(55);
     });
+    document.addEventListener('mouseup', () => {
+      window.requestAnimationFrame(() => checkTextSelectionForNote({ immediateHide: true }));
+    });
+    document.addEventListener('touchend', () => {
+      scheduleSelectionCheck(70);
+    }, { passive: true });
     document.addEventListener('keyup', (evt) => {
       if (evt.key.startsWith('Arrow') || evt.key === 'Shift') {
-        checkTextSelectionForNote();
+        checkTextSelectionForNote({ immediateHide: true });
       }
     });
 
-    els.btnSelectionAddNote?.addEventListener('mousedown', (evt) => {
-      evt.preventDefault();
-      evt.stopPropagation();
+    function consumePendingSelectionToNote(evt) {
       const pending = state.pendingSelection;
       if (!pending) return;
+      evt.preventDefault?.();
+      evt.stopPropagation?.();
+      if (selectionCheckTimer) {
+        clearTimeout(selectionCheckTimer);
+        selectionCheckTimer = null;
+      }
+      cancelSelectionHideTimer();
       hideSelectionPopover();
-      window.getSelection()?.removeAllRanges();
+      window.getSelection()?.removeAllRanges?.();
 
       const rec = upsertInlineNote(state.progress.inline_notes, pending.scopeKey, {
         block_index: pending.blockIdx,
@@ -2734,7 +2809,12 @@ function bootBrowserApp() {
         remountScopeInlineNotes(pending.scopeKey, rec.id);
         scheduleProgressSave(300);
       }
-    });
+    }
+
+    els.btnSelectionAddNote?.addEventListener('touchstart', consumePendingSelectionToNote, { passive: false });
+    els.btnSelectionAddNote?.addEventListener('pointerdown', consumePendingSelectionToNote);
+    els.btnSelectionAddNote?.addEventListener('mousedown', consumePendingSelectionToNote);
+    els.btnSelectionAddNote?.addEventListener('click', consumePendingSelectionToNote);
 
     document.addEventListener('click', (evt) => {
       const addBlockBtn = evt.target.closest('[data-add-block-note]');

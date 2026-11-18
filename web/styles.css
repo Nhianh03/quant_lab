@@ -2786,9 +2786,10 @@ a:hover {
   background: var(--accent-soft);
 }
 
-@media (hover: none) {
+@media (hover: none), (max-width: 1024px) {
   .heading-add-note-btn {
-    opacity: 0.9;
+    opacity: 0.95;
+    padding: 0.3rem 0.68rem;
   }
 }
 
@@ -2797,23 +2798,32 @@ a:hover {
   z-index: 1200;
   transform: translate(-50%, -100%);
   pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.selection-note-popover.is-below {
+  transform: translate(-50%, 0);
 }
 
 .selection-note-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.38rem 0.78rem;
+  padding: 0.44rem 0.88rem;
   font-family: var(--font-sans);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #ffffff;
   background: #18181b;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
   cursor: pointer;
   white-space: nowrap;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: transform 0.12s ease, background 0.12s ease;
 }
 
