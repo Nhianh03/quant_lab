@@ -328,6 +328,7 @@ def validate_syllabus_and_library(base_dir: Path) -> list[str]:
     # 2. Validate modules (8) and lessons (36)
     modules = syllabus.get("modules")
     seen_lesson_ids: list[str] = []
+    modern_2022_plus_count = 0
     if not isinstance(modules, list) or len(modules) != 8:
         errors.append(
             f"syllabus.json: 'modules' must be a list of 8 objects (got {len(modules) if isinstance(modules, list) else type(modules).__name__})."
@@ -388,9 +389,10 @@ def validate_syllabus_and_library(base_dir: Path) -> list[str]:
                     )
 
                 readings = lesson.get("readings")
-                if not isinstance(readings, list) or len(readings) < 2:
-                    errors.append(f"{l_ctx} ({lid}): must have at least 2 'readings'.")
+                if not isinstance(readings, list) or len(readings) != 3:
+                    errors.append(f"{l_ctx} ({lid}): must have exactly 3 'readings'.")
                 else:
+                    lesson_modern_count = 0
                     for r_idx, reading in enumerate(readings):
                         r_ctx = f"{l_ctx}.readings[{r_idx}]"
                         if not isinstance(reading, dict):
@@ -400,6 +402,32 @@ def validate_syllabus_and_library(base_dir: Path) -> list[str]:
                         for r_str in ("source", "chapter", "url", "note"):
                             if not _is_non_empty_str(reading.get(r_str)):
                                 errors.append(f"{r_ctx}: '{r_str}' must be a non-empty string.")
+                        raw_url = str(reading.get("url") or "").strip()
+                        if not raw_url.startswith("https://"):
+                            errors.append(
+                                f"{r_ctx} ({lid}): reading 'url' must be a direct 'https://' external link, got {raw_url!r}."
+                            )
+                        raw_source = str(reading.get("source") or "")
+                        years = [int(y) for y in re.findall(r"\b(19\d{2}|20\d{2})\b", raw_source)]
+                        if not years:
+                            errors.append(
+                                f"{r_ctx} ({lid}): reading 'source' must include a 4-digit publication year."
+                            )
+                        else:
+                            latest_year = max(years)
+                            if latest_year >= 2021:
+                                lesson_modern_count += 1
+                            if latest_year >= 2022:
+                                modern_2022_plus_count += 1
+                    if lesson_modern_count < 2:
+                        errors.append(
+                            f"{l_ctx} ({lid}): must include at least 2 modern readings (2021+), got {lesson_modern_count}."
+                        )
+
+    if modern_2022_plus_count < 68:
+        errors.append(
+            f"syllabus.json: must include at least 68 readings published in 2022-2026 across all 108 readings, got {modern_2022_plus_count}."
+        )
 
     if seen_lesson_ids != EXPECTED_ALL_LESSONS:
         errors.append(
@@ -530,6 +558,11 @@ def validate_syllabus_and_library(base_dir: Path) -> list[str]:
                     already_math_stripped=guide_stripped,
                 )
             )
+            guide_modern_hits = re.findall(r"\b(202[2-6])\b", guide_text)
+            if len(guide_modern_hits) < 12:
+                errors.append(
+                    f"READING_GUIDE.md: must highlight at least 12 modern (2022-2026) publication references, got {len(guide_modern_hits)}."
+                )
 
     return errors
 

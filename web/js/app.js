@@ -1156,7 +1156,7 @@ function bootBrowserApp() {
 
     els.readingsSection.innerHTML = `
       <div class="section-heading-row">
-        <h2 class="section-heading-title">Checklist Đọc Sách Kinh Điển &amp; Paper Gốc</h2>
+        <h2 class="section-heading-title">Checklist Đọc Giáo Trình Chuẩn &amp; Nghiên Cứu Mới Nhất</h2>
         <span class="section-heading-count" id="readings-progress-count">${doneCount} / ${readings.length} tài liệu</span>
       </div>
       <div class="reading-list">
