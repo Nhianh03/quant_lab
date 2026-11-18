@@ -8,8 +8,31 @@
   "completed_readings": {},
   "completed_milestones": {},
   "lesson_notes": {},
-  "inline_notes": {},
+  "inline_notes": {
+    "roadmap-sem-1": [
+      {
+        "id": "n-mwlkhohd-yusd",
+        "block_index": 2,
+        "quote": "ời nắm trọn cơ chế khớp lệnh sổ lệnh điện tử, kỷ luật dữ liệu đúng thời điểm, mô hình b",
+        "text": ""
+      }
+    ]
+  },
   "problem_reviews": {},
   "problem_attempts": {},
-  "projects": {}
+  "projects": {
+    "proj-2": {
+      "checked_tasks": {},
+      "checked_audits": {},
+      "repo_url": "",
+      "whitepaper_path": "",
+      "metrics": {
+        "sharpe": "",
+        "ic": "",
+        "turnover": "",
+        "max_dd": ""
+      },
+      "reflection": ""
+    }
+  }
 }

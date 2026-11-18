@@ -2676,7 +2676,7 @@ function bootBrowserApp() {
       state.expandedNoteIds.delete(noteId);
       const list = state.progress.inline_notes[scopeKey] || [];
       const target = list.find((n) => n.id === noteId);
-      if (target && !target.text.trim() && !target.quote) {
+      if (target && !target.text.trim()) {
         deleteInlineNote(state.progress.inline_notes, scopeKey, noteId);
       }
       remountScopeInlineNotes(scopeKey);

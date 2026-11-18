@@ -527,13 +527,14 @@ test('inline_notes manages anchored notes per block and renders Notion-style car
   assert.ok(!collapsedHtml.includes('inline-note-body'), 'Collapsed pill must hide full note body');
 
   const expandedHtml = renderInlineNoteCardHtml(getInlineNotesForScope(map, 'm6-02')[1], 'expanded', null);
-  assert.ok(expandedHtml.includes('Bổ đề Itô bậc hai'));
+  assert.ok(!expandedHtml.includes('inline-note-quote'), 'Expanded note must omit redundant highlighted quote snippet');
   assert.ok(expandedHtml.includes('Đã cập nhật nội dung.'));
   assert.ok(expandedHtml.includes('Ẩn'));
   assert.ok(!expandedHtml.includes('Ghi chú cá nhân'), 'Expanded note must omit bulky uppercase header');
 
   const editHtml = renderInlineNoteCardHtml(getInlineNotesForScope(map, 'm6-02')[1], 'editing', null);
   assert.ok(editHtml.includes('inline-note-textarea'));
+  assert.ok(!editHtml.includes('inline-note-quote'), 'Editing composer must omit redundant highlighted quote snippet');
   assert.ok(editHtml.includes('Lưu'));
   assert.ok(!editHtml.includes('inline-note-hint'), 'Editing composer must omit cluttered hint text');
 
@@ -591,6 +592,11 @@ test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial 
   assert.ok(stylesCss.includes('.split-open'), 'styles.css must define .split-open layout');
   assert.ok(stylesCss.includes('#3b6f56'), 'styles.css must apply Mẫu B Matcha Sage primary accent (#3b6f56)');
   assert.ok(stylesCss.includes('#f9f8f4'), 'styles.css must apply Mẫu B Soft Cream background (#f9f8f4)');
+  assert.match(
+    stylesCss,
+    /\.roadmap-action-bar\s*\{[\s\S]*?flex-direction:\s*column/,
+    '.roadmap-action-bar must stack full-width text above action buttons'
+  );
   assert.ok(appJs.includes('data-mod-id='), 'app.js must attach data-mod-id on roadmap module cards for pastel headers');
 
   // Verify every static element ID bound at startup in app.js exists in index.html

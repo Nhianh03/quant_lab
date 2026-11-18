@@ -101,7 +101,7 @@ export function deleteInlineNote(notesMap, scopeKey, noteId) {
 }
 
 function buildCompactPreview(note) {
-  const raw = (note.text || note.quote || '')
+  const raw = (note.text || '')
     .replace(/\$\$[\s\S]*?\$\$/g, ' [công thức] ')
     .replace(/\$[^$\n]+\$/g, ' [công thức] ')
     .replace(/\s+/g, ' ')
@@ -118,14 +118,10 @@ export function renderInlineNoteCardHtml(note, mode = 'collapsed', katexInst = n
     mode === true ? 'editing' : mode === false ? 'collapsed' : mode || 'collapsed';
   const safeId = escapeHtml(note.id);
   const safeScope = escapeHtml(scopeKey);
-  const quoteHtml = note.quote
-    ? `<div class="inline-note-quote">“${escapeHtml(note.quote)}”</div>`
-    : '';
 
   if (resolvedMode === 'editing') {
     return `
       <div class="inline-note-card is-editing" data-inline-note-card="${safeId}" data-note-scope-owner="${safeScope}">
-        ${quoteHtml}
         <textarea
           class="inline-note-textarea"
           rows="2"
@@ -148,7 +144,6 @@ export function renderInlineNoteCardHtml(note, mode = 'collapsed', katexInst = n
     const bodyMd = (note.text || '').trim() || '*Chưa có nội dung ghi chú — nhấn Sửa để bổ sung.*';
     return `
       <div class="inline-note-card is-expanded" data-inline-note-card="${safeId}" data-note-scope-owner="${safeScope}">
-        ${quoteHtml}
         <div class="inline-note-body prose prose-compact">
           ${renderMarkdownWithMath(bodyMd, katexInst)}
         </div>

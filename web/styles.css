@@ -806,10 +806,9 @@ a:hover {
 
 .roadmap-action-bar {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
   padding: 1.25rem 1.45rem;
   margin-bottom: 2.75rem;
   background: linear-gradient(120deg, #e7f2ec 0%, #faf2e1 55%, #f5eaf0 100%);
@@ -820,7 +819,7 @@ a:hover {
 
 .roadmap-resume-info {
   min-width: 0;
-  flex: 1;
+  width: 100%;
 }
 
 .roadmap-resume-caption {
