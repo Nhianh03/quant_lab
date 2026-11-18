@@ -15,6 +15,13 @@ import {
   normalizeInlineNotesMap,
   upsertInlineNote,
 } from './inline_notes.js';
+import {
+  INK_AUTOSAVE_MS,
+  INK_COLORS,
+  createInkHistory,
+  mountInkOverlay,
+  normalizeInkDrawingsMap,
+} from './ink_canvas.js';
 import { getTodayIso } from './spaced_repetition.js';
 import { escapeHtml, renderMarkdownWithMath } from './markdown_math.js';
 import { mountSimulator } from './simulators.js';
@@ -72,6 +79,7 @@ export function createDefaultProgress() {
     completed_milestones: {},
     lesson_notes: {},
     inline_notes: {},
+    ink_drawings: {},
     problem_reviews: {},
     problem_attempts: {},
     projects: {},
@@ -139,6 +147,7 @@ export function normalizeProgressPayload(raw) {
     'completed_milestones',
     'lesson_notes',
     'inline_notes',
+    'ink_drawings',
     'problem_reviews',
     'problem_attempts',
     'projects',
@@ -178,6 +187,7 @@ export function normalizeProgressPayload(raw) {
   }
 
   clean.inline_notes = normalizeInlineNotesMap(raw.inline_notes);
+  clean.ink_drawings = normalizeInkDrawingsMap(raw.ink_drawings);
 
   if (isPlainObject(raw.problem_reviews)) {
     for (const [pid, rev] of Object.entries(raw.problem_reviews)) {
@@ -435,6 +445,14 @@ function bootBrowserApp() {
     expandedNoteIds: new Set(),
     pendingSelection: null,
 
+    // Freehand Ink Overlay state
+    inkTool: 'off',
+    inkColorKey: 'sage',
+    inkHistory: createInkHistory(),
+    activeInkOverlay: null,
+    inkPendingSave: false,
+    inkBadgeTimer: null,
+
     // Persistence state
     isStaticHost: false,
     saveTimer: null,
@@ -482,6 +500,7 @@ function bootBrowserApp() {
     btnReaderQuickComplete: document.getElementById('btn-reader-quick-complete'),
     btnToggleSplit: document.getElementById('btn-toggle-split'),
     readerGrid: document.getElementById('reader-grid'),
+    readerArticleInner: document.getElementById('reader-article-inner'),
     lessonHeader: document.getElementById('lesson-header'),
     simulatorSlot: document.getElementById('lesson-simulator-slot'),
     lessonBody: document.getElementById('lesson-markdown-body'),
@@ -506,7 +525,72 @@ function bootBrowserApp() {
 
     selectionPopover: document.getElementById('selection-note-popover'),
     btnSelectionAddNote: document.getElementById('btn-selection-add-note'),
+
+    inkFloatingBar: document.getElementById('ink-floating-bar'),
+    btnInkPen: document.getElementById('btn-ink-pen'),
+    btnInkEraser: document.getElementById('btn-ink-eraser'),
+    btnInkUndo: document.getElementById('btn-ink-undo'),
+    inkSwatches: [...document.querySelectorAll('[data-ink-color]')],
+    inkAutosaveBadge: document.getElementById('ink-autosave-badge'),
   };
+
+  function syncInkToolbarDom() {
+    const isPen = state.inkTool === 'pen';
+    const isEraser = state.inkTool === 'eraser';
+    if (els.btnInkPen) {
+      els.btnInkPen.classList.toggle('is-active', isPen);
+      els.btnInkPen.setAttribute('aria-pressed', String(isPen));
+    }
+    if (els.btnInkEraser) {
+      els.btnInkEraser.classList.toggle('is-active', isEraser);
+      els.btnInkEraser.setAttribute('aria-pressed', String(isEraser));
+    }
+    const activeScope = state.activeInkOverlay?.scopeKey || '';
+    if (els.btnInkUndo) {
+      els.btnInkUndo.disabled = !state.inkHistory.canUndo(activeScope);
+    }
+    for (const sw of els.inkSwatches) {
+      const cKey = sw.getAttribute('data-ink-color');
+      sw.classList.toggle('is-active', cKey === state.inkColorKey);
+    }
+  }
+
+  function showInkAutosaveStatus(label, hideAfterMs = 0) {
+    if (!els.inkAutosaveBadge) return;
+    if (state.inkBadgeTimer) {
+      clearTimeout(state.inkBadgeTimer);
+      state.inkBadgeTimer = null;
+    }
+    els.inkAutosaveBadge.textContent = label;
+    els.inkAutosaveBadge.hidden = false;
+    if (hideAfterMs > 0) {
+      state.inkBadgeTimer = setTimeout(() => {
+        state.inkBadgeTimer = null;
+        if (els.inkAutosaveBadge) els.inkAutosaveBadge.hidden = true;
+      }, hideAfterMs);
+    }
+  }
+
+  function handleInkStrokeChange() {
+    state.inkPendingSave = true;
+    recordStudyToday();
+    renderSidebarMetricsAndBadges();
+    syncInkToolbarDom();
+    showInkAutosaveStatus('Tự lưu 10s...');
+    scheduleProgressSave(INK_AUTOSAVE_MS);
+  }
+
+  function mountInkForScope(containerEl, scopeKey) {
+    state.activeInkOverlay?.destroy?.();
+    state.activeInkOverlay = mountInkOverlay(containerEl, {
+      scopeKey,
+      inkMap: state.progress.ink_drawings,
+      history: state.inkHistory,
+      getToolState: () => ({ tool: state.inkTool, colorKey: state.inkColorKey }),
+      onChange: handleInkStrokeChange,
+    });
+    syncInkToolbarDom();
+  }
 
   function hideSelectionPopover() {
     state.pendingSelection = null;
@@ -553,6 +637,7 @@ function bootBrowserApp() {
         ta.selectionEnd = ta.value.length;
       }
     }
+    state.activeInkOverlay?.refresh?.();
   }
 
   /* ------------------------------------------------------------------------
@@ -582,6 +667,10 @@ function bootBrowserApp() {
     } else {
       els.saveDot.classList.add('is-saved');
       els.saveText.textContent = state.isStaticHost ? 'Đã lưu trên trình duyệt' : 'Đã lưu vào ổ cứng';
+      if (state.inkPendingSave) {
+        state.inkPendingSave = false;
+        showInkAutosaveStatus('Đã lưu ✓', 1800);
+      }
     }
   }
 
@@ -1065,6 +1154,8 @@ function bootBrowserApp() {
         );
       }
     }
+
+    mountInkForScope(els.roadmapContainer, 'roadmap:main');
   }
 
   /* ------------------------------------------------------------------------
@@ -1321,6 +1412,7 @@ function bootBrowserApp() {
       getKatex(),
       { showHeadingButtons: true, expandedIds: state.expandedNoteIds }
     );
+    mountInkForScope(els.readerArticleInner || els.lessonBody, `lesson:${requestedId}`);
   }
 
   /* ------------------------------------------------------------------------
@@ -1700,6 +1792,7 @@ function bootBrowserApp() {
     cardEl.outerHTML = renderProblemCardHtml(prob, getKatex());
     mountProblemPromptNotes(els.problemsContainer);
     updateProblemStatsStripDom();
+    state.activeInkOverlay?.refresh?.();
   }
 
   function renderProblemsListOnly() {
@@ -1724,6 +1817,7 @@ function bootBrowserApp() {
       .map((prob) => renderProblemCardHtml(prob, katexInst))
       .join('');
     mountProblemPromptNotes(listWrap);
+    state.activeInkOverlay?.refresh?.();
   }
 
   function renderProblemsView() {
@@ -1826,6 +1920,7 @@ function bootBrowserApp() {
     `;
 
     renderProblemsListOnly();
+    mountInkForScope(els.problemsContainer, 'problems:main');
   }
 
   /* ------------------------------------------------------------------------
@@ -2104,6 +2199,7 @@ function bootBrowserApp() {
     if (maxddInput) maxddInput.value = pState.metrics.max_dd;
     if (reflInput) reflInput.value = pState.reflection;
     renderProjectReflectionPreview(pState.reflection);
+    mountInkForScope(els.projectsContainer, `projects:${proj.id}`);
   }
 
   /* ------------------------------------------------------------------------
@@ -2140,6 +2236,9 @@ function bootBrowserApp() {
 
   function handleRouteChange() {
     if (!state.syllabus) return;
+    if (state.saveTimer) {
+      persistProgressNow();
+    }
     const fallbackLesson =
       state.progress.last_active_lesson && state.lessonMap.has(state.progress.last_active_lesson)
         ? state.progress.last_active_lesson
@@ -2187,6 +2286,57 @@ function bootBrowserApp() {
       if (document.visibilityState === 'hidden' && state.saveTimer) {
         persistProgressNow();
       }
+    });
+
+    window.addEventListener('pagehide', () => {
+      if (state.saveTimer) {
+        persistProgressNow();
+      }
+    });
+
+    // Freehand Ink Toolbar: Pen, Eraser, Undo & Color Palette
+    els.btnInkPen?.addEventListener('click', () => {
+      state.inkTool = state.inkTool === 'pen' ? 'off' : 'pen';
+      hideSelectionPopover();
+      state.activeInkOverlay?.setInteractive?.();
+      syncInkToolbarDom();
+    });
+
+    els.btnInkEraser?.addEventListener('click', () => {
+      state.inkTool = state.inkTool === 'eraser' ? 'off' : 'eraser';
+      hideSelectionPopover();
+      state.activeInkOverlay?.setInteractive?.();
+      syncInkToolbarDom();
+    });
+
+    els.btnInkUndo?.addEventListener('click', () => {
+      const scopeKey = state.activeInkOverlay?.scopeKey;
+      if (!scopeKey) return;
+      if (!Array.isArray(state.progress.ink_drawings[scopeKey])) {
+        state.progress.ink_drawings[scopeKey] = [];
+      }
+      const changed = state.inkHistory.undo(scopeKey, state.progress.ink_drawings[scopeKey]);
+      if (state.progress.ink_drawings[scopeKey].length === 0) {
+        delete state.progress.ink_drawings[scopeKey];
+      }
+      if (changed) {
+        state.activeInkOverlay?.refresh?.();
+        handleInkStrokeChange();
+      } else {
+        syncInkToolbarDom();
+      }
+    });
+
+    els.inkFloatingBar?.addEventListener('click', (evt) => {
+      const swatch = evt.target.closest?.('[data-ink-color]');
+      if (!swatch) return;
+      const colorKey = swatch.getAttribute('data-ink-color');
+      if (!colorKey || !INK_COLORS[colorKey]) return;
+      state.inkColorKey = colorKey;
+      state.inkTool = 'pen';
+      hideSelectionPopover();
+      state.activeInkOverlay?.setInteractive?.();
+      syncInkToolbarDom();
     });
 
     // Mobile drawer

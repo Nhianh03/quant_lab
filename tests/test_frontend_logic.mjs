@@ -13,6 +13,13 @@ import {
   renderInlineNoteCardHtml,
   mountInlineNotesInContainer,
 } from '../web/js/inline_notes.js';
+import {
+  INK_AUTOSAVE_MS,
+  INK_COLORS,
+  normalizeInkDrawingsMap,
+  hitTestStroke,
+  createInkHistory,
+} from '../web/js/ink_canvas.js';
 import { renderMarkdownWithMath } from '../web/js/markdown_math.js';
 import { mountSimulator } from '../web/js/simulators.js';
 import {
@@ -583,6 +590,83 @@ test('inline_notes manages anchored notes per block and renders Notion-style car
   assert.equal(map['m6-02'], undefined);
 });
 
+test('ink_canvas normalizes strokes, hit-tests eraser swipes, manages undo history, and syncs 10s autosave across app and server', () => {
+  assert.equal(INK_AUTOSAVE_MS, 10000, 'Ink autosave interval must be 10 seconds (10000ms)');
+  assert.ok(INK_COLORS.sage && INK_COLORS.coral && INK_COLORS.ocean && INK_COLORS.highlighter);
+
+  const cleaned = normalizeInkDrawingsMap({
+    'lesson:m0-01': [
+      {
+        id: 'st-1',
+        color: '#2f6349',
+        width: 2.2,
+        opacity: 1,
+        pts: [[0.123456, 140.24], [0.51234, 142.88]],
+      },
+      { id: 'bad', pts: [[0.2, 10]] }, // < 2 points ignored unless dot? wait: let single-tap dots work by duplicating point on pointerup, or allow >=1 point! Let's allow >=1 point and reject empty pts!
+      { id: 'empty', pts: [] },
+    ],
+    emptyScope: [],
+  });
+  assert.equal(cleaned['lesson:m0-01'].length, 2);
+  assert.equal(cleaned.emptyScope, undefined);
+  assert.deepEqual(cleaned['lesson:m0-01'][0].pts[0], [0.1235, 140.2]);
+
+  // Hit-testing for Eraser (containerWidth = 800 -> x from 98.8 to 409.9, y ~ 141)
+  const stroke = cleaned['lesson:m0-01'][0];
+  assert.equal(hitTestStroke(stroke, 250, 141.5, 800, 14), true, 'Eraser swipe across stroke segment must hit');
+  assert.equal(hitTestStroke(stroke, 250, 320, 800, 14), false, 'Distant click must not erase stroke');
+
+  // Undo history (add + erase + undo both)
+  const strokes = [];
+  const history = createInkHistory();
+  const s1 = { id: 's1', color: '#2f6349', width: 2.2, opacity: 1, pts: [[0.1, 20], [0.3, 20]] };
+  const s2 = { id: 's2', color: '#d9534f', width: 2.2, opacity: 1, pts: [[0.2, 60], [0.5, 60]] };
+  strokes.push(s1);
+  history.recordAdd('lesson:m0-01', s1);
+  strokes.push(s2);
+  history.recordAdd('lesson:m0-01', s2);
+
+  // Erase s1 at index 0
+  const removed = strokes.splice(0, 1)[0];
+  history.recordErase('lesson:m0-01', removed, 0);
+  assert.deepEqual(strokes.map((s) => s.id), ['s2']);
+
+  // Undo 1 -> restores s1 at index 0
+  assert.equal(history.canUndo('lesson:m0-01'), true);
+  history.undo('lesson:m0-01', strokes);
+  assert.deepEqual(strokes.map((s) => s.id), ['s1', 's2']);
+
+  // Undo 2 -> removes s2
+  history.undo('lesson:m0-01', strokes);
+  assert.deepEqual(strokes.map((s) => s.id), ['s1']);
+
+  // Progress payload & Python server parity for ink_drawings
+  const normProg = normalizeProgressPayload({
+    version: 1,
+    ink_drawings: cleaned,
+  });
+  assert.equal(normProg.ink_drawings['lesson:m0-01'].length, 2);
+
+  const pyOut = execFileSync(
+    'python3',
+    [
+      '-c',
+      'import json, sys; from server import validate_progress_payload; p = validate_progress_payload(json.loads(sys.argv[1])); assert "ink_drawings" in p and len(p["ink_drawings"]["lesson:m0-01"]) == 2; print("OK")',
+      JSON.stringify(normProg),
+    ],
+    { cwd: APP_ROOT, encoding: 'utf8' }
+  );
+  assert.equal(pyOut.trim(), 'OK');
+
+  // DOM contract for minimal floating ink toolbar
+  const indexHtml = fs.readFileSync(path.join(APP_ROOT, 'web', 'index.html'), 'utf8');
+  for (const id of ['ink-floating-bar', 'btn-ink-pen', 'btn-ink-eraser', 'btn-ink-undo']) {
+    assert.ok(indexHtml.includes(`id="${id}"`), `index.html missing id="${id}"`);
+  }
+  assert.ok(indexHtml.includes('data-ink-color="sage"'), 'index.html must include ink color palette buttons');
+});
+
 test('index.html, styles.css, and app.js satisfy DOM ID contracts and editorial deduplication', () => {
   const indexHtml = fs.readFileSync(path.join(APP_ROOT, 'web', 'index.html'), 'utf8');
   const stylesCss = fs.readFileSync(path.join(APP_ROOT, 'web', 'styles.css'), 'utf8');
@@ -960,6 +1044,17 @@ test('bootBrowserApp renders #roadmap, #lesson, #problems, and #projects in Verc
     const lessonNotes = savedDraft.inline_notes?.['m0-01-to-hop-phep-dem-bu-tru-va-doi-xung'] || [];
     assert.equal(lessonNotes.length, 1, 'Tapping + Ghi chú on iPad must create the anchored inline note');
     assert.equal(lessonNotes[0].quote, 'Nguyên lý bù trừ trên tập hữu hạn');
+
+    // 6. Ink Toolbar Pen & Eraser toggling in bootBrowserApp
+    const penBtn = fakeDoc.getElementById('btn-ink-pen');
+    const eraserBtn = fakeDoc.getElementById('btn-ink-eraser');
+    penBtn.dispatch('click', {});
+    assert.equal(penBtn.getAttribute('aria-pressed'), 'true', 'Clicking Pen activates pen mode');
+    eraserBtn.dispatch('click', {});
+    assert.equal(eraserBtn.getAttribute('aria-pressed'), 'true', 'Clicking Eraser activates eraser mode');
+    assert.equal(penBtn.getAttribute('aria-pressed'), 'false', 'Activating Eraser deactivates Pen');
+    eraserBtn.dispatch('click', {});
+    assert.equal(eraserBtn.getAttribute('aria-pressed'), 'false', 'Clicking Eraser again returns to normal scroll mode');
   } finally {
     globalThis.window = prevWin;
     globalThis.document = prevDoc;
